@@ -1,4 +1,6 @@
-﻿using GraduateWorkApi.Abstractions;
+﻿using System;
+using System.IO;
+using GraduateWorkApi.Abstractions;
 using GraduateWorkApi.Configurations;
 using GraduateWorkApi.Context;
 using GraduateWorkApi.Services;
@@ -8,7 +10,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Swashbuckle.AspNetCore.Swagger;
 
@@ -61,10 +62,14 @@ namespace GraduateWorkApi
                             Type = "apiKey"
                         });
                 };
+                var basePath = AppContext.BaseDirectory;
+                var xmlPath = Path.Combine(basePath, "GraduateWorkApi.xml"); 
+                sg.IncludeXmlComments(xmlPath);
             });
 
             services.AddTransient<IAccountService, AccountService>();
             services.AddTransient<IUniversityService, UniversityService>();
+            services.AddTransient<ISpecialityService, SpecialityService>();
         }
         
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)

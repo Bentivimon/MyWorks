@@ -9,7 +9,7 @@ namespace GraduateWorkApi.Context
         public DbSet<CertificateOfTestingEntity> CertificateOfTestings { get; set; }
         public DbSet<CertificateOfSecondaryEducationEntity> CertificateOfSecondaryEducations { get; set; }
         public DbSet<EntrantEntity> Entrants { get; set; }
-        public DbSet<SpecialtyEntity> Specialtys { get; set; }
+        public DbSet<SpecialityEntity> Specialtys { get; set; }
         public DbSet<StatementEntity> Statements { get; set; }
         public DbSet<UniversityEntity> Universitys { get; set; }
 

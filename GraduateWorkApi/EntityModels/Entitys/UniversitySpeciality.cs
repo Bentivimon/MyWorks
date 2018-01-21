@@ -13,6 +13,6 @@ namespace EntityModels.Entitys
 
         [ForeignKey("Specialty")]
         public int SpecialtyId { get; set; }
-        public SpecialtyEntity Specialty { get; set; }
+        public SpecialityEntity Specialty { get; set; }
     }
 }
