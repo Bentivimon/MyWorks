@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Models.DTOModels.UniverisyModels;
 using Models.RequestModels.UniversityModels;
 
-namespace GraduateWorkApi.Abstractions
+namespace GraduateWorkApi.Services.Abstractions
 {
     public interface IUniversityService
     {

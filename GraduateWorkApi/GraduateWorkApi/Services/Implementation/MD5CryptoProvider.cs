@@ -1,8 +1,10 @@
-﻿namespace GraduateWorkApi.Services
+﻿using GraduateWorkApi.Services.Abstractions;
+
+namespace GraduateWorkApi.Services.Implementation
 {
-    public static class Md5CryptoProvider
+    public class MD5CryptoProvider: IMD5CryptoProvider
     {
-        public static string Encoding(string password)
+        public string Encoding(string password)
         {
             System.Security.Cryptography.MD5CryptoServiceProvider x = new System.Security.Cryptography.MD5CryptoServiceProvider();
             byte[] bs = System.Text.Encoding.UTF8.GetBytes(password);

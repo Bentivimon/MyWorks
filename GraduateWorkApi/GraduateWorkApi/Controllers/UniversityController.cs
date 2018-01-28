@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Threading.Tasks;
-using GraduateWorkApi.Abstractions;
+using GraduateWorkApi.Services.Abstractions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
+using Models.CustomExceptions;
 using Models.RequestModels.UniversityModels;
+using NLog;
 
 namespace GraduateWorkApi.Controllers
 {
@@ -12,12 +13,12 @@ namespace GraduateWorkApi.Controllers
     public class UniversityController : Controller
     {
         private readonly IUniversityService _universityService;
-        private readonly ILogger _logger;
+        private readonly Logger _logger;
 
-        public UniversityController(IUniversityService universityService, ILogger<UniversityController> logger)
+        public UniversityController(IUniversityService universityService)
         {
             _universityService = universityService;
-            _logger = logger;
+            _logger = LogManager.GetCurrentClassLogger();
         }
 
         /// <summary>
@@ -37,7 +38,7 @@ namespace GraduateWorkApi.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Invalid Server Error api/Universitys&skip={skip}&take={take}");
+                _logger.Error(ex);
                 return StatusCode(500, "Internal server error");
             }
         }
@@ -60,7 +61,7 @@ namespace GraduateWorkApi.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Invalid Server Error api/Universitys&skip={skip}&take={take}&name={name}");
+                _logger.Error(ex);
                 return StatusCode(500, "Internal server error");
             }
         }
@@ -86,7 +87,7 @@ namespace GraduateWorkApi.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Invalid Server Error api/University");
+                _logger.Error(ex);
                 return StatusCode(500, "Internal server error");
             }
         }
@@ -97,22 +98,27 @@ namespace GraduateWorkApi.Controllers
         /// <returns>University Dto model</returns>
         /// <response code="200">Edited university model</response>
         /// <reaponse code="400">Invalid Model</reaponse>
+        /// <reaponse code="404">Unoversity not found</reaponse>
         /// <response code="500">Intenal Server Error</response>
         [HttpPut("api/University")]
         public async Task<IActionResult> EditUniversityAsync([FromBody] UnivesityModelRequest request)
         {
             if (!ModelState.IsValid)
                 return BadRequest();
-            
+
             try
             {
                 var result = await _universityService.EditUniversityTask(request);
 
                 return StatusCode(200, result);
             }
+            catch (UniversityNotFoundException ex)
+            {
+                return StatusCode(404, ex.Message);
+            }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Invalid Server Error api/University");
+                _logger.Error(ex);
                 return StatusCode(500, "Internal server error");
             }
         }

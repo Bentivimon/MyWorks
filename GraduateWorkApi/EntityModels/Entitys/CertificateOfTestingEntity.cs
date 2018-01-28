@@ -1,9 +1,10 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations.Schema;
+using EntityModels.Abstractions;
 
 namespace EntityModels.Entitys
 {
-    public class CertificateOfTestingEntity
+    public class CertificateOfTestingEntity : ICertificateOfTesting
     {
         public int Id { get; set; }
         public string SerialNumber { get; set; }

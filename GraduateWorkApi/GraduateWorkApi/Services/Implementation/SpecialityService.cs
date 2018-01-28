@@ -3,14 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using EntityModels.Entitys;
-using GraduateWorkApi.Abstractions;
 using GraduateWorkApi.Context;
+using GraduateWorkApi.Services.Abstractions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Models.CustomExceptions;
 using Models.DTOModels.SpecialityModels;
 using Models.RequestModels.SpecialityModels;
 
-namespace GraduateWorkApi.Services
+namespace GraduateWorkApi.Services.Implementation
 {
     public class SpecialityService : ISpecialityService
     {
@@ -38,6 +39,9 @@ namespace GraduateWorkApi.Services
             {
                 var specialityEntity = await context.Specialtys
                     .FirstOrDefaultAsync(x => x.Code == request.Code);
+
+                if(specialityEntity == null)
+                    throw new SpecialityNotFoundException();
 
                 specialityEntity.AdditionalFactor = request.AdditionalFactor;
                 specialityEntity.CountOfStatePlaces = request.CountOfStatePlaces;

@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Threading.Tasks;
-using GraduateWorkApi.Abstractions;
+using GraduateWorkApi.Services.Abstractions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
+using Models.CustomExceptions;
 using Models.RequestModels.SpecialityModels;
+using NLog;
 
 namespace GraduateWorkApi.Controllers
 {
@@ -12,12 +13,12 @@ namespace GraduateWorkApi.Controllers
     public class SpecialityController : Controller
     {
         private readonly ISpecialityService _specialityService;
-        private readonly ILogger _logger;
+        private readonly Logger _logger;
 
-        public SpecialityController(ISpecialityService specialityService, ILogger<SpecialityController> logger)
+        public SpecialityController(ISpecialityService specialityService)
         {
             _specialityService = specialityService;
-            _logger = logger;
+            _logger = LogManager.GetCurrentClassLogger();
         }
 
         /// <summary>
@@ -40,7 +41,7 @@ namespace GraduateWorkApi.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Invalid Server Error api/Speciality");
+                _logger.Error(ex);
                 return StatusCode(500, "Internal server error");
             }
         }
@@ -50,6 +51,7 @@ namespace GraduateWorkApi.Controllers
         /// </summary>
         /// <returns>Speciality Dto model</returns>
         /// <response code="200">Speciality Dto model</response>
+        /// <response code="404">Speciality not found</response>
         /// <response code="500">Intenal Server Error</response>
         [HttpPut("api/Speciality")]
         public async Task<IActionResult> EditSpecialityAsync([FromBody] SpecialityRequest request)
@@ -63,9 +65,13 @@ namespace GraduateWorkApi.Controllers
 
                 return StatusCode(200, result);
             }
+            catch (SpecialityNotFoundException ex)
+            {
+                return StatusCode(404, ex.Message);
+            }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Invalid Server Error api/Speciality");
+                _logger.Error(ex);
                 return StatusCode(500, "Internal server error");
             }
         }
@@ -87,7 +93,7 @@ namespace GraduateWorkApi.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Invalid Server Error api/Specialitys&skip={skip}&take={take}");
+                _logger.Error(ex);
                 return StatusCode(500, "Internal server error");
             }
         }
@@ -109,7 +115,7 @@ namespace GraduateWorkApi.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Invalid Server Error api/Specialitys&skip={skip}&take={take}&name={name}");
+                _logger.Error(ex);
                 return StatusCode(500, "Internal server error");
             }
         }
@@ -131,7 +137,7 @@ namespace GraduateWorkApi.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Invalid Server Error api/Specialitys&skip={skip}&take={take}&univerisity={universityId}");
+                _logger.Error(ex);
                 return StatusCode(500, "Internal server error");
             }
         }

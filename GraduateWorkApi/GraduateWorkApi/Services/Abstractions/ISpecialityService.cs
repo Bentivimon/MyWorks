@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Models.DTOModels.SpecialityModels;
 using Models.RequestModels.SpecialityModels;
 
-namespace GraduateWorkApi.Abstractions
+namespace GraduateWorkApi.Services.Abstractions
 {
     public interface ISpecialityService
     {

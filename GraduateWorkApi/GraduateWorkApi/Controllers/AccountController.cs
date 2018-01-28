@@ -1,14 +1,14 @@
 ﻿using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Threading.Tasks;
-using GraduateWorkApi.Abstractions;
+using GraduateWorkApi.Services.Abstractions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Models.CustomExceptions;
 using Models.DTOModels.UserModels;
 using Models.RequestModels.UserModels;
 using Newtonsoft.Json;
+using NLog;
 
 namespace GraduateWorkApi.Controllers
 {
@@ -16,12 +16,14 @@ namespace GraduateWorkApi.Controllers
     public class AccountController : Controller
     {
         private readonly IAccountService _accountService;
-        private readonly ILogger _logger;
+        private readonly IJwtTokenService _jwtTokenService;
+        private readonly Logger _logger;
 
-        public AccountController(IAccountService accountService, ILogger<AccountController> logger)
+        public AccountController(IAccountService accountService, IJwtTokenService jwtTokenService)
         {
             _accountService = accountService;
-            _logger = logger;
+            _jwtTokenService = jwtTokenService;
+            _logger =  LogManager.GetCurrentClassLogger();
         }
 
         /// <summary>
@@ -41,7 +43,10 @@ namespace GraduateWorkApi.Controllers
 
             try
             {
-                var userToken = await _accountService.LogisTask(loginModel);
+                var userId = await _accountService.LogisTask(loginModel);
+
+                var userToken = _jwtTokenService.GenerateJwtTokenTask(userId);
+
                 return StatusCode(200, JsonConvert.SerializeObject(new JwtSecurityTokenHandler().WriteToken(userToken)));
             }
             catch (UserNotFoundException ex)
@@ -50,7 +55,7 @@ namespace GraduateWorkApi.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Invalid Server Error api/Token");
+                _logger.Error(ex);
                 return StatusCode(500, "Internal server error");
             }
         }
@@ -80,7 +85,7 @@ namespace GraduateWorkApi.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Invalid Server Error api/Register");
+                _logger.Error(ex);
                 return StatusCode(500, "Internal server error");
 
             }
@@ -112,7 +117,7 @@ namespace GraduateWorkApi.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Invalid Server Error api/UserInfo");
+                _logger.Error(ex);
                 return StatusCode(500, "Internal server error");
             }
         }
@@ -143,7 +148,7 @@ namespace GraduateWorkApi.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Invalid Server Error api/UserInfo");
+                _logger.Error(ex);
                 return StatusCode(500, "Internal server error");
             }
         }
@@ -178,7 +183,7 @@ namespace GraduateWorkApi.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Invalid Server Error api/ChangePassword");
+                _logger.Error(ex);
                 return StatusCode(500, "Internal server error");
             }
         }
@@ -213,7 +218,7 @@ namespace GraduateWorkApi.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Invalid Server Error api/ChangeEmail");
+                _logger.Error(ex);
                 return StatusCode(500, "Internal server error");
             }
         }

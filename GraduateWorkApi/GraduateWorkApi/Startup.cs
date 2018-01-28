@@ -1,9 +1,9 @@
 ﻿using System;
 using System.IO;
-using GraduateWorkApi.Abstractions;
 using GraduateWorkApi.Configurations;
 using GraduateWorkApi.Context;
-using GraduateWorkApi.Services;
+using GraduateWorkApi.Services.Abstractions;
+using GraduateWorkApi.Services.Implementation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -67,9 +67,7 @@ namespace GraduateWorkApi
                 sg.IncludeXmlComments(xmlPath);
             });
 
-            services.AddTransient<IAccountService, AccountService>();
-            services.AddTransient<IUniversityService, UniversityService>();
-            services.AddTransient<ISpecialityService, SpecialityService>();
+            RegisterTypes(services);
         }
         
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
@@ -89,6 +87,16 @@ namespace GraduateWorkApi
 
             app.UseMvc();
             app.UseCors("CorsPolicy");
+        }
+
+        private void RegisterTypes(IServiceCollection services)
+        {
+            services.AddTransient<IAccountService, AccountService>();
+            services.AddTransient<IUniversityService, UniversityService>();
+            services.AddTransient<ISpecialityService, SpecialityService>();
+            services.AddTransient<IMD5CryptoProvider, MD5CryptoProvider>();
+            services.AddTransient<IEntrantService, EntrantService>();
+            services.AddTransient<IJwtTokenService, JwtTokenService>();
         }
     }
 }

@@ -4,13 +4,14 @@ using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using System.Threading.Tasks;
 using EntityModels.Entitys;
-using GraduateWorkApi.Abstractions;
 using GraduateWorkApi.Context;
+using GraduateWorkApi.Services.Abstractions;
 using Microsoft.EntityFrameworkCore;
+using Models.CustomExceptions;
 using Models.DTOModels.UniverisyModels;
 using Models.RequestModels.UniversityModels;
 
-namespace GraduateWorkApi.Services
+namespace GraduateWorkApi.Services.Implementation
 {
     public class UniversityService : IUniversityService
     {
@@ -40,9 +41,13 @@ namespace GraduateWorkApi.Services
         {
             using (var context = _serviceProvider.GetService<DatabaseContext>())
             {
-                var model = await context.Universitys
+                var universityEntity = await context.Universitys
                     .FirstOrDefaultAsync(x => x.FullName == request.FullName);
-                model.LevelOfAccreditation = request.LevelOfAccreditation;
+
+                if(universityEntity == null)
+                    throw new UniversityNotFoundException();
+
+                universityEntity.LevelOfAccreditation = request.LevelOfAccreditation;
 
                 await context.SaveChangesAsync();
             }

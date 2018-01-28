@@ -1,57 +1,39 @@
 ﻿using System;
-using System.Collections.Generic;
 using Microsoft.Extensions.DependencyInjection;
 using System.Threading.Tasks;
 using EntityModels.Entitys;
-using GraduateWorkApi.Abstractions;
 using GraduateWorkApi.Context;
 using Microsoft.EntityFrameworkCore;
 using Models.RequestModels.UserModels;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using GraduateWorkApi.Configurations;
-using Microsoft.IdentityModel.Tokens;
+using GraduateWorkApi.Services.Abstractions;
 using Models.CustomExceptions;
 using Models.DTOModels.UserModels;
 
-namespace GraduateWorkApi.Services
+namespace GraduateWorkApi.Services.Implementation
 {
     public class AccountService: IAccountService
     {
         private readonly IServiceProvider _serviceProvider;
+        private readonly IMD5CryptoProvider _cryptoProvider;
 
-        public AccountService(IServiceProvider serviceProvider)
+        public AccountService(IServiceProvider serviceProvider, IMD5CryptoProvider cryptoProvider)
         {
             _serviceProvider = serviceProvider;
+            _cryptoProvider = cryptoProvider;
         }
 
-        public async Task<JwtSecurityToken> LogisTask(UserLoginModelRequest loginModel)
+        public async Task<string> LogisTask(UserLoginModelRequest loginModel)
         {
             using (var contex = _serviceProvider.GetService<DatabaseContext>())
             {
                 var user = await contex.Users
                     .AsNoTracking()
-                    .FirstOrDefaultAsync(x => x.Email == loginModel.Login && x.Password == Md5CryptoProvider.Encoding(loginModel.Password));
+                    .FirstOrDefaultAsync(x => x.Email == loginModel.Login && x.Password == _cryptoProvider.Encoding(loginModel.Password));
 
                 if(user == null)
                     throw new UserNotFoundException();
 
-                var claims = new List<Claim>
-                {
-                    new Claim(ClaimsIdentity.DefaultNameClaimType, user.Id),
-                   // new Claim(ClaimsIdentity.DefaultRoleClaimType, user.Role.ToString())
-                };
-
-                var identity = new ClaimsIdentity
-                    (claims  , "Token", ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);
-                return new JwtSecurityToken(
-                    issuer: JwtTokenConfiguration.Issuer,
-                    audience: JwtTokenConfiguration.Audience,
-                    notBefore: DateTime.UtcNow,
-                    claims: identity.Claims,
-                    expires: DateTime.UtcNow.Add(TimeSpan.FromDays(JwtTokenConfiguration.LifeTime)),
-                    signingCredentials: new SigningCredentials(JwtTokenConfiguration.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));
-
+                return user.Id;
             }
         }
 
@@ -59,11 +41,11 @@ namespace GraduateWorkApi.Services
         {
             using (var context = _serviceProvider.GetService<DatabaseContext>())
             {
-                var isEmailUsed = await context.Users
+                var isEmailOrPhoneUsed = await context.Users
                     .AsNoTracking()
-                    .AnyAsync(x => x.Email == registrarionModel.Email && x.MobileNumber == registrarionModel.MobileNumber);
+                    .AnyAsync(x => x.Email == registrarionModel.Email || x.MobileNumber == registrarionModel.MobileNumber);
 
-                if (isEmailUsed)
+                if (isEmailOrPhoneUsed)
                     return false;
 
                 var userEntity = new UserEntity
@@ -73,7 +55,7 @@ namespace GraduateWorkApi.Services
                     FirstName = registrarionModel.FirstName,
                     LastName = registrarionModel.LastName,
                     MobileNumber = registrarionModel.MobileNumber,
-                    Password = Md5CryptoProvider.Encoding(registrarionModel.Password)
+                    Password = _cryptoProvider.Encoding(registrarionModel.Password)
                 };
 
                 await context.AddAsync(userEntity);
@@ -132,10 +114,10 @@ namespace GraduateWorkApi.Services
                 if(user == null)
                     throw new UserNotFoundException();
 
-                if(Md5CryptoProvider.Encoding(model.NewPassword) == user.Password || model.OldPassword == model.NewPassword)
+                if(_cryptoProvider.Encoding(model.OldPassword) != user.Password || model.OldPassword == model.NewPassword)
                     return false;
 
-                user.Password = Md5CryptoProvider.Encoding(model.NewPassword);
+                user.Password = _cryptoProvider.Encoding(model.NewPassword);
                 await context.SaveChangesAsync();
             }
 

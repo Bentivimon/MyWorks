@@ -1,9 +1,10 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations.Schema;
+using EntityModels.Abstractions;
 
 namespace EntityModels.Entitys
 {
-    public class CertificateOfSecondaryEducationEntity
+    public class CertificateOfSecondaryEducationEntity : ICertificateOfSecondaryEducation
     {
         public int Id { get; set; }
         public string SeriaNumber { get; set; }
