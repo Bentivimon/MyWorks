@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RuleSet Name="CodeStandart" Description="Alphateka Code Standart Rules" ToolsVersion="10.0">
+    <Rules AnalyzerId="StyleCop.Analyzers" RuleNamespace="StyleCop.Analyzers">
+        <!-- SA Warnings -->
+    </Rules>
+    <Rules AnalyzerId="Microsoft.Usage" RuleNamespace="Microsoft.Usage">
+        <!-- CA Warnings -->
+        <!-- [CA1034] Do not nest type. Alternatively, change its accessibility so that it is not externally visible. -->
+        <Rule Id="CA1034" Action="None" />
+        <!-- [CA1716] In virtual/interface member ..., rename parameter next so that it no longer conflicts with the reserved language keyword '...'. Using a reserved keyword as the name of a parameter on a virtual/interface member makes it harder for consumers in other languages to override/implement the member. -->
+        <Rule Id="CA1716" Action="None" />
+        <!-- CA1717: Only FlagsAttribute enums should have plural names -->
+        <Rule Id="CA1717" Action="None" />
+        <!-- [CA1812] Class is an internal class that is apparently never instantiated. If so, remove the code from the assembly. If this class is intended to contain only static members, make it static (Shared in Visual Basic). -->
+        <Rule Id="CA1812" Action="None" />
+        <!-- [CA1815] Class should override the equality (==) and inequality (!=) operators. -->
+        <Rule Id="CA1815" Action="None" />
+        <!--  [CA1819] Properties should not return arrays -->
+        <Rule Id="CA1819" Action="None" />
+        <!-- [CA2227] Change property to be read-only by removing the property setter. -->
+        <Rule Id="CA2227" Action="None" />
+        <!-- [CA2231] Overload operator equals on overriding value type Equals -->
+        <Rule Id="CA2231" Action="None" />
+    </Rules>
+</RuleSet>

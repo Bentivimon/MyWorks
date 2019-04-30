@@ -1,0 +1,508 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>GraduateWork.Server.Data</name>
+    </assembly>
+    <members>
+        <member name="T:GraduateWork.Server.Data.DatabaseContext">
+            <summary>
+            Represent database context.
+            </summary>
+        </member>
+        <member name="P:GraduateWork.Server.Data.DatabaseContext.Users">
+            <summary>
+            Gets/Sets user entities.
+            </summary>
+        </member>
+        <member name="P:GraduateWork.Server.Data.DatabaseContext.CertificateOfTestings">
+            <summary>
+            Gets/Sets certificate of testing entities.
+            </summary>
+        </member>
+        <member name="P:GraduateWork.Server.Data.DatabaseContext.CertificateOfSecondaryEducations">
+            <summary>
+            Gets/Sets certificate of secondary education entities.
+            </summary>
+        </member>
+        <member name="P:GraduateWork.Server.Data.DatabaseContext.Entrants">
+            <summary>
+            Gets/Sets entrant entities.
+            </summary>
+        </member>
+        <member name="P:GraduateWork.Server.Data.DatabaseContext.Specialties">
+            <summary>
+            Gets/Sets speciality entities.
+            </summary>
+        </member>
+        <member name="P:GraduateWork.Server.Data.DatabaseContext.Statements">
+            <summary>
+            Gets/Sets statement entities.
+            </summary>
+        </member>
+        <member name="P:GraduateWork.Server.Data.DatabaseContext.Universities">
+            <summary>
+            Gets/Sets university entities.
+            </summary>
+        </member>
+        <member name="M:GraduateWork.Server.Data.DatabaseContext.#ctor(Microsoft.EntityFrameworkCore.DbContextOptions)">
+            <summary>
+            Constructor for initialize <see cref="T:GraduateWork.Server.Data.DatabaseContext"/> instance with options.
+            </summary>
+            <param name="options"> Database context. </param>
+        </member>
+        <member name="M:GraduateWork.Server.Data.DatabaseContext.OnModelCreating(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc/>
+        </member>
+        <member name="T:GraduateWork.Server.Data.Entities.CertificateOfSecondaryEducationEntity">
+            <summary>
+            Represent certificate of secondary education entity. 
+            </summary>
+        </member>
+        <member name="P:GraduateWork.Server.Data.Entities.CertificateOfSecondaryEducationEntity.Id">
+            <summary>
+            Gets/Sets uniq certificate of secondary education identifier.
+            </summary>
+        </member>
+        <member name="P:GraduateWork.Server.Data.Entities.CertificateOfSecondaryEducationEntity.SerialNumber">
+            <summary>
+            Gets/Sets certificate of secondary education serial number.
+            </summary>
+        </member>
+        <member name="P:GraduateWork.Server.Data.Entities.CertificateOfSecondaryEducationEntity.AverageMark">
+            <summary>
+            Gets/Sets certificate of secondary education average mark.
+            </summary>
+        </member>
+        <member name="P:GraduateWork.Server.Data.Entities.CertificateOfSecondaryEducationEntity.FullNameOfTheEducationalInstitution">
+            <summary>
+            Gets/Sets certificate of secondary education full name of the educational institution. 
+            </summary>
+        </member>
+        <member name="P:GraduateWork.Server.Data.Entities.CertificateOfSecondaryEducationEntity.YearOfIssue">
+            <summary>
+            Gets/Sets certificate of secondary education year of issue.
+            </summary>
+        </member>
+        <member name="P:GraduateWork.Server.Data.Entities.CertificateOfSecondaryEducationEntity.EntrantId">
+            <summary>
+            Gets/Sets certificate of secondary education associated with entrant by id.
+            </summary>
+        </member>
+        <member name="P:GraduateWork.Server.Data.Entities.CertificateOfSecondaryEducationEntity.Entrant">
+            <summary>
+            Gets/Sets certificate of secondary education associated with entrant.
+            </summary>
+        </member>
+        <member name="M:GraduateWork.Server.Data.Entities.CertificateOfSecondaryEducationEntity.ToDto">
+            <summary>
+            Converter to <see cref="T:GraduateWork.Server.Models.Response.CertificateOfSecondaryEducationDto"/>.
+            </summary>
+        </member>
+        <member name="T:GraduateWork.Server.Data.Entities.CertificateOfTestingEntity">
+            <summary>
+            Represent certificate of testing entity.
+            </summary>
+        </member>
+        <member name="P:GraduateWork.Server.Data.Entities.CertificateOfTestingEntity.Id">
+            <summary>
+            Gets/Sets uniq identifier.
+            </summary>
+        </member>
+        <member name="P:GraduateWork.Server.Data.Entities.CertificateOfTestingEntity.SerialNumber">
+            <summary>
+            Gets/Sets certificate of testing serial number.
+            </summary>
+        </member>
+        <member name="P:GraduateWork.Server.Data.Entities.CertificateOfTestingEntity.YearOfIssue">
+            <summary>
+            Gets/Sets certificate of testing year of issue.
+            </summary>
+        </member>
+        <member name="P:GraduateWork.Server.Data.Entities.CertificateOfTestingEntity.FirstSubject">
+            <summary>
+            Gets/Sets certificate of testing first subject.
+            </summary>
+        </member>
+        <member name="P:GraduateWork.Server.Data.Entities.CertificateOfTestingEntity.SecondSubject">
+            <summary>
+            Gets/Sets certificate of testing second subject.
+            </summary>
+        </member>
+        <member name="P:GraduateWork.Server.Data.Entities.CertificateOfTestingEntity.ThirdSubject">
+            <summary>
+            Gets/Sets certificate of testing  third subject.
+            </summary>
+        </member>
+        <member name="P:GraduateWork.Server.Data.Entities.CertificateOfTestingEntity.FourthSubject">
+            <summary>
+            Gets/Sets certificate of testing fourth subject
+            </summary>
+        </member>
+        <member name="P:GraduateWork.Server.Data.Entities.CertificateOfTestingEntity.FirstMark">
+            <summary>
+            Gets/Sets certificate of testing first mark
+            </summary>
+        </member>
+        <member name="P:GraduateWork.Server.Data.Entities.CertificateOfTestingEntity.SecondMark">
+            <summary>
+            Gets/Sets certificate of testing second mark
+            </summary>
+        </member>
+        <member name="P:GraduateWork.Server.Data.Entities.CertificateOfTestingEntity.ThirdMark">
+            <summary>
+            Gets/Sets certificate of testing third mak.
+            </summary>
+        </member>
+        <member name="P:GraduateWork.Server.Data.Entities.CertificateOfTestingEntity.FourthMark">
+            <summary>
+            Gets/Sets certificate of testing fourth mark.
+            </summary>
+        </member>
+        <member name="P:GraduateWork.Server.Data.Entities.CertificateOfTestingEntity.EntrantId">
+            <summary>
+            Gets/Sets certificate of testing associated with entrant by id.
+            </summary>
+        </member>
+        <member name="P:GraduateWork.Server.Data.Entities.CertificateOfTestingEntity.Entrant">
+            <summary>
+            Gets/Sets certificate of testing associated with entrant.
+            </summary>
+        </member>
+        <member name="M:GraduateWork.Server.Data.Entities.CertificateOfTestingEntity.ToDto">
+            <summary>
+            Converter to <see cref="T:GraduateWork.Server.Models.Response.CertificateOfTestingDto"/>.
+            </summary>
+        </member>
+        <member name="T:GraduateWork.Server.Data.Entities.EntrantEntity">
+            <summary>
+            Represent entrant entity.
+            </summary>
+        </member>
+        <member name="P:GraduateWork.Server.Data.Entities.EntrantEntity.Id">
+            <summary>
+            Gets/Sets uniq entrant identifier.
+            </summary>
+        </member>
+        <member name="P:GraduateWork.Server.Data.Entities.EntrantEntity.FirstName">
+            <summary>
+            Gets/Sets entrant first name.
+            </summary>
+        </member>
+        <member name="P:GraduateWork.Server.Data.Entities.EntrantEntity.LastName">
+            <summary>
+            Gets/Sets entrant last name.
+            </summary>
+        </member>
+        <member name="P:GraduateWork.Server.Data.Entities.EntrantEntity.Birthday">
+            <summary>
+            Gets/Sets entrant birthday.
+            </summary>
+        </member>
+        <member name="P:GraduateWork.Server.Data.Entities.EntrantEntity.UserId">
+            <summary>
+            Gets/Sets entrant associated with user by id. 
+            </summary>
+        </member>
+        <member name="P:GraduateWork.Server.Data.Entities.EntrantEntity.User">
+            <summary>
+            Gets/Sets entrant associated with user entity.
+            </summary>
+        </member>
+        <member name="P:GraduateWork.Server.Data.Entities.EntrantEntity.CertificateOfTesting">
+            <summary>
+            Gets/Sets entrant associated with certificate of testing.
+            </summary>
+        </member>
+        <member name="P:GraduateWork.Server.Data.Entities.EntrantEntity.CertificateOfSecondaryEducation">
+            <summary>
+            Gets/Sets entrant associated with certificate of secondary education.
+            </summary>
+        </member>
+        <member name="P:GraduateWork.Server.Data.Entities.EntrantEntity.Statements">
+            <summary>
+            Gets/Sets entrant associated with statements.
+            </summary>
+        </member>
+        <member name="M:GraduateWork.Server.Data.Entities.EntrantEntity.#ctor">
+            <summary>
+            Basic constructor.
+            </summary>
+        </member>
+        <member name="M:GraduateWork.Server.Data.Entities.EntrantEntity.#ctor(GraduateWork.Server.Models.Request.EntrantModel)">
+            <summary>
+            Constructor with <see cref="T:GraduateWork.Server.Models.Request.EntrantModel"/> parameter.
+            </summary>
+            <param name="request"><see cref="T:GraduateWork.Server.Models.Request.EntrantModel"/> instance.</param>
+        </member>
+        <member name="M:GraduateWork.Server.Data.Entities.EntrantEntity.ToDto">
+            <summary>
+            Converter to <see cref="T:GraduateWork.Server.Models.Response.EntrantDto"/>.
+            </summary>
+        </member>
+        <member name="M:GraduateWork.Server.Data.Entities.EntrantEntity.ToExtendedDto">
+            <summary>
+            Converter to <see cref="T:GraduateWork.Server.Models.Response.EntrantExtendDto"/>.
+            </summary>
+        </member>
+        <member name="M:GraduateWork.Server.Data.Entities.EntrantEntity.Update(GraduateWork.Server.Models.Request.EntrantModel)">
+            <summary>
+            Method for update fields by <see cref="T:GraduateWork.Server.Models.Request.EntrantModel"/> instance.
+            </summary>
+            <param name="request"><see cref="T:GraduateWork.Server.Models.Request.EntrantModel"/> instance.</param>
+        </member>
+        <member name="T:GraduateWork.Server.Data.Entities.SpecialityEntity">
+            <summary>
+            Represents speciality entity.
+            </summary>
+        </member>
+        <member name="P:GraduateWork.Server.Data.Entities.SpecialityEntity.Id">
+            <summary>
+            Gets/Sets uniq speciality identifier.
+            </summary>
+        </member>
+        <member name="P:GraduateWork.Server.Data.Entities.SpecialityEntity.Code">
+            <summary>
+            Gets/Sets speciality code.
+            </summary>
+        </member>
+        <member name="P:GraduateWork.Server.Data.Entities.SpecialityEntity.Name">
+            <summary>
+            Gets/Sets speciality name.
+            </summary>
+        </member>
+        <member name="P:GraduateWork.Server.Data.Entities.SpecialityEntity.AdditionalFactor">
+            <summary>
+            Gets/Sets speciality additional factor.
+            </summary>
+        </member>
+        <member name="P:GraduateWork.Server.Data.Entities.SpecialityEntity.CountOfStatePlaces">
+            <summary>
+            Gets/Sets speciality count of state places.
+            </summary>
+        </member>
+        <member name="P:GraduateWork.Server.Data.Entities.SpecialityEntity.UniversitySpecialities">
+            <summary>
+            Gets/Sets speciality associated with a university specialities.
+            </summary>
+        </member>
+        <member name="M:GraduateWork.Server.Data.Entities.SpecialityEntity.#ctor">
+            <summary>
+            Basic constructor.
+            </summary>
+        </member>
+        <member name="M:GraduateWork.Server.Data.Entities.SpecialityEntity.#ctor(GraduateWork.Server.Models.Request.SpecialityRequest)">
+            <summary>
+            Constructor.
+            </summary>
+            <param name="request"><see cref="T:GraduateWork.Server.Models.Request.SpecialityRequest"/> instance.</param>
+        </member>
+        <member name="M:GraduateWork.Server.Data.Entities.SpecialityEntity.Update(GraduateWork.Server.Models.Request.SpecialityRequest)">
+            <summary>
+            Method for update speciality.
+            </summary>
+            <param name="request"><see cref="T:GraduateWork.Server.Models.Request.SpecialityRequest"/> instance.</param>
+        </member>
+        <member name="M:GraduateWork.Server.Data.Entities.SpecialityEntity.ToDto">
+            <summary>
+            Method for convert entity to dto.
+            </summary>
+        </member>
+        <member name="T:GraduateWork.Server.Data.Entities.StatementEntity">
+            <summary>
+            Represent statement entity.
+            </summary>
+        </member>
+        <member name="P:GraduateWork.Server.Data.Entities.StatementEntity.Id">
+            <summary>
+            Gets/Sets uniq entrant identifier.
+            </summary>
+        </member>
+        <member name="P:GraduateWork.Server.Data.Entities.StatementEntity.TotalScore">
+            <summary>
+            Gets/Sets statement total score.
+            </summary>
+        </member>
+        <member name="P:GraduateWork.Server.Data.Entities.StatementEntity.ExtraScore">
+            <summary>
+            Gets/Sets statement extra score.
+            </summary>
+        </member>
+        <member name="P:GraduateWork.Server.Data.Entities.StatementEntity.EntrantId">
+            <summary>
+            Gets/Sets statement associated with entrant by id.
+            </summary>
+        </member>
+        <member name="P:GraduateWork.Server.Data.Entities.StatementEntity.UniversityId">
+            <summary>
+            Gets/Sets statement associated with university by id.
+            </summary>
+        </member>
+        <member name="P:GraduateWork.Server.Data.Entities.StatementEntity.Entrant">
+            <summary>
+            Gets/Sets statement associated with entrant entity.
+            </summary>
+        </member>
+        <member name="P:GraduateWork.Server.Data.Entities.StatementEntity.University">
+            <summary>
+            Gets/Sets statement associated with university entity.
+            </summary>
+        </member>
+        <member name="T:GraduateWork.Server.Data.Entities.UniversityEntity">
+            <summary>
+            Represent university entity.
+            </summary>
+        </member>
+        <member name="P:GraduateWork.Server.Data.Entities.UniversityEntity.Id">
+            <summary>
+            Gets/Sets uniq entrant identifier.
+            </summary>
+        </member>
+        <member name="P:GraduateWork.Server.Data.Entities.UniversityEntity.FullName">
+            <summary>
+            Gets/Sets university full name.
+            </summary>
+        </member>
+        <member name="P:GraduateWork.Server.Data.Entities.UniversityEntity.LevelOfAccreditation">
+            <summary>
+            Gets/Sets university level of accreditation.
+            </summary>
+        </member>
+        <member name="P:GraduateWork.Server.Data.Entities.UniversityEntity.Statements">
+            <summary>
+            Gets/Sets university associated with universities.
+            </summary>
+        </member>
+        <member name="P:GraduateWork.Server.Data.Entities.UniversityEntity.UniversitySpecialities">
+            <summary>
+            Gets/Sets university associated with university specialities.
+            </summary>
+        </member>
+        <member name="M:GraduateWork.Server.Data.Entities.UniversityEntity.#ctor">
+            <summary>
+            Basic constructor.
+            </summary>
+        </member>
+        <member name="M:GraduateWork.Server.Data.Entities.UniversityEntity.#ctor(GraduateWork.Server.Models.Request.UniversityRequest)">
+            <summary>
+            Constructor.
+            </summary>
+            <param name="request"><see cref="T:GraduateWork.Server.Models.Request.UniversityRequest"/> instance.</param>
+        </member>
+        <member name="M:GraduateWork.Server.Data.Entities.UniversityEntity.ToDto">
+            <summary>
+            Convert to <see cref="T:GraduateWork.Server.Models.Response.UniversityDto"/>.
+            </summary>
+        </member>
+        <member name="T:GraduateWork.Server.Data.Entities.UniversitySpecialityEntity">
+            <summary>
+            Represent university specialities entity.
+            </summary>
+        </member>
+        <member name="P:GraduateWork.Server.Data.Entities.UniversitySpecialityEntity.UniversityId">
+            <summary>
+            Gets/Sets university id.
+            </summary>
+        </member>
+        <member name="P:GraduateWork.Server.Data.Entities.UniversitySpecialityEntity.SpecialtyId">
+            <summary>
+            Gets/Sets specialty id.
+            </summary>
+        </member>
+        <member name="P:GraduateWork.Server.Data.Entities.UniversitySpecialityEntity.University">
+            <summary>
+            Gets/Sets associated with university.
+            </summary>
+        </member>
+        <member name="P:GraduateWork.Server.Data.Entities.UniversitySpecialityEntity.Specialty">
+            <summary>
+            Gets/Sets associated with specialty.
+            </summary>
+        </member>
+        <member name="T:GraduateWork.Server.Data.Entities.UserEntity">
+            <summary>
+            Represents user entity.
+            </summary>
+        </member>
+        <member name="P:GraduateWork.Server.Data.Entities.UserEntity.Id">
+            <summary>
+            Gets/Sets uniq user identifier.
+            </summary>
+        </member>
+        <member name="P:GraduateWork.Server.Data.Entities.UserEntity.Password">
+            <summary>
+            Gets/Sets user password.
+            </summary>
+        </member>
+        <member name="P:GraduateWork.Server.Data.Entities.UserEntity.Email">
+            <summary>
+            Gets/Sets user email.
+            </summary>
+        </member>
+        <member name="P:GraduateWork.Server.Data.Entities.UserEntity.FirstName">
+            <summary>
+            Gets/Sets user first name
+            </summary>
+        </member>
+        <member name="P:GraduateWork.Server.Data.Entities.UserEntity.LastName">
+            <summary>
+            Gets/Sets user last name.
+            </summary>
+        </member>
+        <member name="P:GraduateWork.Server.Data.Entities.UserEntity.Phone">
+            <summary>
+            Gets/Sets user phone number.
+            </summary>
+        </member>
+        <member name="P:GraduateWork.Server.Data.Entities.UserEntity.Birthday">
+            <summary>
+            Gets/Sets user birthday date.
+            </summary>
+        </member>
+        <member name="P:GraduateWork.Server.Data.Entities.UserEntity.Entrant">
+            <summary>
+            Gets/Sets user associated with a entrant
+            </summary>
+        </member>
+        <member name="M:GraduateWork.Server.Data.Entities.UserEntity.Update(GraduateWork.Server.Models.Response.UserDto)">
+            <summary>
+            Method for update properties of <see cref="T:GraduateWork.Server.Data.Entities.UserEntity"/> by <see cref="T:GraduateWork.Server.Models.Response.UserDto"/>.
+            </summary>
+            <param name="model">Model with new data.</param>
+        </member>
+        <member name="M:GraduateWork.Server.Data.Entities.UserEntity.ToDto">
+            <summary>
+            Method for convert <see cref="T:GraduateWork.Server.Data.Entities.UserEntity"/> to <see cref="T:GraduateWork.Server.Models.Response.UserDto"/>
+            </summary>
+        </member>
+        <member name="M:GraduateWork.Server.Data.Entities.UserEntity.CreateEntity(GraduateWork.Server.Models.Request.RegistrationModel,System.String)">
+            <summary>
+            Method for convert <see cref="T:GraduateWork.Server.Models.Request.RegistrationModel"/> to <see cref="T:GraduateWork.Server.Models.Request.RegistrationModel"/>.
+            </summary>
+            <param name="model">Registration model</param>
+            <param name="encodePassword">encoded password</param>
+        </member>
+        <member name="T:GraduateWork.Server.Data.Migrations.Initial">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:GraduateWork.Server.Data.Migrations.Initial.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <summary>
+            
+            </summary>
+            <param name="migrationBuilder"></param>
+        </member>
+        <member name="M:GraduateWork.Server.Data.Migrations.Initial.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <summary>
+            
+            </summary>
+            <param name="migrationBuilder"></param>
+        </member>
+        <member name="M:GraduateWork.Server.Data.Migrations.Initial.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <summary>
+            
+            </summary>
+            <param name="modelBuilder"></param>
+        </member>
+    </members>
+</doc>

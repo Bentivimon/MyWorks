@@ -1,0 +1,330 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>GraduateWork.Server.Api</name>
+    </assembly>
+    <members>
+        <member name="T:GraduateWork.Server.Api.Configurations.ApplicationBuilderExtensions">
+            <summary>
+            Extensions for <see cref="T:Microsoft.AspNetCore.Builder.IApplicationBuilder"/>.
+            </summary>
+        </member>
+        <member name="M:GraduateWork.Server.Api.Configurations.ApplicationBuilderExtensions.EnsureContext(Microsoft.AspNetCore.Builder.IApplicationBuilder)">
+            <summary>
+            Ensure context ready.
+            </summary>
+            <param name="builder"><see cref="T:Microsoft.AspNetCore.Builder.IApplicationBuilder"/> instance.</param>
+        </member>
+        <member name="T:GraduateWork.Server.Api.Configurations.StartupConfigurations">
+            <summary>
+            Class witch contains method for configure our application.
+            </summary>
+        </member>
+        <member name="M:GraduateWork.Server.Api.Configurations.StartupConfigurations.RegisterSwagger(Microsoft.Extensions.DependencyInjection.IServiceCollection,Microsoft.Extensions.Configuration.IConfiguration)">
+            <summary>
+            Method for register swagger.
+            </summary>
+            <param name="services"><see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection"/> instance.</param>
+            <param name="configuration"><see cref="T:Microsoft.Extensions.Configuration.IConfiguration"/> instance.</param>
+        </member>
+        <member name="M:GraduateWork.Server.Api.Configurations.StartupConfigurations.RegisterDatabaseContext(Microsoft.Extensions.DependencyInjection.IServiceCollection,Microsoft.Extensions.Configuration.IConfiguration)">
+            <summary>
+            Method for register database context in DI.
+            </summary>
+            <param name="services"><see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection"/> instance.</param>
+            <param name="configuration"><see cref="T:Microsoft.Extensions.Configuration.IConfiguration"/> instance.</param>
+        </member>
+        <member name="M:GraduateWork.Server.Api.Configurations.StartupConfigurations.AddAuthentication(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+            <summary>
+            Method for add authentication.
+            </summary>
+            <param name="services"><see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection"/> instance.</param>
+        </member>
+        <member name="M:GraduateWork.Server.Api.Configurations.StartupConfigurations.RegisterCustomService(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+            <summary>
+            Method for register custom service.
+            </summary>
+            <param name="services"><see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection"/> instance.</param>
+        </member>
+        <member name="M:GraduateWork.Server.Api.Configurations.StartupConfigurations.ConfigureApplication(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+            <summary>
+            Method for configure JSON response, MVC with exception filter and CORS.
+            </summary>
+            <param name="services"><see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection"/> instance.</param>
+        </member>
+        <member name="T:GraduateWork.Server.Api.Controllers.AccountController">
+            <inheritdoc />
+            <summary>
+            Account controller.
+            </summary>
+        </member>
+        <member name="M:GraduateWork.Server.Api.Controllers.AccountController.#ctor(GraduateWork.Server.Services.Abstractions.IAccountService,GraduateWork.Server.Services.Abstractions.IJwtTokenService)">
+            <summary>
+            Base constructor. 
+            </summary>
+            <param name="accountService"><see cref="T:GraduateWork.Server.Services.Abstractions.IAccountService"/> instance.</param>
+            <param name="jwtTokenService"><see cref="T:GraduateWork.Server.Services.Abstractions.IJwtTokenService"/> instance.</param>
+        </member>
+        <member name="M:GraduateWork.Server.Api.Controllers.AccountController.LoginAsync(GraduateWork.Server.Models.Request.UserLoginModel,System.Threading.CancellationToken)">
+            <summary>
+            Get user access token.
+            </summary>
+            <param name="loginModel"><see cref="T:GraduateWork.Server.Models.Request.UserLoginModel"/> instance.</param>
+            <param name="cancellationToken"><see cref="T:System.Threading.CancellationToken"/> instance.</param>
+        </member>
+        <member name="M:GraduateWork.Server.Api.Controllers.AccountController.RegistrationAsync(GraduateWork.Server.Models.Request.RegistrationModel,System.Threading.CancellationToken)">
+            <summary>
+            Register new user. 
+            </summary>
+            <param name="registrationModel"><see cref="T:GraduateWork.Server.Models.Request.RegistrationModel"/> instance.</param>
+            <param name="cancellationToken"><see cref="T:System.Threading.CancellationToken"/> instance.</param>
+        </member>
+        <member name="M:GraduateWork.Server.Api.Controllers.AccountController.GetUserInfoAsync(System.Threading.CancellationToken)">
+            <summary>
+            Get user info model.
+            </summary>
+            <param name="cancellationToken"><see cref="T:System.Threading.CancellationToken"/> instance.</param>
+        </member>
+        <member name="M:GraduateWork.Server.Api.Controllers.AccountController.UpdateUserAsync(GraduateWork.Server.Models.Response.UserDto,System.Threading.CancellationToken)">
+            <summary>
+            Edit User Info Model.
+            </summary>
+            <param name="userModel"><see cref="T:GraduateWork.Server.Models.Response.UserDto"/> instance.</param>
+            <param name="cancellationToken"><see cref="T:System.Threading.CancellationToken"/> instance.</param>
+        </member>
+        <member name="M:GraduateWork.Server.Api.Controllers.AccountController.ChangeUserPasswordAsync(GraduateWork.Server.Models.Request.ChangeUserPasswordModel,System.Threading.CancellationToken)">
+            <summary>
+            Change user Password.
+            </summary>
+            <param name="model"><see cref="T:GraduateWork.Server.Models.Request.ChangeUserPasswordModel"/> instance.</param>
+            <param name="cancellationToken"><see cref="T:System.Threading.CancellationToken"/> instance.</param>
+        </member>
+        <member name="M:GraduateWork.Server.Api.Controllers.AccountController.ChangeUserEmailAsync(GraduateWork.Server.Models.Request.ChangeUserEmailModel,System.Threading.CancellationToken)">
+            <summary>
+            Change user Email address.
+            </summary>
+            <param name="model"><see cref="T:GraduateWork.Server.Models.Request.ChangeUserEmailModel"/> instance.</param>
+            <param name="cancellationToken"><see cref="T:System.Threading.CancellationToken"/> instance.</param>
+        </member>
+        <member name="T:GraduateWork.Server.Api.Controllers.EntrantController">
+            <summary>
+            Controller for manage entrant.
+            </summary>
+        </member>
+        <member name="M:GraduateWork.Server.Api.Controllers.EntrantController.#ctor(GraduateWork.Server.Services.Abstractions.IEntrantService)">
+            <summary>
+            Basic constructor.
+            </summary>
+            <param name="entrantService"><see cref="T:GraduateWork.Server.Services.Abstractions.IEntrantService"/> instance.</param>
+        </member>
+        <member name="M:GraduateWork.Server.Api.Controllers.EntrantController.GetEntrantsAsync(System.Int32,System.Int32,System.Threading.CancellationToken)">
+            <summary>
+            Get Entrants by rang.
+            </summary>
+            <param name="skip">Count of element for skip.</param>
+            <param name="take">Count of element for take.</param>
+            <param name="cancellationToken"><see cref="T:System.Threading.CancellationToken"/> instance.</param>
+        </member>
+        <member name="M:GraduateWork.Server.Api.Controllers.EntrantController.GetEntrantsByNameAsync(System.Int32,System.Int32,System.String,System.Threading.CancellationToken)">
+            <summary>
+            Get Entrants by rang and name.
+            </summary>
+            <param name="skip">Count of element for skip.</param>
+            <param name="take">Count of element for take.</param>
+            <param name="name">Part of name.</param>
+            <param name="cancellationToken"><see cref="T:System.Threading.CancellationToken"/> instance.</param>
+        </member>
+        <member name="M:GraduateWork.Server.Api.Controllers.EntrantController.GetEntrantByIdAsync(System.Guid,System.Threading.CancellationToken)">
+            <summary>
+            Get Entrant by id.
+            </summary>
+            <param name="entrantId">Present entrant.</param>
+            <param name="cancellationToken"><see cref="T:System.Threading.CancellationToken"/> instance.</param>
+        </member>
+        <member name="M:GraduateWork.Server.Api.Controllers.EntrantController.CombineEntrantAndUserAsync(System.Guid,System.Threading.CancellationToken)">
+            <summary>
+            Tie up entrant and user.
+            </summary>
+            <param name="entrantId"> Entrant identifier.</param>
+            <param name="cancellationToken"><see cref="T:System.Threading.CancellationToken"/> instance.</param>
+        </member>
+        <member name="T:GraduateWork.Server.Api.Controllers.SpecialityController">
+            <summary>
+            Controller for manage speciality.
+            </summary>
+        </member>
+        <member name="M:GraduateWork.Server.Api.Controllers.SpecialityController.#ctor(GraduateWork.Server.Services.Abstractions.ISpecialityService)">
+            <summary>
+            Basic constructor.
+            </summary>
+            <param name="specialityService"><see cref="T:GraduateWork.Server.Services.Abstractions.ISpecialityService"/> instance.</param>
+        </member>
+        <member name="M:GraduateWork.Server.Api.Controllers.SpecialityController.AddSpecialityAsync(GraduateWork.Server.Models.Request.SpecialityRequest,System.Threading.CancellationToken)">
+            <summary>
+            Add Speciality.
+            </summary>
+            <param name="request"><see cref="T:GraduateWork.Server.Models.Request.SpecialityRequest"/> instance.</param>
+            <param name="cancellationToken"><see cref="T:System.Threading.CancellationToken"/> instance.</param>
+        </member>
+        <member name="M:GraduateWork.Server.Api.Controllers.SpecialityController.UpdateSpecialityAsync(GraduateWork.Server.Models.Request.SpecialityRequest,System.Threading.CancellationToken)">
+            <summary>
+            Update Speciality.
+            </summary>
+            <param name="request"><see cref="T:GraduateWork.Server.Models.Request.SpecialityRequest"/> instance.</param>
+            <param name="cancellationToken"><see cref="T:System.Threading.CancellationToken"/> instance.</param>
+        </member>
+        <member name="M:GraduateWork.Server.Api.Controllers.SpecialityController.GetSpecialitiesAsync(System.Int32,System.Int32,System.Threading.CancellationToken)">
+            <summary>
+            Get Specialities by range.
+            </summary>
+            <param name="skip">Count of element for skip.</param>
+            <param name="take">Count of element for take.</param>
+            <param name="cancellationToken"><see cref="T:System.Threading.CancellationToken"/> instance.</param>
+        </member>
+        <member name="M:GraduateWork.Server.Api.Controllers.SpecialityController.GetSpecialitiesByNameAsync(System.Int32,System.Int32,System.String,System.Threading.CancellationToken)">
+            <summary>
+            Get Specialities by range and name.
+            </summary>
+            <param name="skip">Count of element for skip.</param>
+            <param name="take">Count of element for take.</param>
+            <param name="name">Name of speciality.</param>
+            <param name="cancellationToken"><see cref="T:System.Threading.CancellationToken"/> instance.</param>
+        </member>
+        <member name="M:GraduateWork.Server.Api.Controllers.SpecialityController.GetSpecialitiesInUniversityAsync(System.Int32,System.Int32,System.Guid,System.Threading.CancellationToken)">
+            <summary>
+            Get specialities by range and university Id.
+            </summary>
+            <param name="skip">Count of element for skip.</param>
+            <param name="take">Count of element for take.</param>
+            <param name="universityId"> Represent university id.</param>
+            <param name="cancellationToken"><see cref="T:System.Threading.CancellationToken"/> instance.</param>
+        </member>
+        <member name="T:GraduateWork.Server.Api.Controllers.UniversityController">
+            <summary>
+            Controller for manage university.
+            </summary>
+        </member>
+        <member name="M:GraduateWork.Server.Api.Controllers.UniversityController.#ctor(GraduateWork.Server.Services.Abstractions.IUniversityService)">
+            <summary>
+            Basic constructor.
+            </summary>
+            <param name="universityService"><see cref="T:GraduateWork.Server.Services.Abstractions.IUniversityService"/> instance.</param>
+        </member>
+        <member name="M:GraduateWork.Server.Api.Controllers.UniversityController.GetUniversitiesAsync(System.Int32,System.Int32,System.Threading.CancellationToken)">
+            <summary>
+            Get Universities by range.
+            </summary>
+            <param name="skip">Count of element for skip.</param>
+            <param name="take">Count of element for take.</param>
+            <param name="cancellationToken"><see cref="T:System.Threading.CancellationToken"/> instance.</param>
+        </member>
+        <member name="M:GraduateWork.Server.Api.Controllers.UniversityController.GetUniversitiesByNameAsync(System.Int32,System.Int32,System.String,System.Threading.CancellationToken)">
+            <summary>
+            Get Universities by range and name.
+            </summary>
+            <param name="skip">Count of element for skip.</param>
+            <param name="take">Count of element for take.</param>
+            <param name="name"> University name.</param>
+            <param name="cancellationToken"><see cref="T:System.Threading.CancellationToken"/> instance.</param>
+        </member>
+        <member name="M:GraduateWork.Server.Api.Controllers.UniversityController.AddUniversityAsync(GraduateWork.Server.Models.Request.UniversityRequest,System.Threading.CancellationToken)">
+            <summary>
+            Add University.
+            </summary>
+            <param name="request"><see cref="T:GraduateWork.Server.Models.Request.UniversityRequest"/> instance.</param>
+            <param name="cancellationToken"><see cref="T:System.Threading.CancellationToken"/> instance.</param>
+        </member>
+        <member name="M:GraduateWork.Server.Api.Controllers.UniversityController.UpdateUniversityAsync(GraduateWork.Server.Models.Request.UniversityRequest,System.Threading.CancellationToken)">
+            <summary>
+            Update University info.
+            </summary>
+            <param name="request"><see cref="T:GraduateWork.Server.Models.Request.UniversityRequest"/> instance.</param>
+            <param name="cancellationToken"><see cref="T:System.Threading.CancellationToken"/> instance.</param>
+        </member>
+        <member name="T:GraduateWork.Server.Api.Filters.MvcGlobalExceptionFilter">
+            <summary>
+            Filter for handling exceptions on server side int HttpContext live sickle.
+            </summary>
+        </member>
+        <member name="M:GraduateWork.Server.Api.Filters.MvcGlobalExceptionFilter.#ctor(Microsoft.Extensions.Logging.ILogger{GraduateWork.Server.Api.Filters.MvcGlobalExceptionFilter},Microsoft.Extensions.Configuration.IConfiguration)">
+            <summary>
+            Base constructor.
+            </summary>
+            <param name="logger"><see cref="T:Microsoft.Extensions.Logging.ILogger"/> instance.</param>
+            <param name="config"><see cref="T:Microsoft.Extensions.Configuration.IConfiguration"/> instance.</param>
+        </member>
+        <member name="M:GraduateWork.Server.Api.Filters.MvcGlobalExceptionFilter.OnException(Microsoft.AspNetCore.Mvc.Filters.ExceptionContext)">
+            <summary>
+            Method for handle exception.
+            </summary>
+            <param name="context"><see cref="T:Microsoft.AspNetCore.Mvc.Filters.ExceptionContext"/> instance.</param>
+        </member>
+        <member name="T:GraduateWork.Server.Api.Options.SwaggerOptions">
+            <summary>
+            Options for swagger.
+            </summary>
+        </member>
+        <member name="M:GraduateWork.Server.Api.Options.SwaggerOptions.Read(Microsoft.Extensions.Configuration.IConfiguration)">
+            <summary>
+            Method for read configuration from file.
+            </summary>
+            <param name="configuration"><see cref="T:Microsoft.Extensions.Configuration.IConfiguration"/> instance.</param>
+        </member>
+        <member name="P:GraduateWork.Server.Api.Options.SwaggerOptions.Enabled">
+            <summary>
+            Gets/Sets enabled.
+            </summary>
+        </member>
+        <member name="P:GraduateWork.Server.Api.Options.SwaggerOptions.Version">
+            <summary>
+            Gets/Sets version.
+            </summary>
+        </member>
+        <member name="P:GraduateWork.Server.Api.Options.SwaggerOptions.XmlCommentsFileName">
+            <summary>
+            Gets/Sets xml comments file name.
+            </summary>
+        </member>
+        <member name="T:GraduateWork.Server.Api.Program">
+            <summary>
+            Main class
+            </summary>
+        </member>
+        <member name="M:GraduateWork.Server.Api.Program.Main(System.String[])">
+            <summary>
+            Application enter point.
+            </summary>
+            <param name="args">Console args</param>
+        </member>
+        <member name="M:GraduateWork.Server.Api.Program.CreateWebHostBuilder(System.String[])">
+            <summary>
+            Create web host builder.
+            </summary>
+        </member>
+        <member name="T:GraduateWork.Server.Api.Startup">
+            <summary>
+            Startup class
+            </summary>
+        </member>
+        <member name="M:GraduateWork.Server.Api.Startup.#ctor(Microsoft.Extensions.Configuration.IConfiguration)">
+            <summary>
+            Base constructor.
+            </summary>
+        </member>
+        <member name="P:GraduateWork.Server.Api.Startup.Configuration">
+            <summary>
+            <see cref="T:Microsoft.Extensions.Configuration.IConfiguration"/> instance.
+            </summary>
+        </member>
+        <member name="M:GraduateWork.Server.Api.Startup.ConfigureServices(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+            <summary>
+            Method for configure service.
+            </summary>
+        </member>
+        <member name="M:GraduateWork.Server.Api.Startup.Configure(Microsoft.AspNetCore.Builder.IApplicationBuilder)">
+            <summary>
+            Method for configure app.
+            </summary>
+        </member>
+    </members>
+</doc>
