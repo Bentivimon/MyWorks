@@ -10,7 +10,7 @@
                     <Setter.Value>
                         <OnPlatform 
                             x:TypeArguments="x:String"
-                            iOS="bg/background.png"
+                            iOS="background.png"
                             Android="background.png"/>
                     </Setter.Value>
                 </Setter>
@@ -27,7 +27,7 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="2*"/>
                 <RowDefinition Height="*"/>
-                <RowDefinition Height="3*"/>
+                <RowDefinition Height="4*"/>
                 <RowDefinition Height="2*"/>
             </Grid.RowDefinitions>
 
@@ -46,7 +46,8 @@
                 
                 <StackLayout Orientation="Horizontal" Margin="5,0,5,5" BackgroundColor="White" Padding="5,5,5,5">
                     <Label Text="Забули пароль?" TextColor="Aqua" FontSize="12" VerticalTextAlignment ="Center"  HorizontalTextAlignment="Start"/>
-                    <Button  VerticalOptions ="CenterAndExpand" HorizontalOptions="EndAndExpand" Text="Далі" FontSize="12" BackgroundColor="Blue" TextColor="White" Margin="0,10,5,0" HeightRequest="35"/>
+                    <Button  VerticalOptions ="CenterAndExpand" HorizontalOptions="EndAndExpand" Text="Реєстрація" FontSize="12" BackgroundColor="Blue" TextColor="White" Margin="0,10,5,0" HeightRequest="35" Command="{Binding RegistrationCommand}"/>
+                    <Button  VerticalOptions ="CenterAndExpand" HorizontalOptions="EndAndExpand" Text="Вхід" FontSize="12" BackgroundColor="Blue" TextColor="White" Margin="0,10,5,0" HeightRequest="35" Command="{Binding LoginCommand}"/>
                 </StackLayout>
             </StackLayout>
 

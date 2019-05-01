@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="GraduateWork.Client.Views.UniversityPage" BackgroundColor="LightGray">
+    <ContentPage.Content>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="36*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="3*"/>
+                <RowDefinition Height="25*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <Label Grid.Row="0" Grid.Column="1" Text="Університети" Margin="10,10,0,0" FontSize="25" TextColor="Black"/>
+            <StackLayout Grid.Row="1" Grid.Column="1" BackgroundColor="White">
+                <ListView ItemsSource="{Binding Universities}" HasUnevenRows ="True" SelectionMode="Single" SelectedItem="{Binding UniversitiesSelectedItem, Mode=TwoWay}">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <ViewCell>
+                                <StackLayout Padding="12" Orientation="Horizontal" VerticalOptions="FillAndExpand" 
+                                             HorizontalOptions="FillAndExpand">
+                                    <Label Text="{Binding FullName}" 
+                                           LineBreakMode="WordWrap"
+                                           VerticalOptions="FillAndExpand"
+                                           HorizontalOptions="FillAndExpand"
+                                           FontSize="16"/>
+                                    <Label VerticalTextAlignment="Center" Text=">" FontSize="18"  TextColor="Black" HorizontalTextAlignment="Center" />
+                                </StackLayout>
+                            </ViewCell>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </StackLayout>
+        </Grid>
+    </ContentPage.Content>
+</ContentPage>

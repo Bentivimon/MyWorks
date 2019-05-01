@@ -1,0 +1,67 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="GraduateWork.Client.Views.RegistrationPage">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <Style TargetType="ContentPage" ApplyToDerivedTypes="true">
+                <Setter Property="BackgroundImage">
+                    <Setter.Value>
+                        <OnPlatform 
+                            x:TypeArguments="x:String"
+                            iOS="background.png"
+                            Android="background.png"/>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    <ContentPage.Content>
+       <Grid>
+           <Grid.RowDefinitions>
+               <RowDefinition Height="*"/>
+               <RowDefinition Height="*"/>
+               <RowDefinition Height="16*"/>
+               <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+           <Grid.ColumnDefinitions>
+               <ColumnDefinition Width="*"/>
+               <ColumnDefinition Width="26*"/>
+               <ColumnDefinition Width="*"/>
+           </Grid.ColumnDefinitions>
+           
+           <Label Grid.Column="1" Grid.Row="1" Text="Реєстрація" TextColor="White" FontSize="16" FontAttributes="Bold"/>
+            
+           <StackLayout Grid.Column="1" Grid.Row="2" BackgroundColor="White">
+                <StackLayout BackgroundColor="DarkGray" Margin="5,5,5,5" Spacing="0">
+                    <Label Text="Email" TextColor="Black" FontSize="12" Margin="5,0,0,0"/>
+                    <Entry FontSize="12" Margin="5,0,0,0"/>
+                </StackLayout>
+               <StackLayout BackgroundColor="DarkGray" Margin="5,5,5,5" Spacing="0">
+                    <Label Text="Пароль" TextColor="Black" FontSize="12" Margin="5,0,0,0"/>
+                    <Entry FontSize="12" Margin="5,0,0,0" IsPassword="True"/>
+               </StackLayout>
+               <StackLayout BackgroundColor="DarkGray" Margin="5,5,5,5" Spacing="0">
+                    <Label Text="Підтвердіть пароль" TextColor="Black" FontSize="12" Margin="5,0,0,0"/>
+                    <Entry FontSize="12" Margin="5,0,0,0" IsPassword="True"/>
+               </StackLayout>
+               <StackLayout BackgroundColor="DarkGray" Margin="5,5,5,5" Spacing="0">
+                    <Label Text="Ім'я" TextColor="Black" FontSize="12" Margin="5,0,0,0"/>
+                    <Entry FontSize="12" Margin="5,0,0,0"/>
+               </StackLayout>
+               <StackLayout BackgroundColor="DarkGray" Margin="5,5,5,5" Spacing="0">
+                    <Label Text="Прізвище" TextColor="Black" FontSize="12" Margin="5,0,0,0"/>
+                    <Entry FontSize="12" Margin="5,0,0,0"/>
+               </StackLayout>
+               <StackLayout BackgroundColor="DarkGray" Margin="5,5,5,5" Spacing="0">
+                    <Label Text="Місто" TextColor="Black" FontSize="12" Margin="5,0,0,0"/>
+                    <Entry FontSize="12" Margin="5,0,0,0"/>
+               </StackLayout>
+
+               <StackLayout>
+                   <Button Text="Реєстрація" BackgroundColor="Blue" Margin="5,15,5,0" TextColor="White" Command="{Binding RegistrationCommand}"/>
+               </StackLayout>
+            </StackLayout>
+       </Grid>
+    </ContentPage.Content>
+</ContentPage>

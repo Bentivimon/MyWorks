@@ -12,7 +12,7 @@
 
   <ItemGroup>
     <Reference Include="Microsoft.IdentityModel.Tokens">
-      <HintPath>C:\Users\88naz\.nuget\packages\microsoft.identitymodel.tokens\5.1.0\lib\netstandard1.4\Microsoft.IdentityModel.Tokens.dll</HintPath>
+      <HintPath>..\..\..\..\..\Users\Nazar\.nuget\packages\microsoft.identitymodel.tokens\5.4.0\lib\netstandard2.0\Microsoft.IdentityModel.Tokens.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>C:\Program Files\dotnet\sdk\NuGetFallbackFolder\newtonsoft.json\11.0.2\lib\netstandard2.0\Newtonsoft.Json.dll</HintPath>
