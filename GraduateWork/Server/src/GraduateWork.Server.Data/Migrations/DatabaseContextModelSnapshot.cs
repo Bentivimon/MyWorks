@@ -110,7 +110,7 @@ namespace GraduateWork.Server.Data.Migrations
                     b.Property<string>("LastName")
                         .HasColumnName("last_name");
 
-                    b.Property<Guid>("UserId")
+                    b.Property<Guid?>("UserId")
                         .HasColumnName("user_id");
 
                     b.HasKey("Id");
@@ -250,8 +250,7 @@ namespace GraduateWork.Server.Data.Migrations
                 {
                     b.HasOne("GraduateWork.Server.Data.Entities.UserEntity", "User")
                         .WithOne("Entrant")
-                        .HasForeignKey("GraduateWork.Server.Data.Entities.EntrantEntity", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("GraduateWork.Server.Data.Entities.EntrantEntity", "UserId");
                 });
 
             modelBuilder.Entity("GraduateWork.Server.Data.Entities.StatementEntity", b =>

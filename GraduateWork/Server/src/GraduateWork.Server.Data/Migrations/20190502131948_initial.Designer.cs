@@ -10,13 +10,9 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace GraduateWork.Server.Data.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20190414134518_Initial")]
-    partial class Initial
+    [Migration("20190502131948_initial")]
+    partial class initial
     {
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="modelBuilder"></param>
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
@@ -116,7 +112,7 @@ namespace GraduateWork.Server.Data.Migrations
                     b.Property<string>("LastName")
                         .HasColumnName("last_name");
 
-                    b.Property<Guid>("UserId")
+                    b.Property<Guid?>("UserId")
                         .HasColumnName("user_id");
 
                     b.HasKey("Id");
@@ -256,8 +252,7 @@ namespace GraduateWork.Server.Data.Migrations
                 {
                     b.HasOne("GraduateWork.Server.Data.Entities.UserEntity", "User")
                         .WithOne("Entrant")
-                        .HasForeignKey("GraduateWork.Server.Data.Entities.EntrantEntity", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("GraduateWork.Server.Data.Entities.EntrantEntity", "UserId");
                 });
 
             modelBuilder.Entity("GraduateWork.Server.Data.Entities.StatementEntity", b =>

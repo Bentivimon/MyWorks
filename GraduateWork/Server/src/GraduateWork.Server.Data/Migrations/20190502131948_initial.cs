@@ -3,15 +3,8 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace GraduateWork.Server.Data.Migrations
 {
-    /// <summary>
-    /// 
-    /// </summary>
-    public partial class Initial : Migration
+    public partial class initial : Migration
     {
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="migrationBuilder"></param>
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
@@ -91,7 +84,7 @@ namespace GraduateWork.Server.Data.Migrations
                     firs_name = table.Column<string>(nullable: true),
                     last_name = table.Column<string>(nullable: true),
                     birthday = table.Column<DateTimeOffset>(nullable: false),
-                    user_id = table.Column<Guid>(nullable: false)
+                    user_id = table.Column<Guid>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -101,7 +94,7 @@ namespace GraduateWork.Server.Data.Migrations
                         column: x => x.user_id,
                         principalTable: "users",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -215,10 +208,6 @@ namespace GraduateWork.Server.Data.Migrations
                 column: "university_id");
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="migrationBuilder"></param>
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(

@@ -45,7 +45,7 @@ namespace GraduateWork.Server.Data.Entities
         /// Gets/Sets entrant associated with user by id. 
         /// </summary>
         [Column("user_id")]
-        public Guid UserId { get; set; }
+        public Guid? UserId { get; set; }
 
         #endregion
 
