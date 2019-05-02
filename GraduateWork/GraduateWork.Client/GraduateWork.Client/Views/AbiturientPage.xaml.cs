@@ -10,13 +10,13 @@ using Xamarin.Forms.Xaml;
 namespace GraduateWork.Client.Views
 {
 	[XamlCompilation(XamlCompilationOptions.Compile)]
-	public partial class SpecialityInfoPage : ContentPage
+	public partial class AbiturientPage : ContentPage
     {
-        private SpecialityInfoViewModel _viewModel;
-        public SpecialityInfoPage ()
+        private AbiturientViewModel _viewModel;
+		public AbiturientPage ()
 		{
 			InitializeComponent ();
-            BindingContext = _viewModel = new SpecialityInfoViewModel(Navigation);
+            BindingContext = _viewModel = new AbiturientViewModel();
         }
 	}
 }

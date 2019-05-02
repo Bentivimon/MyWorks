@@ -51,6 +51,35 @@
                 </ListView>
             </StackLayout>
         </ContentPage>
-        <ContentPage Title="Заочна форма"></ContentPage>
+        <ContentPage Title="Заочна форма" BackgroundColor="LightGray" Padding="10">
+            <StackLayout>
+                <ListView x:Name="TestName1" ItemsSource="{Binding Specialities}" HasUnevenRows ="True" SelectionMode="None" SeparatorColor="LightGray" >
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <ViewCell>
+                                <StackLayout BackgroundColor="White" Margin="0,20,0,20" Padding="5">
+                                    <Label Text="Бакалавр" TextColor="Black" FontAttributes="Bold" Margin="0"/>
+                                    <Label Text="(на основі ПЗСО 11кл.)" Margin="0"/>
+                                    <BoxView BackgroundColor="LightGray" HeightRequest="1"/>
+
+                                    <Label Text="Спеціальність" TextColor="Black" FontAttributes="Bold" Margin="0"/>
+                                    <Label Text="Програмна інжинерія" Margin="0"/>
+                                    <BoxView BackgroundColor="LightGray" HeightRequest="1"/>
+
+                                    <Label Text="Освітня програма" TextColor="Black" FontAttributes="Bold" Margin="0"/>
+                                    <Label Text="Комп'ютерні фінформаційні технології" Margin="0"/>
+                                    <BoxView BackgroundColor="LightGray" HeightRequest="1"/>
+
+                                    <StackLayout Orientation="Horizontal" Padding ="10" Margin="0">
+                                        <Button BackgroundColor="LightGray" Text="Конкурсний бал" HorizontalOptions="StartAndExpand" BindingContext="{Binding Source={x:Reference TestName1}, Path=BindingContext}" Command="{Binding ShowAlertCommand}"/>
+                                        <Button BackgroundColor="Blue" Text="Конкурс" HorizontalOptions="EndAndExpand" BindingContext="{Binding Source={x:Reference TestName1}, Path=BindingContext}" Command="{Binding ShowSpecialityInfoCommand}"/>
+                                    </StackLayout>
+                                </StackLayout>
+                            </ViewCell>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </StackLayout>
+        </ContentPage>
     </TabbedPage.Children>
 </TabbedPage>

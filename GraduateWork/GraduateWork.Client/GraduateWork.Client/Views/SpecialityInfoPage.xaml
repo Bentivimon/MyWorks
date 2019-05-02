@@ -20,16 +20,19 @@
             <Label Margin ="0,5,0,0" Grid.Column="1" Grid.Row="0" TextColor="Black" Text="Тернопольский національний економічний університет" LineBreakMode="WordWrap" FontSize="18" VerticalTextAlignment="Center" HorizontalTextAlignment="Center"/>
             
             <Label Margin ="0,5,0,0" Grid.Column="1" Grid.Row="1" TextColor="Black" Text="Бакалавр (на основі ПЗСНО 11кл.) Галузь: Ком*ютерна інженерія. Спеціальність: 1111 Ком*ютерна інженерія. Факультет: Комп8ютерних інформаційних технологій "/>
-
-            <ScrollView Grid.Column="1" Grid.Row="2" BackgroundColor="White" HorizontalScrollBarVisibility="Default">
-                <StackLayout Orientation="Horizontal">
-                    <Label Text="Абітурієнт" TextColor="Black" WidthRequest="120"/>
-                    <Label Text="Деталізація" TextColor="Black" WidthRequest="120"/>
-                    <Label Text="Квота" TextColor="Black" WidthRequest="120"/>
-                    <Label Text="Оригінал док." TextColor="Black" WidthRequest="120"/>
-                </StackLayout>
-
-            </ScrollView>
+            <ListView  Grid.Row="2" Grid.Column="1" HasUnevenRows="True" Header="Абітурієнти" BackgroundColor="White" SeparatorColor="LightGray" ItemsSource="{Binding Abiturients}" SelectedItem="{Binding SelectedAbiturient}">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <StackLayout Padding="10" Margin="0,10,0,10">
+                                <Label Text="1. blablalbla" TextColor="Black"  FontAttributes="Bold"/>
+                                <Label Text="Конкурсний бал: 128.923" TextColor="Black"/>
+                                <Label Text="Пріоритет: немає" TextColor="Black"/>
+                            </StackLayout>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
         </Grid>
     </ContentPage.Content>
 </ContentPage>
