@@ -52,6 +52,7 @@ namespace GraduateWork.Server.Api
             app.UseCors(Consts.CorsPolicy);
 
             app.EnsureContext();
+
         }
         
     }

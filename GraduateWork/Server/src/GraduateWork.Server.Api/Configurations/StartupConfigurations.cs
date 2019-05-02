@@ -143,6 +143,13 @@ namespace GraduateWork.Server.Api.Configurations
             });
             services.AddCors(o =>
                 o.AddPolicy(Consts.CorsPolicy, builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()));
+
+            services.AddApiVersioning(options =>
+            {
+                options.ReportApiVersions = true;
+                options.AssumeDefaultVersionWhenUnspecified = true;
+                options.DefaultApiVersion = new ApiVersion(1, 0);
+            });
         }
     }
 }
