@@ -34,6 +34,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\GraduateWork.Server.Data\GraduateWork.Server.Data.csproj" />
+    <ProjectReference Include="..\GraduateWork.Server.Models\GraduateWork.Server.Models.csproj" />
     <ProjectReference Include="..\GraduateWork.Server.Services\GraduateWork.Server.Services.csproj" />
   </ItemGroup>
 
