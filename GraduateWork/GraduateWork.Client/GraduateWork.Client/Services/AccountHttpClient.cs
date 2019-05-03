@@ -9,13 +9,11 @@ namespace GraduateWork.Client.Services
 {
     public class AccountHttpClient
     {
-        private const string BaseUrl = "https://123.495.23.45:5000/";
-
         public async Task<string> LoginAsync(UserLoginModel model)
         {
             using (var client = new HttpClient())
             {
-                var requestUri = BaseUrl + "v1/Account/token";
+                var requestUri = Consts.BaseUrl + "v1/Account/token";
                 var jsonValue = JsonConvert.SerializeObject(model);
 
                 var response = await client.PostAsync(requestUri, new StringContent(jsonValue)).ConfigureAwait(false);
@@ -35,7 +33,7 @@ namespace GraduateWork.Client.Services
         {
             using (var client = new HttpClient())
             {
-                var requestUri = BaseUrl + "v1/Account/registration";
+                var requestUri = Consts.BaseUrl + "v1/Account/registration";
                 var jsonValue = JsonConvert.SerializeObject(model);
 
                 var response = await client.PostAsync(requestUri, new StringContent(jsonValue)).ConfigureAwait(false);

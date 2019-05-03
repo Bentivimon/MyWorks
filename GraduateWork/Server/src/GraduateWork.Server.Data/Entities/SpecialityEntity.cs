@@ -37,18 +37,23 @@ namespace GraduateWork.Server.Data.Entities
         /// <summary>
         /// Gets/Sets speciality additional factor.
         /// </summary>
-        [Column("additional_factory")]
-        public float AdditionalFactor { get; set; }
+        [Column("faculty")]
+        public string Faculty { get; set; }
 
         /// <summary>
         /// Gets/Sets speciality count of state places.
         /// </summary>
-        [Column("count_of_state_places")]
-        public int CountOfStatePlaces { get; set; }
+        [Column("subject_scores")]
+        public string SubjectScores { get; set; }
 
         #endregion
 
         #region Foreign keys
+        
+        /// <summary>
+        /// Gets/Sets university associated with universities.
+        /// </summary>
+        public IEnumerable<StatementEntity> Statements { get; set; }
 
         /// <summary>
         /// Gets/Sets speciality associated with a university specialities.
@@ -71,8 +76,8 @@ namespace GraduateWork.Server.Data.Entities
         {
             Code = request.Code;
             Name = request.Name;
-            AdditionalFactor = request.AdditionalFactor;
-            CountOfStatePlaces = request.CountOfStatePlaces;
+            Faculty = request.Faculty;
+            SubjectScores = request.SubjectScores;
         }
 
         /// <summary>
@@ -81,8 +86,8 @@ namespace GraduateWork.Server.Data.Entities
         /// <param name="request"><see cref="SpecialityRequest"/> instance.</param>
         public void Update(SpecialityRequest request)
         {
-            AdditionalFactor = request.AdditionalFactor;
-            CountOfStatePlaces = request.CountOfStatePlaces;
+            Faculty = request.Faculty;
+            SubjectScores = request.SubjectScores;
             Name = request.Name;
         }
 
@@ -95,8 +100,8 @@ namespace GraduateWork.Server.Data.Entities
             {
                 Code = Code,
                 Name = Name,
-                AdditionalFactor = AdditionalFactor,
-                CountOfStatePlaces = CountOfStatePlaces
+                Faculty = Faculty,
+                SubjectScores = SubjectScores
             };
         }
     }

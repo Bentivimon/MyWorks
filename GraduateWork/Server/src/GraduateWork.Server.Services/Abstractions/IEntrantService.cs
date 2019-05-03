@@ -14,6 +14,7 @@ namespace GraduateWork.Server.Services.Abstractions
         Task<List<EntrantDto>> GetEntrantsAsync(int skip, int take, CancellationToken cancellationToken);
         Task<List<EntrantDto>> GetEntrantsByNameAsync(int skip, int take, string name, CancellationToken cancellationToken);
         Task<EntrantExtendDto> GetEntrantByIdAsync(Guid entrantId, CancellationToken cancellationToken);
+        Task<List<EntrantExtendDto>> GetEntrantBySpecialityIdAsync(Guid specialityId, CancellationToken cancellationToken);
         Task TieUpEntrantAndUserAsync(Guid userId, Guid entrantId, CancellationToken cancellationToken);
     }
 }

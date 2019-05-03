@@ -96,6 +96,8 @@ namespace GraduateWork.Server.Services.Implementations
         ///<inheritdoc/>
         public async Task<List<SpecialityDto>> GetSpecialitiesInUniversityAsync(int skip, int take, Guid universityId, CancellationToken cancellationToken)
         {
+            skip = 0;
+            take = 30;
             using (var scope = _serviceProvider.CreateScope())
             using (var context = scope.ServiceProvider.GetRequiredService<DatabaseContext>())
             {

@@ -16,13 +16,13 @@
         public string Name { get; set; }
 
         /// <summary>
-        /// Gets/Sets additional factor.
+        /// Gets/Sets faculty factor.
         /// </summary>
-        public float AdditionalFactor { get; set; }
+        public string Faculty { get; set; }
 
         /// <summary>
         /// Gets/Sets count of state places.
         /// </summary>
-        public int CountOfStatePlaces { get; set; }
+        public string SubjectScores { get; set; }
     }
 }

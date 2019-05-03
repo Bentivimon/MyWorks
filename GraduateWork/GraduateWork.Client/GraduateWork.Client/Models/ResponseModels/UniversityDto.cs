@@ -1,4 +1,4 @@
-﻿namespace GraduateWork.Server.Models.Response
+﻿namespace GraduateWork.Client.Models.ResponseModels
 {
     /// <summary>
     /// University response model.

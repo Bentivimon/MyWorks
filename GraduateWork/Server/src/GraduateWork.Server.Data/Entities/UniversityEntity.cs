@@ -34,14 +34,65 @@ namespace GraduateWork.Server.Data.Entities
         [Column("level_of_accreditation")]
         public string LevelOfAccreditation { get; set; }
 
+        /// <summary>
+        /// Gets/Sets university ownership.
+        /// </summary>
+        [Column("ownership")]
+        public string Ownership { get; set; }
+
+        /// <summary>
+        /// Gets/Sets university chief.
+        /// </summary>
+        [Column("chief")]
+        public string Chief { get; set; }
+
+        /// <summary>
+        /// Gets/Sets university subordination.
+        /// </summary>
+        [Column("subordination")]
+        public string Subordination { get; set; }
+
+        /// <summary>
+        /// Gets/Sets university post index.
+        /// </summary>
+        [Column("post_index")]
+        public string PostIndex { get; set; }
+
+        /// <summary>
+        /// Gets/Sets university address.
+        /// </summary>
+        [Column("address")]
+        public string Address { get; set; }
+
+        /// <summary>
+        /// Gets/Sets university phone.
+        /// </summary>
+        [Column("phone")]
+        public string Phone { get; set; }
+
+        /// <summary>
+        /// Gets/Sets university site.
+        /// </summary>
+        [Column("site")]
+        public string Site { get; set; }
+
+        /// <summary>
+        /// Gets/Sets university email.
+        /// </summary>
+        [Column("email")]
+        public string Email { get; set; }
+
+        /// <summary>
+        /// Gets/Sets region id of university.
+        /// </summary>
+        [Column("region_id")]
+        public int RegionId { get; set; }
+
         #endregion
 
         #region Foreign keys
 
-        /// <summary>
-        /// Gets/Sets university associated with universities.
-        /// </summary>
-        public IEnumerable<StatementEntity> Statements { get; set; }
+        public RegionEntity Region { get; set; }
 
         /// <summary>
         /// Gets/Sets university associated with university specialities.
@@ -74,7 +125,15 @@ namespace GraduateWork.Server.Data.Entities
             return new UniversityDto
             {
                 FullName = FullName,
-                LevelOfAccreditation = LevelOfAccreditation
+                LevelOfAccreditation = LevelOfAccreditation, 
+                Ownership = Ownership,
+                Phone = Phone,
+                Email = Email,
+                Address = Address,
+                Chief = Chief,
+                PostIndex = PostIndex,
+                Site = Site,
+                Subordination = Subordination
             };
         }
     }

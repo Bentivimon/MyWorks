@@ -72,6 +72,23 @@ namespace GraduateWork.Server.Services.Implementations
         }
 
         /// <inheritdoc/>
+        public async Task<List<UniversityDto>> GetUniversitiesByrRegionIdAsync(int regionId, CancellationToken cancellationToken)
+        {
+            using (var scope = _serviceProvider.CreateScope())
+            using (var context = scope.ServiceProvider.GetRequiredService<DatabaseContext>())
+            {
+                var listOfUniversityModels = await context.Universities
+                    .Include(x => x.Region)
+                    .AsNoTracking()
+                    .Where(x => x.Region.Id == regionId)
+                    .Select(x => x.ToDto())
+                    .ToListAsync(cancellationToken).ConfigureAwait(false);
+
+                return listOfUniversityModels;
+            }
+        }
+
+        /// <inheritdoc/>
         public async Task<UniversityDto> UpdateUniversitiesAsync(UniversityRequest request, CancellationToken cancellationToken)
         {
             using (var scope = _serviceProvider.CreateScope())

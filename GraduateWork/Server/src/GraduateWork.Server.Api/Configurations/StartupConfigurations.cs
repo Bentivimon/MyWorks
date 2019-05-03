@@ -121,6 +121,7 @@ namespace GraduateWork.Server.Api.Configurations
             services.AddTransient<ICryptoProvider, CryptoProvider>();
             services.AddTransient<IEntrantService, EntrantService>();
             services.AddTransient<IJwtTokenService, JwtTokenService>();
+            services.AddTransient<IRegionService, RegionService>();
             services.AddTransient<DatabaseSeeder>();
         }
 

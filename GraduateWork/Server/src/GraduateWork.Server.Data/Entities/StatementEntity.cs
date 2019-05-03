@@ -38,10 +38,10 @@ namespace GraduateWork.Server.Data.Entities
         public Guid EntrantId { get; set; }
 
         /// <summary>
-        /// Gets/Sets statement associated with university by id.
+        /// Gets/Sets statement associated with speciality by id.
         /// </summary>
-        [Column("university_id")]
-        public Guid UniversityId { get; set; }
+        [Column("speciality_id")]
+        public Guid SpecialityId { get; set; }
 
         #endregion
 
@@ -55,7 +55,7 @@ namespace GraduateWork.Server.Data.Entities
         /// <summary>
         /// Gets/Sets statement associated with university entity.
         /// </summary>
-        public UniversityEntity University { get; set; }
+        public SpecialityEntity Speciality { get; set; }
         
         #endregion
     }

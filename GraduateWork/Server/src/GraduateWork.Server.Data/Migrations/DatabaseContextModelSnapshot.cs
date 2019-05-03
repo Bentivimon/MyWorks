@@ -121,23 +121,35 @@ namespace GraduateWork.Server.Data.Migrations
                     b.ToTable("entrants");
                 });
 
+            modelBuilder.Entity("GraduateWork.Server.Data.Entities.RegionEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("Name");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Regions");
+                });
+
             modelBuilder.Entity("GraduateWork.Server.Data.Entities.SpecialityEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnName("id");
 
-                    b.Property<float>("AdditionalFactor")
-                        .HasColumnName("additional_factory");
-
                     b.Property<string>("Code")
                         .HasColumnName("code");
 
-                    b.Property<int>("CountOfStatePlaces")
-                        .HasColumnName("count_of_state_places");
+                    b.Property<string>("Faculty")
+                        .HasColumnName("faculty");
 
                     b.Property<string>("Name")
                         .HasColumnName("name");
+
+                    b.Property<string>("SubjectScores")
+                        .HasColumnName("subject_scores");
 
                     b.HasKey("Id");
 
@@ -156,17 +168,17 @@ namespace GraduateWork.Server.Data.Migrations
                     b.Property<float>("ExtraScore")
                         .HasColumnName("extra_score");
 
+                    b.Property<Guid>("SpecialityId")
+                        .HasColumnName("speciality_id");
+
                     b.Property<float>("TotalScore")
                         .HasColumnName("total_score");
-
-                    b.Property<Guid>("UniversityId")
-                        .HasColumnName("university_id");
 
                     b.HasKey("Id");
 
                     b.HasIndex("EntrantId");
 
-                    b.HasIndex("UniversityId");
+                    b.HasIndex("SpecialityId");
 
                     b.ToTable("statements");
                 });
@@ -177,13 +189,42 @@ namespace GraduateWork.Server.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnName("id");
 
+                    b.Property<string>("Address")
+                        .HasColumnName("address");
+
+                    b.Property<string>("Chief")
+                        .HasColumnName("chief");
+
+                    b.Property<string>("Email")
+                        .HasColumnName("email");
+
                     b.Property<string>("FullName")
                         .HasColumnName("full_name");
 
                     b.Property<string>("LevelOfAccreditation")
                         .HasColumnName("level_of_accreditation");
 
+                    b.Property<string>("Ownership")
+                        .HasColumnName("ownership");
+
+                    b.Property<string>("Phone")
+                        .HasColumnName("phone");
+
+                    b.Property<string>("PostIndex")
+                        .HasColumnName("post_index");
+
+                    b.Property<int>("RegionId")
+                        .HasColumnName("region_id");
+
+                    b.Property<string>("Site")
+                        .HasColumnName("site");
+
+                    b.Property<string>("Subordination")
+                        .HasColumnName("subordination");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("RegionId");
 
                     b.ToTable("universities");
                 });
@@ -260,9 +301,17 @@ namespace GraduateWork.Server.Data.Migrations
                         .HasForeignKey("EntrantId")
                         .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("GraduateWork.Server.Data.Entities.UniversityEntity", "University")
+                    b.HasOne("GraduateWork.Server.Data.Entities.SpecialityEntity", "Speciality")
                         .WithMany("Statements")
-                        .HasForeignKey("UniversityId")
+                        .HasForeignKey("SpecialityId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("GraduateWork.Server.Data.Entities.UniversityEntity", b =>
+                {
+                    b.HasOne("GraduateWork.Server.Data.Entities.RegionEntity", "Region")
+                        .WithMany("Universities")
+                        .HasForeignKey("RegionId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 

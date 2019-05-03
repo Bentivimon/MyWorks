@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using GraduateWork.Server.Data;
 using GraduateWork.Server.Data.Entities;
@@ -39,6 +40,10 @@ namespace GraduateWork.Server.Services
             {
                 new UniversityEntity
                 {
+                    Region = new RegionEntity
+                    {
+                        Name = "Тернопільска обл."
+                    },
                     FullName = "Тернопільський Національний Економічний Університет",
                     LevelOfAccreditation = "Вищий навчальний заклад України IV-го рівня акредитації",
                     UniversitySpecialities = new List<UniversitySpecialityEntity>
@@ -49,8 +54,8 @@ namespace GraduateWork.Server.Services
                             {
                                 Name = "Комп’ютерна інженерія",
                                 Code = "123",
-                                AdditionalFactor = 0,
-                                CountOfStatePlaces = 90
+                                SubjectScores = "Українська мова та література (ЗНО), k=0,25 ,балмін 100\n\n Математика (ЗНО), k=0,4 ,балмін 100\n\nФізика(ЗНО), k=0,35 ,балмін 100\n\nАнглійська мова (ЗНО), k=0,35 ,балмін 100\n\nСередній бал документа про освіту, k=0",
+                                Faculty = "Факультет комп'ютерних інформаційних технологій"
                             }
                         },
                         new UniversitySpecialityEntity
@@ -59,8 +64,8 @@ namespace GraduateWork.Server.Services
                             {
                                 Name = "Системний аналіз",
                                 Code = "124",
-                                AdditionalFactor = 0,
-                                CountOfStatePlaces = 60
+                                SubjectScores = "Українська мова та література (ЗНО), k=0,25 ,балмін 100\n\n Математика (ЗНО), k=0,4 ,балмін 100\n\nФізика(ЗНО), k=0,35 ,балмін 100\n\nАнглійська мова (ЗНО), k=0,35 ,балмін 100\n\nСередній бал документа про освіту, k=0",
+                                Faculty = "Факультет комп'ютерних інформаційних технологій"
                             }
                         },
                         new UniversitySpecialityEntity
@@ -69,14 +74,26 @@ namespace GraduateWork.Server.Services
                             {
                                 Name = "Кібербезпека",
                                 Code = "125",
-                                AdditionalFactor = 0,
-                                CountOfStatePlaces = 40
+                                SubjectScores = "Українська мова та література (ЗНО), k=0,25 ,балмін 100\n\n Математика (ЗНО), k=0,4 ,балмін 100\n\nФізика(ЗНО), k=0,35 ,балмін 100\n\nАнглійська мова (ЗНО), k=0,35 ,балмін 100\n\nСередній бал документа про освіту, k=0",
+                                Faculty = "Факультет комп'ютерних інформаційних технологій"
                             }
                         }
-                    }
+                    },
+                    Ownership = "Державна",
+                    Chief = "Крисоватий Андрій Ігорович",
+                    Subordination = "Мінестерство освіти і науки, молоді та спорту України",
+                    PostIndex = "46020",
+                    Address = "вул. Львівська 11",
+                    Phone = "(0352) 47 50 63",
+                    Email = "info@tneu.edu.ua",
+                    Site = "www.tneu.edu.ua"
                 },
                 new UniversityEntity
                 {
+                    Region = new RegionEntity
+                    {
+                        Name = "Львівська обл."
+                    },
                     FullName = "Національний університет Львівська політехніка",
                     LevelOfAccreditation = "Вищий навчальний заклад України IV-го рівня акредитації",
                     UniversitySpecialities = new List<UniversitySpecialityEntity>
@@ -87,8 +104,8 @@ namespace GraduateWork.Server.Services
                             {
                                 Name = "Комп’ютерна інженерія",
                                 Code = "123",
-                                AdditionalFactor = 0,
-                                CountOfStatePlaces = 120
+                                SubjectScores = "Українська мова та література (ЗНО), k=0,25 ,балмін 100\n\n Математика (ЗНО), k=0,4 ,балмін 100\n\nФізика(ЗНО), k=0,35 ,балмін 100\n\nАнглійська мова (ЗНО), k=0,35 ,балмін 100\n\nСередній бал документа про освіту, k=0",
+                                Faculty = "Факультет комп'ютерних інформаційних технологій"
                             }
                         },
                         new UniversitySpecialityEntity
@@ -97,8 +114,8 @@ namespace GraduateWork.Server.Services
                             {
                                 Name = "Системний аналіз",
                                 Code = "124",
-                                AdditionalFactor = 0,
-                                CountOfStatePlaces = 90
+                                SubjectScores = "Українська мова та література (ЗНО), k=0,25 ,балмін 100\n\n Математика (ЗНО), k=0,4 ,балмін 100\n\nФізика(ЗНО), k=0,35 ,балмін 100\n\nАнглійська мова (ЗНО), k=0,35 ,балмін 100\n\nСередній бал документа про освіту, k=0",
+                                Faculty = "Факультет комп'ютерних інформаційних технологій"
                             }
                         },
                         new UniversitySpecialityEntity
@@ -107,15 +124,27 @@ namespace GraduateWork.Server.Services
                             {
                                 Name = "Кібербезпека",
                                 Code = "125",
-                                AdditionalFactor = 0,
-                                CountOfStatePlaces = 73
+                                SubjectScores = "Українська мова та література (ЗНО), k=0,25 ,балмін 100\n\n Математика (ЗНО), k=0,4 ,балмін 100\n\nФізика(ЗНО), k=0,35 ,балмін 100\n\nАнглійська мова (ЗНО), k=0,35 ,балмін 100\n\nСередній бал документа про освіту, k=0",
+                                Faculty = "Факультет комп'ютерних інформаційних технологій"
                             }
                         }
-                    }
+                    },
+                    Ownership = "Державна",
+                    Chief = "Бобало Юрій Ярославович",
+                    Subordination = "Мінестерство освіти і науки, молоді та спорту України",
+                    PostIndex = "79013",
+                    Address = "вул. Степана Бандери 12",
+                    Phone = "(032) 258-22-19",
+                    Email = "web@lpnu.ua",
+                    Site = "lp.edu.ua/"
 
                 },
                 new UniversityEntity
                 {
+                    Region = new RegionEntity
+                    {
+                        Name = "Київська обл."
+                    },
                     FullName =
                         "Національний технічний університет України «Київський політехнічний інститут імені Ігоря Сікорського»",
                     LevelOfAccreditation = "Вищий навчальний заклад України IV-го рівня акредитації",
@@ -127,8 +156,8 @@ namespace GraduateWork.Server.Services
                             {
                                 Name = "Комп’ютерна інженерія",
                                 Code = "123",
-                                AdditionalFactor = 0,
-                                CountOfStatePlaces = 126
+                                SubjectScores = "Українська мова та література (ЗНО), k=0,25 ,балмін 100\n\n Математика (ЗНО), k=0,4 ,балмін 100\n\nФізика(ЗНО), k=0,35 ,балмін 100\n\nАнглійська мова (ЗНО), k=0,35 ,балмін 100\n\nСередній бал документа про освіту, k=0",
+                                Faculty = "Факультет комп'ютерних інформаційних технологій"
                             }
                         },
                         new UniversitySpecialityEntity
@@ -137,8 +166,8 @@ namespace GraduateWork.Server.Services
                             {
                                 Name = "Системний аналіз",
                                 Code = "124",
-                                AdditionalFactor = 0,
-                                CountOfStatePlaces = 93
+                                SubjectScores = "Українська мова та література (ЗНО), k=0,25 ,балмін 100\n\n Математика (ЗНО), k=0,4 ,балмін 100\n\nФізика(ЗНО), k=0,35 ,балмін 100\n\nАнглійська мова (ЗНО), k=0,35 ,балмін 100\n\nСередній бал документа про освіту, k=0",
+                                Faculty = "Факультет комп'ютерних інформаційних технологій"
                             }
                         },
                         new UniversitySpecialityEntity
@@ -147,11 +176,19 @@ namespace GraduateWork.Server.Services
                             {
                                 Name = "Кібербезпека",
                                 Code = "125",
-                                AdditionalFactor = 0,
-                                CountOfStatePlaces = 79
+                                SubjectScores = "Українська мова та література (ЗНО), k=0,25 ,балмін 100\n\n Математика (ЗНО), k=0,4 ,балмін 100\n\nФізика(ЗНО), k=0,35 ,балмін 100\n\nАнглійська мова (ЗНО), k=0,35 ,балмін 100\n\nСередній бал документа про освіту, k=0",
+                                Faculty = "Факультет комп'ютерних інформаційних технологій"
                             }
                         }
-                    }
+                    },
+                    Ownership = "Державна",
+                    Chief = "Згуровський Михайло Захарович",
+                    Subordination = "Мінестерство освіти і науки, молоді та спорту України",
+                    PostIndex = "03056",
+                    Address = "проспект Перемоги, 37",
+                    Phone = "+380 44 236 7989",
+                    Email = "mail@kpi.ua",
+                    Site = "kpi.ua/"
                 }
             };
 
@@ -196,19 +233,28 @@ namespace GraduateWork.Server.Services
                         {
                             ExtraScore = 0,
                             TotalScore = 190,
-                            UniversityId = (await _context.Universities
+                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities)
                                 .FirstOrDefaultAsync(x =>
                                     x.FullName == "Тернопільський Національний Економічний Університет")
-                                .ConfigureAwait(false)).Id
+                                .ConfigureAwait(false)).UniversitySpecialities.First().SpecialtyId
                         },
                         new StatementEntity
                         {
                             ExtraScore = 0,
                             TotalScore = 190,
-                            UniversityId = (await _context.Universities
+                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities)
                                 .FirstOrDefaultAsync(
                                     x => x.FullName == "Національний університет Львівська політехніка")
-                                .ConfigureAwait(false)).Id
+                                .ConfigureAwait(false)).UniversitySpecialities.First().SpecialtyId
+                        },
+                        new StatementEntity
+                        {
+                            ExtraScore = 0,
+                            TotalScore = 170,
+                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).FirstOrDefaultAsync(x =>
+                                    x.FullName ==
+                                    "Національний технічний університет України «Київський політехнічний інститут імені Ігоря Сікорського»")
+                                .ConfigureAwait(false)).UniversitySpecialities.First().SpecialtyId
                         }
                     }
                 },
@@ -243,28 +289,28 @@ namespace GraduateWork.Server.Services
                         {
                             ExtraScore = 0,
                             TotalScore = 170,
-                            UniversityId = (await _context.Universities
+                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities)
                                 .FirstOrDefaultAsync(x =>
                                     x.FullName == "Тернопільський Національний Економічний Університет")
-                                .ConfigureAwait(false)).Id
+                                .ConfigureAwait(false)).UniversitySpecialities.Last().SpecialtyId
                         },
                         new StatementEntity
                         {
                             ExtraScore = 0,
                             TotalScore = 170,
-                            UniversityId = (await _context.Universities
+                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities)
                                 .FirstOrDefaultAsync(
                                     x => x.FullName == "Національний університет Львівська політехніка")
-                                .ConfigureAwait(false)).Id
+                                .ConfigureAwait(false)).UniversitySpecialities.Last().SpecialtyId
                         },
                         new StatementEntity
                         {
                             ExtraScore = 0,
                             TotalScore = 170,
-                            UniversityId = (await _context.Universities.FirstOrDefaultAsync(x =>
+                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).FirstOrDefaultAsync(x =>
                                     x.FullName ==
                                     "Національний технічний університет України «Київський політехнічний інститут імені Ігоря Сікорського»")
-                                .ConfigureAwait(false)).Id
+                                .ConfigureAwait(false)).UniversitySpecialities.Last().SpecialtyId
                         }
                     }
                 }

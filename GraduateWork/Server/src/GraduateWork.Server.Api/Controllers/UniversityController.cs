@@ -62,6 +62,20 @@ namespace GraduateWork.Server.Api.Controllers
         }
 
         /// <summary>
+        /// Get Universities by range and name.
+        /// </summary>
+        /// <param name="regionId">Region identifier.</param>
+        /// <param name="cancellationToken"><see cref="CancellationToken"/> instance.</param>
+        [HttpGet("region")]
+        public async Task<List<UniversityDto>> GetUniversitiesByRegionAsync([FromQuery] int regionId, CancellationToken cancellationToken)
+        {
+            var result = await _universityService.GetUniversitiesByrRegionIdAsync(regionId, cancellationToken)
+                .ConfigureAwait(false);
+
+            return result;
+        }
+
+        /// <summary>
         /// Add University.
         /// </summary>
         /// <param name="request"><see cref="UniversityRequest"/> instance.</param>

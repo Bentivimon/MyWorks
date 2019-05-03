@@ -72,6 +72,19 @@ namespace GraduateWork.Server.Api.Controllers
         }
 
         /// <summary>
+        /// Get Entrant by id.
+        /// </summary>
+        /// <param name="specialityId">Speciality identifier.</param>
+        /// <param name="cancellationToken"><see cref="CancellationToken"/> instance.</param>
+        [HttpGet("speciality")]
+        public async Task<List<EntrantExtendDto>> GetEntrantBySpecialityIdAsync([FromQuery] Guid specialityId, CancellationToken cancellationToken)
+        {
+            var result = await _entrantService.GetEntrantBySpecialityIdAsync(specialityId, cancellationToken).ConfigureAwait(false);
+
+            return result;
+        }
+
+        /// <summary>
         /// Tie up entrant and user.
         /// </summary>
         /// <param name="entrantId"> Entrant identifier.</param>

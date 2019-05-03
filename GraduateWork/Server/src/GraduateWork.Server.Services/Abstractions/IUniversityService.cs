@@ -36,6 +36,12 @@ namespace GraduateWork.Server.Services.Abstractions
         /// <param name="cancellationToken"><see cref="CancellationToken"/> instance.</param>
         Task<List<UniversityDto>> GetUniversitiesByNameAsync(int skip, int take, string name, CancellationToken cancellationToken);
 
+        /// <summary>
+        /// Method for add university.
+        /// </summary>
+        /// <param name="regionId">Region identifier.</param>
+        /// <param name="cancellationToken"><see cref="CancellationToken"/> instance.</param>
+        Task<List<UniversityDto>> GetUniversitiesByrRegionIdAsync(int regionId, CancellationToken cancellationToken);
 
         /// <summary>
         /// Method for add university.

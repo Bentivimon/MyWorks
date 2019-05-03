@@ -102,6 +102,23 @@ namespace GraduateWork.Server.Services.Implementations
             }
         }
 
+        public async Task<List<EntrantExtendDto>> GetEntrantBySpecialityIdAsync(Guid specialityId, CancellationToken cancellationToken)
+        {
+            using (var scope = _serviceProvider.CreateScope())
+            using (var context = scope.ServiceProvider.GetRequiredService<DatabaseContext>())
+            {
+                var result = await context.Entrants.Include(x => x.Statements)
+                    .Where(x => x.Statements.Any(y => y.SpecialityId == specialityId))
+                    .ToListAsync(cancellationToken)
+                    .ConfigureAwait(false);
+
+                if (result == null)
+                    throw new NotFoundException("Entrant not found.");
+
+                return result.Select(x => x.ToExtendedDto()).ToList();
+            }
+        }
+
         public async Task TieUpEntrantAndUserAsync(Guid userId, Guid entrantId, CancellationToken cancellationToken)
         {
             using (var scope = _serviceProvider.CreateScope())

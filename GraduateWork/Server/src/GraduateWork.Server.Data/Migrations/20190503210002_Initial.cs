@@ -1,12 +1,26 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace GraduateWork.Server.Data.Migrations
 {
-    public partial class initial : Migration
+    public partial class Initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "Regions",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn),
+                    Name = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Regions", x => x.Id);
+                });
+
             migrationBuilder.CreateTable(
                 name: "specialities",
                 columns: table => new
@@ -14,25 +28,12 @@ namespace GraduateWork.Server.Data.Migrations
                     id = table.Column<Guid>(nullable: false),
                     code = table.Column<string>(nullable: true),
                     name = table.Column<string>(nullable: true),
-                    additional_factory = table.Column<float>(nullable: false),
-                    count_of_state_places = table.Column<int>(nullable: false)
+                    faculty = table.Column<string>(nullable: true),
+                    subject_scores = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_specialities", x => x.id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "universities",
-                columns: table => new
-                {
-                    id = table.Column<Guid>(nullable: false),
-                    full_name = table.Column<string>(nullable: true),
-                    level_of_accreditation = table.Column<string>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_universities", x => x.id);
                 });
 
             migrationBuilder.CreateTable(
@@ -50,6 +51,55 @@ namespace GraduateWork.Server.Data.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_users", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "universities",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(nullable: false),
+                    full_name = table.Column<string>(nullable: true),
+                    level_of_accreditation = table.Column<string>(nullable: true),
+                    ownership = table.Column<string>(nullable: true),
+                    chief = table.Column<string>(nullable: true),
+                    subordination = table.Column<string>(nullable: true),
+                    post_index = table.Column<string>(nullable: true),
+                    address = table.Column<string>(nullable: true),
+                    phone = table.Column<string>(nullable: true),
+                    site = table.Column<string>(nullable: true),
+                    email = table.Column<string>(nullable: true),
+                    region_id = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_universities", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_universities_Regions_region_id",
+                        column: x => x.region_id,
+                        principalTable: "Regions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "entrants",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(nullable: false),
+                    firs_name = table.Column<string>(nullable: true),
+                    last_name = table.Column<string>(nullable: true),
+                    birthday = table.Column<DateTimeOffset>(nullable: false),
+                    user_id = table.Column<Guid>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_entrants", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_entrants_users_user_id",
+                        column: x => x.user_id,
+                        principalTable: "users",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -74,27 +124,6 @@ namespace GraduateWork.Server.Data.Migrations
                         principalTable: "universities",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "entrants",
-                columns: table => new
-                {
-                    id = table.Column<Guid>(nullable: false),
-                    firs_name = table.Column<string>(nullable: true),
-                    last_name = table.Column<string>(nullable: true),
-                    birthday = table.Column<DateTimeOffset>(nullable: false),
-                    user_id = table.Column<Guid>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_entrants", x => x.id);
-                    table.ForeignKey(
-                        name: "FK_entrants_users_user_id",
-                        column: x => x.user_id,
-                        principalTable: "users",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -155,7 +184,7 @@ namespace GraduateWork.Server.Data.Migrations
                     total_score = table.Column<float>(nullable: false),
                     extra_score = table.Column<float>(nullable: false),
                     entrant_id = table.Column<Guid>(nullable: false),
-                    university_id = table.Column<Guid>(nullable: false)
+                    speciality_id = table.Column<Guid>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -167,9 +196,9 @@ namespace GraduateWork.Server.Data.Migrations
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_statements_universities_university_id",
-                        column: x => x.university_id,
-                        principalTable: "universities",
+                        name: "FK_statements_specialities_speciality_id",
+                        column: x => x.speciality_id,
+                        principalTable: "specialities",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -198,9 +227,14 @@ namespace GraduateWork.Server.Data.Migrations
                 column: "entrant_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_statements_university_id",
+                name: "IX_statements_speciality_id",
                 table: "statements",
-                column: "university_id");
+                column: "speciality_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_universities_region_id",
+                table: "universities",
+                column: "region_id");
 
             migrationBuilder.CreateIndex(
                 name: "IX_university_specialities_university_id",
@@ -233,6 +267,9 @@ namespace GraduateWork.Server.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "users");
+
+            migrationBuilder.DropTable(
+                name: "Regions");
         }
     }
 }

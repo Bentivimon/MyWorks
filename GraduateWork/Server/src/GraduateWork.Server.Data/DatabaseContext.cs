@@ -44,6 +44,11 @@ namespace GraduateWork.Server.Data
         public DbSet<UniversityEntity> Universities { get; set; }
 
         /// <summary>
+        /// Gets/Sets region entities.
+        /// </summary>
+        public DbSet<RegionEntity> Regions { get; set; }
+
+        /// <summary>
         /// Constructor for initialize <see cref="DatabaseContext"/> instance with options.
         /// </summary>
         /// <param name="options"> Database context. </param>

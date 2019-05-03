@@ -1,34 +1,28 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace GraduateWork.Server.Models.Request
+﻿namespace GraduateWork.Client.Models.ResponseModels
 {
     /// <summary>
-    /// Speciality request model.
+    /// Speciality response model.
     /// </summary>
-    public class SpecialityRequest
+    public class SpecialityDto
     {
         /// <summary>
         /// Gets/Sets code.
         /// </summary>
-        [Required]
         public string Code { get; set; }
 
         /// <summary>
         /// Gets/Sets name.
         /// </summary>
-        [Required]
         public string Name { get; set; }
 
         /// <summary>
-        /// Gets/Sets additional factor
+        /// Gets/Sets faculty factor.
         /// </summary>
-        [Required]
         public string Faculty { get; set; }
 
         /// <summary>
         /// Gets/Sets count of state places.
         /// </summary>
-        [Required]
         public string SubjectScores { get; set; }
     }
 }
