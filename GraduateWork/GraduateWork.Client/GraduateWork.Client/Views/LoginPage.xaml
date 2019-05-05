@@ -36,18 +36,17 @@
             <StackLayout Grid.Column="1" Grid.Row="2" BackgroundColor="White">
                 <StackLayout Margin="5,10,5,10" BackgroundColor="DarkGray" Spacing="0">
                     <Label TextColor="DodgerBlue" Text="Email" Margin="5,2,0,-10" FontSize="12"/>
-                    <Entry Placeholder="Email" FontSize="12"/>
+                    <Entry Placeholder="Email" FontSize="12" Text="{Binding InputEmail}"/>
                 </StackLayout>
 
                 <StackLayout Margin="5,0,5,0" BackgroundColor="DarkGray" Spacing="0">
                     <Label TextColor="DodgerBlue" Text="Пароль" Margin="5,2,0,-10" FontSize="12"/>
-                    <Entry Placeholder="Пароль" FontSize="12" IsPassword="True"/>
+                    <Entry Placeholder="Пароль" FontSize="12" IsPassword="True" Text="{Binding InputPassword}"/>
                 </StackLayout>
-                
+                <Label Text="{Binding ErrorMessage}" TextColor="Red" Margin="10,5,5,5"/>
                 <StackLayout Orientation="Horizontal" Margin="5,0,5,5" BackgroundColor="White" Padding="5,5,5,5">
-                    <Label Text="Забули пароль?" TextColor="Aqua" FontSize="12" VerticalTextAlignment ="Center"  HorizontalTextAlignment="Start"/>
-                    <Button  VerticalOptions ="CenterAndExpand" HorizontalOptions="EndAndExpand" Text="Реєстрація" FontSize="12" BackgroundColor="Blue" TextColor="White" Margin="0,10,5,0" HeightRequest="35" Command="{Binding RegistrationCommand}"/>
-                    <Button  VerticalOptions ="CenterAndExpand" HorizontalOptions="EndAndExpand" Text="Вхід" FontSize="12" BackgroundColor="Blue" TextColor="White" Margin="0,10,5,0" HeightRequest="35" Command="{Binding LoginCommand}"/>
+                    <Button  VerticalOptions ="CenterAndExpand" HorizontalOptions="CenterAndExpand" Text="Реєстрація" FontSize="12" BackgroundColor="Blue" TextColor="White" Margin="0,10,5,0" HeightRequest="35" Command="{Binding RegistrationCommand}"/>
+                    <Button  VerticalOptions ="CenterAndExpand" HorizontalOptions="CenterAndExpand" Text="Вхід" FontSize="14" BackgroundColor="Blue" TextColor="White" Margin="0,10,5,0" HeightRequest="35" Command="{Binding LoginCommand}"/>
                 </StackLayout>
             </StackLayout>
 

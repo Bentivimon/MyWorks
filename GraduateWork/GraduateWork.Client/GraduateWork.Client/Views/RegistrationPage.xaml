@@ -35,11 +35,11 @@
            <StackLayout Grid.Column="1" Grid.Row="2" BackgroundColor="White">
                 <StackLayout BackgroundColor="DarkGray" Margin="5,5,5,5" Spacing="0">
                     <Label Text="Email" TextColor="Black" FontSize="12" Margin="5,0,0,0"/>
-                    <Entry FontSize="12" Margin="5,0,0,0"/>
+                    <Entry FontSize="12" Margin="5,0,0,0" Text="{Binding InputEmail}"/>
                 </StackLayout>
                <StackLayout BackgroundColor="DarkGray" Margin="5,5,5,5" Spacing="0">
                     <Label Text="Пароль" TextColor="Black" FontSize="12" Margin="5,0,0,0"/>
-                    <Entry FontSize="12" Margin="5,0,0,0" IsPassword="True"/>
+                    <Entry FontSize="12" Margin="5,0,0,0" IsPassword="True" Text="{Binding InputPassword}"/>
                </StackLayout>
                <StackLayout BackgroundColor="DarkGray" Margin="5,5,5,5" Spacing="0">
                     <Label Text="Підтвердіть пароль" TextColor="Black" FontSize="12" Margin="5,0,0,0"/>
@@ -47,15 +47,15 @@
                </StackLayout>
                <StackLayout BackgroundColor="DarkGray" Margin="5,5,5,5" Spacing="0">
                     <Label Text="Ім'я" TextColor="Black" FontSize="12" Margin="5,0,0,0"/>
-                    <Entry FontSize="12" Margin="5,0,0,0"/>
+                    <Entry FontSize="12" Margin="5,0,0,0" Text="{Binding InputName}"/>
                </StackLayout>
                <StackLayout BackgroundColor="DarkGray" Margin="5,5,5,5" Spacing="0">
                     <Label Text="Прізвище" TextColor="Black" FontSize="12" Margin="5,0,0,0"/>
-                    <Entry FontSize="12" Margin="5,0,0,0"/>
+                    <Entry FontSize="12" Margin="5,0,0,0" Text="{Binding InputSurname}"/>
                </StackLayout>
                <StackLayout BackgroundColor="DarkGray" Margin="5,5,5,5" Spacing="0">
-                    <Label Text="Місто" TextColor="Black" FontSize="12" Margin="5,0,0,0"/>
-                    <Entry FontSize="12" Margin="5,0,0,0"/>
+                    <Label Text="Номер телефону" TextColor="Black" FontSize="12" Margin="5,0,0,0"/>
+                    <Entry FontSize="12" Margin="5,0,0,0" Text="{Binding InputNumber}"/>
                </StackLayout>
 
                <StackLayout>

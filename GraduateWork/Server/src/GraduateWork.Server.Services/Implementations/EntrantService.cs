@@ -107,7 +107,10 @@ namespace GraduateWork.Server.Services.Implementations
             using (var scope = _serviceProvider.CreateScope())
             using (var context = scope.ServiceProvider.GetRequiredService<DatabaseContext>())
             {
-                var result = await context.Entrants.Include(x => x.Statements)
+                var result = await context.Entrants
+                    .Include(x => x.CertificateOfTesting)
+                    .Include(x => x.CertificateOfSecondaryEducation)
+                    .Include(x => x.Statements)
                     .Where(x => x.Statements.Any(y => y.SpecialityId == specialityId))
                     .ToListAsync(cancellationToken)
                     .ConfigureAwait(false);

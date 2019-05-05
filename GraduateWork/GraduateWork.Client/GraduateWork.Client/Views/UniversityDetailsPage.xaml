@@ -23,7 +23,7 @@
         </ContentPage>
         <ContentPage Title="Денна Форма" BackgroundColor="LightGray" Padding="10">
             <StackLayout>
-                <ListView x:Name="TestName" ItemsSource="{Binding Specialities}" HasUnevenRows ="True" SelectionMode="None" SeparatorColor="LightGray" >
+                <ListView x:Name="TestName" ItemsSource="{Binding Specialities}" HasUnevenRows ="True" SelectionMode="None" SeparatorColor="LightGray" SelectedItem="{Binding SpecialitySelectedItem, Mode=TwoWay}" >
                     <ListView.ItemTemplate>
                         <DataTemplate>
                             <ViewCell>
@@ -33,46 +33,16 @@
                                     <BoxView BackgroundColor="LightGray" HeightRequest="1"/>
 
                                     <Label Text="Спеціальність" TextColor="Black" FontAttributes="Bold" Margin="0"/>
-                                    <Label Text="Програмна інжинерія" Margin="0"/>
+                                    <Label x:Name="Speciality" Text="{Binding Speciality}" Margin="0"/>
                                     <BoxView BackgroundColor="LightGray" HeightRequest="1"/>
 
                                     <Label Text="Освітня програма" TextColor="Black" FontAttributes="Bold" Margin="0"/>
-                                    <Label Text="Комп'ютерні фінформаційні технології" Margin="0"/>
+                                    <Label Text="{Binding Faculty}" Margin="0"/>
                                     <BoxView BackgroundColor="LightGray" HeightRequest="1"/>
 
                                     <StackLayout Orientation="Horizontal" Padding ="10" Margin="0">
-                                        <Button BackgroundColor="LightGray" Text="Конкурсний бал" HorizontalOptions="StartAndExpand" BindingContext="{Binding Source={x:Reference TestName}, Path=BindingContext}" Command="{Binding ShowAlertCommand}"/>
-                                        <Button BackgroundColor="Blue" Text="Конкурс" HorizontalOptions="EndAndExpand" BindingContext="{Binding Source={x:Reference TestName}, Path=BindingContext}" Command="{Binding ShowSpecialityInfoCommand}"/>
-                                    </StackLayout>
-                                </StackLayout>
-                            </ViewCell>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-                </ListView>
-            </StackLayout>
-        </ContentPage>
-        <ContentPage Title="Заочна форма" BackgroundColor="LightGray" Padding="10">
-            <StackLayout>
-                <ListView x:Name="TestName1" ItemsSource="{Binding Specialities}" HasUnevenRows ="True" SelectionMode="None" SeparatorColor="LightGray" >
-                    <ListView.ItemTemplate>
-                        <DataTemplate>
-                            <ViewCell>
-                                <StackLayout BackgroundColor="White" Margin="0,20,0,20" Padding="5">
-                                    <Label Text="Бакалавр" TextColor="Black" FontAttributes="Bold" Margin="0"/>
-                                    <Label Text="(на основі ПЗСО 11кл.)" Margin="0"/>
-                                    <BoxView BackgroundColor="LightGray" HeightRequest="1"/>
-
-                                    <Label Text="Спеціальність" TextColor="Black" FontAttributes="Bold" Margin="0"/>
-                                    <Label Text="Програмна інжинерія" Margin="0"/>
-                                    <BoxView BackgroundColor="LightGray" HeightRequest="1"/>
-
-                                    <Label Text="Освітня програма" TextColor="Black" FontAttributes="Bold" Margin="0"/>
-                                    <Label Text="Комп'ютерні фінформаційні технології" Margin="0"/>
-                                    <BoxView BackgroundColor="LightGray" HeightRequest="1"/>
-
-                                    <StackLayout Orientation="Horizontal" Padding ="10" Margin="0">
-                                        <Button BackgroundColor="LightGray" Text="Конкурсний бал" HorizontalOptions="StartAndExpand" BindingContext="{Binding Source={x:Reference TestName1}, Path=BindingContext}" Command="{Binding ShowAlertCommand}"/>
-                                        <Button BackgroundColor="Blue" Text="Конкурс" HorizontalOptions="EndAndExpand" BindingContext="{Binding Source={x:Reference TestName1}, Path=BindingContext}" Command="{Binding ShowSpecialityInfoCommand}"/>
+                                        <Button BackgroundColor="LightGray" Text="Конкурсний бал" HorizontalOptions="StartAndExpand" BindingContext="{Binding Source={x:Reference TestName}, Path=BindingContext}" Command="{Binding ShowAlertCommand}" CommandParameter="{Binding Source={x:Reference Speciality}, Path=Text}"/>
+                                        <Button BackgroundColor="Blue" Text="Конкурс" HorizontalOptions="EndAndExpand" BindingContext="{Binding Source={x:Reference TestName}, Path=BindingContext}" Command="{Binding ShowSpecialityInfoCommand}" CommandParameter="{Binding Source={x:Reference Speciality}, Path=Text}"/>
                                     </StackLayout>
                                 </StackLayout>
                             </ViewCell>

@@ -17,16 +17,16 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <Label Margin ="0,5,0,0" Grid.Column="1" Grid.Row="0" TextColor="Black" Text="Тернопольский національний економічний університет" LineBreakMode="WordWrap" FontSize="18" VerticalTextAlignment="Center" HorizontalTextAlignment="Center"/>
-            
-            <Label Margin ="0,5,0,0" Grid.Column="1" Grid.Row="1" TextColor="Black" Text="Бакалавр (на основі ПЗСНО 11кл.) Галузь: Ком*ютерна інженерія. Спеціальність: 1111 Ком*ютерна інженерія. Факультет: Комп8ютерних інформаційних технологій "/>
+            <Label Margin ="0,5,0,0" Grid.Column="1" Grid.Row="0" TextColor="Black" Text="{Binding UniversityName}" LineBreakMode="WordWrap" FontSize="18" VerticalTextAlignment="Center" HorizontalTextAlignment="Center"/>
+
+            <Label Margin ="0,5,0,0" Grid.Column="1" Grid.Row="1" TextColor="Black" Text="{Binding SpecialityInfo}"/>
             <ListView  Grid.Row="2" Grid.Column="1" HasUnevenRows="True" Header="Абітурієнти" BackgroundColor="White" SeparatorColor="LightGray" ItemsSource="{Binding Abiturients}" SelectedItem="{Binding SelectedAbiturient}">
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <ViewCell>
                             <StackLayout Padding="10" Margin="0,10,0,10">
-                                <Label Text="1. blablalbla" TextColor="Black"  FontAttributes="Bold"/>
-                                <Label Text="Конкурсний бал: 128.923" TextColor="Black"/>
+                                <Label Text="{Binding Title}" TextColor="Black"  FontAttributes="Bold"/>
+                                <Label Text="{Binding Score}" TextColor="Black"/>
                                 <Label Text="Пріоритет: немає" TextColor="Black"/>
                             </StackLayout>
                         </ViewCell>

@@ -1,10 +1,17 @@
-﻿namespace GraduateWork.Client.Models.ResponseModels
+﻿using System;
+
+namespace GraduateWork.Client.Models.ResponseModels
 {
     /// <summary>
     /// Speciality response model.
     /// </summary>
     public class SpecialityDto
     {
+        /// <summary>
+        /// Gets/Sets speciality id.
+        /// </summary>
+        public Guid Id { get; set; }
+
         /// <summary>
         /// Gets/Sets code.
         /// </summary>

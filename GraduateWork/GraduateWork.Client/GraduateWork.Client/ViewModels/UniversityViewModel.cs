@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using GraduateWork.Client.Models;
+using GraduateWork.Client.Models.ResponseModels;
+using GraduateWork.Client.Services;
 using GraduateWork.Client.Views;
 using Xamarin.Forms;
 
@@ -10,7 +14,11 @@ namespace GraduateWork.Client.ViewModels
 {
     public class UniversityViewModel : BaseViewModel
     {
+        private string _regionName;
+        private List<UniversityDto> _universities;
         public ObservableCollection<UniversityListModel> Universities { get; set; }
+
+        private SpecialitiesHttpClient _httpClient;
 
         public INavigation Navigation { get; set; }
 
@@ -31,58 +39,20 @@ namespace GraduateWork.Client.ViewModels
             }
         }
 
-        private void ShowUniversityDetailPage()
+        private async Task ShowUniversityDetailPage()
         {
-            Navigation.PushAsync(new UniversityDetailsPage(_universitiesSelectedItem.FullName), true);
+            var university = _universities.First(x => x.FullName == _universitiesSelectedItem.FullName);
+          
+            await Navigation.PushAsync(new UniversityDetailsPage(university, _regionName), true);
         }
 
 
-        public UniversityViewModel(INavigation navigation)
+        public UniversityViewModel(INavigation navigation, List<UniversityDto> universities, string regionName)
         {
+            _regionName = regionName;
+            _universities = universities;
             Navigation = navigation;
-            Universities = new ObservableCollection<UniversityListModel>()
-            {
-                new UniversityListModel(){FullName = "Тернопільський національний педагогічний університет імені Володимира Гнатюка"},
-                new UniversityListModel(){FullName = "ТЕРНОПІЛЬСЬКИЙ НАЦІОНАЛЬНИЙ ЕКОНОМІЧНИЙ УНІВЕРСИТЕТ"},
-                new UniversityListModel(){FullName = "ТЕРНОПІЛЬСЬКИЙ НАЦІОНАЛЬНИЙ МЕДИЧНИЙ УНІВЕРСИТЕТ  імені І.Я.Горбачевського"},
-                new UniversityListModel(){FullName = "Національний університет «Львівська політехніка»"},
-                new UniversityListModel(){FullName = "Національний технічний університет україни «Київський політехнічний штститут імені Ігоря Сікорського»"},
-                new UniversityListModel(){FullName = "Тернопільський національний педагогічний університет імені Володимира Гнатюка"},
-                new UniversityListModel(){FullName = "ТЕРНОПІЛЬСЬКИЙ НАЦІОНАЛЬНИЙ ЕКОНОМІЧНИЙ УНІВЕРСИТЕТ"},
-                new UniversityListModel(){FullName = "ТЕРНОПІЛЬСЬКИЙ НАЦІОНАЛЬНИЙ МЕДИЧНИЙ УНІВЕРСИТЕТ  імені І.Я.Горбачевського"},
-                new UniversityListModel(){FullName = "Національний університет «Львівська політехніка»"},
-                new UniversityListModel(){FullName = "Національний технічний університет україни «Київський політехнічний штститут імені Ігоря Сікорського»"},
-                new UniversityListModel(){FullName = "Тернопільський національний педагогічний університет імені Володимира Гнатюка"},
-                new UniversityListModel(){FullName = "ТЕРНОПІЛЬСЬКИЙ НАЦІОНАЛЬНИЙ ЕКОНОМІЧНИЙ УНІВЕРСИТЕТ"},
-                new UniversityListModel(){FullName = "ТЕРНОПІЛЬСЬКИЙ НАЦІОНАЛЬНИЙ МЕДИЧНИЙ УНІВЕРСИТЕТ  імені І.Я.Горбачевського"},
-                new UniversityListModel(){FullName = "Національний університет «Львівська політехніка»"},
-                new UniversityListModel(){FullName = "Національний технічний університет україни «Київський політехнічний штститут імені Ігоря Сікорського»"},
-                new UniversityListModel(){FullName = "Тернопільський національний педагогічний університет імені Володимира Гнатюка"},
-                new UniversityListModel(){FullName = "ТЕРНОПІЛЬСЬКИЙ НАЦІОНАЛЬНИЙ ЕКОНОМІЧНИЙ УНІВЕРСИТЕТ"},
-                new UniversityListModel(){FullName = "ТЕРНОПІЛЬСЬКИЙ НАЦІОНАЛЬНИЙ МЕДИЧНИЙ УНІВЕРСИТЕТ  імені І.Я.Горбачевського"},
-                new UniversityListModel(){FullName = "Національний університет «Львівська політехніка»"},
-                new UniversityListModel(){FullName = "Національний технічний університет україни «Київський політехнічний штститут імені Ігоря Сікорського»"},
-                new UniversityListModel(){FullName = "Тернопільський національний педагогічний університет імені Володимира Гнатюка"},
-                new UniversityListModel(){FullName = "ТЕРНОПІЛЬСЬКИЙ НАЦІОНАЛЬНИЙ ЕКОНОМІЧНИЙ УНІВЕРСИТЕТ"},
-                new UniversityListModel(){FullName = "ТЕРНОПІЛЬСЬКИЙ НАЦІОНАЛЬНИЙ МЕДИЧНИЙ УНІВЕРСИТЕТ  імені І.Я.Горбачевського"},
-                new UniversityListModel(){FullName = "Національний університет «Львівська політехніка»"},
-                new UniversityListModel(){FullName = "Національний технічний університет україни «Київський політехнічний штститут імені Ігоря Сікорського»"},
-                new UniversityListModel(){FullName = "Тернопільський національний педагогічний університет імені Володимира Гнатюка"},
-                new UniversityListModel(){FullName = "ТЕРНОПІЛЬСЬКИЙ НАЦІОНАЛЬНИЙ ЕКОНОМІЧНИЙ УНІВЕРСИТЕТ"},
-                new UniversityListModel(){FullName = "ТЕРНОПІЛЬСЬКИЙ НАЦІОНАЛЬНИЙ МЕДИЧНИЙ УНІВЕРСИТЕТ  імені І.Я.Горбачевського"},
-                new UniversityListModel(){FullName = "Національний університет «Львівська політехніка»"},
-                new UniversityListModel(){FullName = "Національний технічний університет україни «Київський політехнічний штститут імені Ігоря Сікорського»"},
-                new UniversityListModel(){FullName = "Тернопільський національний педагогічний університет імені Володимира Гнатюка"},
-                new UniversityListModel(){FullName = "ТЕРНОПІЛЬСЬКИЙ НАЦІОНАЛЬНИЙ ЕКОНОМІЧНИЙ УНІВЕРСИТЕТ"},
-                new UniversityListModel(){FullName = "ТЕРНОПІЛЬСЬКИЙ НАЦІОНАЛЬНИЙ МЕДИЧНИЙ УНІВЕРСИТЕТ  імені І.Я.Горбачевського"},
-                new UniversityListModel(){FullName = "Національний університет «Львівська політехніка»"},
-                new UniversityListModel(){FullName = "Національний технічний університет україни «Київський політехнічний штститут імені Ігоря Сікорського»"},
-                new UniversityListModel(){FullName = "Тернопільський національний педагогічний університет імені Володимира Гнатюка"},
-                new UniversityListModel(){FullName = "ТЕРНОПІЛЬСЬКИЙ НАЦІОНАЛЬНИЙ ЕКОНОМІЧНИЙ УНІВЕРСИТЕТ"},
-                new UniversityListModel(){FullName = "ТЕРНОПІЛЬСЬКИЙ НАЦІОНАЛЬНИЙ МЕДИЧНИЙ УНІВЕРСИТЕТ  імені І.Я.Горбачевського"},
-                new UniversityListModel(){FullName = "Національний університет «Львівська політехніка»"},
-                new UniversityListModel(){FullName = "Національний технічний університет україни «Київський політехнічний штститут імені Ігоря Сікорського»"},
-            };
+            Universities = new ObservableCollection<UniversityListModel>(universities.Select(x=> new UniversityListModel{ FullName = x.FullName }));
         }
 
     }

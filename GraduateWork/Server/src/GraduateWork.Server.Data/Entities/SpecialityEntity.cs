@@ -98,6 +98,7 @@ namespace GraduateWork.Server.Data.Entities
         {
             return new SpecialityDto
             {
+                Id = Id,
                 Code = Code,
                 Name = Name,
                 Faculty = Faculty,

@@ -124,6 +124,7 @@ namespace GraduateWork.Server.Data.Entities
         {
             return new UniversityDto
             {
+                Id = Id,
                 FullName = FullName,
                 LevelOfAccreditation = LevelOfAccreditation, 
                 Ownership = Ownership,

@@ -115,12 +115,15 @@ namespace GraduateWork.Server.Data.Entities
         /// </summary>
         public EntrantExtendDto ToExtendedDto()
         {
-            var result = (EntrantExtendDto)ToDto();
-
-            result.CertificateOfTesting = CertificateOfTesting.ToDto();
-            result.CertificateOfSecondaryEducation = CertificateOfSecondaryEducation.ToDto();
-
-            return result;
+            return new EntrantExtendDto()
+            {
+                Id = Id,
+                Name = FirstName,
+                Surname = LastName,
+                BDay = Birthday.UtcDateTime,
+                CertificateOfTesting = CertificateOfTesting?.ToDto(),
+                CertificateOfSecondaryEducation = CertificateOfSecondaryEducation?.ToDto()
+            };
         }
 
         #endregion

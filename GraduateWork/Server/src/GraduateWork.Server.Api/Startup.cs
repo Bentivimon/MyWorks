@@ -33,6 +33,7 @@ namespace GraduateWork.Server.Api
             StartupConfigurations.ConfigureApplication(services);
             StartupConfigurations.RegisterSwagger(services, Configuration);
             StartupConfigurations.RegisterCustomService(services);
+            StartupConfigurations.AddAuthentication(services);
         }
 
         /// <summary>

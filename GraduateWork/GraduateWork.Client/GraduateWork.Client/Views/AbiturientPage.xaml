@@ -8,8 +8,8 @@
             <TableSection Title="Абітурієнт">
                 <ViewCell>
                     <StackLayout Padding="10" Margin="0,10,0,10" Orientation="Vertical">
-                        <Label Text="1. blablalbla" TextColor="Black"  FontAttributes="Bold"/>
-                        <Label Text="Конкурсний бал: 128.923" TextColor="Black"/>
+                        <Label Text="{Binding NameSurname}" TextColor="Black"  FontAttributes="Bold"/>
+                        <Label Text="{Binding Score}" TextColor="Black"/>
                         <Label Text="Пріоритет: немає" TextColor="Black"/>
                     </StackLayout>
                 </ViewCell>
@@ -17,11 +17,10 @@
             <TableSection Title="Деталізація">
                 <ViewCell>
                     <StackLayout Padding="10" Margin="0,10,0,10" Orientation="Vertical">
-                        <Label Text="- Біологія (ЗНО): 186" TextColor="Black"/>
-                        <Label Text="- Українська мова та література (ЗНО): 198" TextColor="Black"/>
-                        <Label Text="- Хімія (ЗНО): 198" TextColor="Black"/>
-                        <Label Text="- Середній бал документа про освіту: 10.6" TextColor="Black"/>
-                        <Label Text="- РК" TextColor="Black"/>
+                        <Label Text="{Binding FirstSubject}" TextColor="Black"/>
+                        <Label Text="{Binding SecondSubject}" TextColor="Black"/>
+                        <Label Text="{Binding ThirdSubject}" TextColor="Black"/>
+                        <Label Text="{Binding SchoolAverageMark}" TextColor="Black"/>
                     </StackLayout>
                 </ViewCell>
             </TableSection>

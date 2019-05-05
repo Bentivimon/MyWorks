@@ -27,7 +27,7 @@ namespace GraduateWork.Server.Api.Configurations
                 {
                     context.Database.MigrateAsync().GetAwaiter().GetResult();
                 }
-                //TODO Check this.
+                
                 var seeder = scope.ServiceProvider.GetService<DatabaseSeeder>();
                 if (seeder != null)
                 {

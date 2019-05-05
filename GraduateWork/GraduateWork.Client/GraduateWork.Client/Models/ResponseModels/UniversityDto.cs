@@ -1,10 +1,17 @@
-﻿namespace GraduateWork.Client.Models.ResponseModels
+﻿using System;
+
+namespace GraduateWork.Client.Models.ResponseModels
 {
     /// <summary>
     /// University response model.
     /// </summary>
     public class UniversityDto
     {
+        /// <summary>
+        /// Gets/Sets university id.
+        /// </summary>
+        public Guid Id { get; set; }
+
         /// <summary>
         /// Gets/Sets full name of university.
         /// </summary>
