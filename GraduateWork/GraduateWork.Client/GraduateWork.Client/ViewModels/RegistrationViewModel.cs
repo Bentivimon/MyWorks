@@ -86,7 +86,7 @@ namespace GraduateWork.Client.ViewModels
             RegistrationCommand = new Command(async() => await RegistrationAsync());
             Navigation = navigation;
         }
-
+        //TODO fix this
         private async Task RegistrationAsync()
         {
             var result = await _httpClient.RegistrationAsync(new RegistrationModel
