@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="GraduateWork.Client.Views.UniversityPage" BackgroundColor="LightGray">
+             x:Class="GraduateWork.Client.Views.UniversityPage" BackgroundColor="White">
     <ContentPage.Content>
         <Grid>
             <Grid.ColumnDefinitions>
@@ -16,8 +16,8 @@
             </Grid.RowDefinitions>
 
             <Label Grid.Row="0" Grid.Column="1" Text="Університети" Margin="10,10,0,0" FontSize="25" TextColor="Black"/>
-            <StackLayout Grid.Row="1" Grid.Column="1" BackgroundColor="White">
-                <ListView ItemsSource="{Binding Universities}" HasUnevenRows ="True" SelectionMode="Single" SelectedItem="{Binding UniversitiesSelectedItem, Mode=TwoWay}">
+            <Frame Grid.Row="1" Grid.Column="1" BackgroundColor="#fafafa" CornerRadius="3">
+                <ListView ItemsSource="{Binding Universities}" HasUnevenRows ="True" SeparatorColor="LightGray" SelectionMode="Single" SelectedItem="{Binding UniversitiesSelectedItem, Mode=TwoWay}">
                     <ListView.ItemTemplate>
                         <DataTemplate>
                             <ViewCell>
@@ -34,7 +34,7 @@
                         </DataTemplate>
                     </ListView.ItemTemplate>
                 </ListView>
-            </StackLayout>
+            </Frame>
         </Grid>
     </ContentPage.Content>
 </ContentPage>

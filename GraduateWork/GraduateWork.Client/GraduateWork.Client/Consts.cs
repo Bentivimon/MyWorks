@@ -6,6 +6,6 @@ namespace GraduateWork.Client
 {
     public static class Consts
     {
-        public const string BaseUrl = "http://35.246.5.231:5000/";
+        public const string BaseUrl = "http://35.242.156.84:5000/";
     }
 }

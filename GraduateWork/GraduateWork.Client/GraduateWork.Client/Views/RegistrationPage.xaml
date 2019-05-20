@@ -18,9 +18,8 @@
     </ContentPage.Resources>
     <ContentPage.Content>
        <Grid>
-           <Grid.RowDefinitions>
-               <RowDefinition Height="*"/>
-               <RowDefinition Height="*"/>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
                <RowDefinition Height="16*"/>
                <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
@@ -30,38 +29,39 @@
                <ColumnDefinition Width="*"/>
            </Grid.ColumnDefinitions>
            
-           <Label Grid.Column="1" Grid.Row="1" Text="Реєстрація" TextColor="White" FontSize="16" FontAttributes="Bold"/>
-            
-           <StackLayout Grid.Column="1" Grid.Row="2" BackgroundColor="White">
-                <StackLayout BackgroundColor="DarkGray" Margin="5,5,5,5" Spacing="0">
-                    <Label Text="Email" TextColor="Black" FontSize="12" Margin="5,0,0,0"/>
-                    <Entry FontSize="12" Margin="5,0,0,0" Text="{Binding InputEmail}"/>
+           <Label Margin="0,5,5,1" Grid.Column="1" Grid.Row="0" Text="Реєстрація" TextColor="White" FontSize="22" FontAttributes="Bold"/>
+           <Frame  Grid.Column="1" Grid.Row="1" BackgroundColor="White" CornerRadius="3" Padding="0,0,0,0">
+           <StackLayout>
+                <StackLayout BackgroundColor="#fafafa" Margin="5,5,5,5" Spacing="0">
+                    <Label Text="Email" TextColor="DodgerBlue" FontSize="14" Margin="5,5,0,0"/>
+                    <Entry FontSize="14" FontAttributes="Bold" Margin="1,0,0,0" Text="{Binding InputEmail}" Placeholder="Email"/>
                 </StackLayout>
-               <StackLayout BackgroundColor="DarkGray" Margin="5,5,5,5" Spacing="0">
-                    <Label Text="Пароль" TextColor="Black" FontSize="12" Margin="5,0,0,0"/>
-                    <Entry FontSize="12" Margin="5,0,0,0" IsPassword="True" Text="{Binding InputPassword}"/>
+                <StackLayout BackgroundColor="#fafafa" Margin="5,5,5,5" Spacing="0">
+                    <Label Text="Пароль" TextColor="DodgerBlue" FontSize="14" Margin="5,0,0,0"/>
+                     <Entry Placeholder="Пароль" FontAttributes="Bold" Margin="1,0,0,0" FontSize="14" IsPassword="True" Text="{Binding InputPassword}"/>
                </StackLayout>
-               <StackLayout BackgroundColor="DarkGray" Margin="5,5,5,5" Spacing="0">
-                    <Label Text="Підтвердіть пароль" TextColor="Black" FontSize="12" Margin="5,0,0,0"/>
-                    <Entry FontSize="12" Margin="5,0,0,0" IsPassword="True"/>
+                <StackLayout BackgroundColor="#fafafa" Margin="5,5,5,5" Spacing="0">
+                    <Label Text="Підтвердіть пароль" TextColor="DodgerBlue" FontSize="14" Margin="5,0,0,0"/>
+                        <Entry Placeholder="Підтвердіть пароль" FontSize="14" FontAttributes="Bold" Margin="1,0,0,0" IsPassword="True"/>
                </StackLayout>
-               <StackLayout BackgroundColor="DarkGray" Margin="5,5,5,5" Spacing="0">
-                    <Label Text="Ім'я" TextColor="Black" FontSize="12" Margin="5,0,0,0"/>
-                    <Entry FontSize="12" Margin="5,0,0,0" Text="{Binding InputName}"/>
+                <StackLayout BackgroundColor="#fafafa" Margin="5,5,5,5" Spacing="0">
+                    <Label Text="Ім'я" TextColor="DodgerBlue" FontSize="14" Margin="5,0,0,0"/>
+                        <Entry Placeholder="Ім'я" FontSize="14" FontAttributes="Bold" Margin="1,0,0,0" Text="{Binding InputName}"/>
                </StackLayout>
-               <StackLayout BackgroundColor="DarkGray" Margin="5,5,5,5" Spacing="0">
-                    <Label Text="Прізвище" TextColor="Black" FontSize="12" Margin="5,0,0,0"/>
-                    <Entry FontSize="12" Margin="5,0,0,0" Text="{Binding InputSurname}"/>
+                <StackLayout BackgroundColor="#fafafa" Margin="5,5,5,5" Spacing="0">
+                    <Label Text="Прізвище" TextColor="DodgerBlue" FontSize="14" Margin="5,0,0,0"/>
+                        <Entry Placeholder="Прізвище" FontSize="14" FontAttributes="Bold" Margin="1,0,0,0" Text="{Binding InputSurname}"/>
                </StackLayout>
-               <StackLayout BackgroundColor="DarkGray" Margin="5,5,5,5" Spacing="0">
-                    <Label Text="Номер телефону" TextColor="Black" FontSize="12" Margin="5,0,0,0"/>
-                    <Entry FontSize="12" Margin="5,0,0,0" Text="{Binding InputNumber}"/>
+                <StackLayout BackgroundColor="#fafafa" Margin="5,5,5,5" Spacing="0">
+                    <Label Text="Номер телефону" TextColor="DodgerBlue" FontSize="14" Margin="5,0,0,0"/>
+                        <Entry Placeholder="Номер телефону" FontSize="14" FontAttributes="Bold" Margin="1,0,0,0" Text="{Binding InputNumber}"/>
                </StackLayout>
 
                <StackLayout>
-                   <Button Text="Реєстрація" BackgroundColor="Blue" Margin="5,15,5,0" TextColor="White" Command="{Binding RegistrationCommand}"/>
+                    <Button Text="Реєстрація" BackgroundColor="DodgerBlue" Margin="15,15,15,0" TextColor="White" Command="{Binding RegistrationCommand}"/>
                </StackLayout>
             </StackLayout>
-       </Grid>
+            </Frame>
+        </Grid>
     </ContentPage.Content>
 </ContentPage>

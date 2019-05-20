@@ -14,6 +14,12 @@ namespace GraduateWork.Client.Views
 	public partial class LocationPage : ContentPage
     {
         private LocationViewModel _viewModel;
+
+        public LocationPage()
+        {
+            InitializeComponent();    
+        }
+
 		public LocationPage (List<RegionDto> regions)
 		{
 			InitializeComponent ();

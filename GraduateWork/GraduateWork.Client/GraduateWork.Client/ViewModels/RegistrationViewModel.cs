@@ -98,7 +98,7 @@ namespace GraduateWork.Client.ViewModels
                 MobileNumber = _inputNumber
             }).ConfigureAwait(false);
 
-            await Navigation.PushAsync(new LoginPage(), true);
+            await Navigation.PopAsync(true);
         }
     }
 }

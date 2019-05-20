@@ -2,7 +2,7 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="GraduateWork.Client.Views.LocationPage"
-             BackgroundColor="LightGray">
+             BackgroundColor="White">
     <ContentPage.Content>
        <Grid>
            <Grid.ColumnDefinitions>
@@ -16,23 +16,23 @@
                <RowDefinition Height="*"/>
            </Grid.RowDefinitions>
 
-           <Label Grid.Row="0" Grid.Column="1" Text="Оберіть місто або область" TextColor="Black" VerticalTextAlignment="Center" FontSize="18"/>
-           <StackLayout Grid.Row="1" Grid.Column="1" BackgroundColor="White">
-                <ListView ItemsSource="{Binding Locations}" SelectionMode="Single" SelectedItem="{Binding LocationsSelectedItem, Mode=TwoWay}">
+           <Label Grid.Row="0" Grid.Column="1" Text="Оберіть місто або область" TextColor="Black" VerticalTextAlignment="Center" FontSize="24"/>
+            <Frame Grid.Row="1" Grid.Column="1" BackgroundColor="#fafafa" CornerRadius="3">
+                <ListView ItemsSource="{Binding Locations}" SelectionMode="Single" SeparatorColor="LightGray" HasUnevenRows ="True" SelectedItem="{Binding LocationsSelectedItem, Mode=TwoWay}">
                     <ListView.ItemTemplate>
                         <DataTemplate>
                             <ViewCell>
-                                <StackLayout Padding="12">
+                                <StackLayout Margin="0,10,0,0" BackgroundColor="#fafafa">
                                     <Label Text="{Binding Region}" 
                                            LineBreakMode="NoWrap" 
-                                           FontSize="18" />
-                                    <Label BackgroundColor="Gray" />
+                                           FontSize="24"
+                                           HorizontalTextAlignment="Center"/>
                                 </StackLayout>
                             </ViewCell>
                         </DataTemplate>
                     </ListView.ItemTemplate>
                 </ListView>
-           </StackLayout>
+           </Frame>
         </Grid>
     </ContentPage.Content>
 </ContentPage>
