@@ -32,6 +32,18 @@ namespace GraduateWork.Server.Data.Entities
         public float ExtraScore { get; set; }
 
         /// <summary>
+        /// Gets/Sets statement priority.
+        /// </summary>
+        [Column("priority")]
+        public int Priority { get; set; }
+
+        /// <summary>
+        /// Gets/Sets is accepted
+        /// </summary>
+        [Column("is_accept")]
+        public bool IsAccepted { get; set; }
+
+        /// <summary>
         /// Gets/Sets statement associated with entrant by id.
         /// </summary>
         [Column("entrant_id")]

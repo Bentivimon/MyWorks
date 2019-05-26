@@ -46,6 +46,12 @@ namespace GraduateWork.Server.Data.Entities
         [Column("subject_scores")]
         public string SubjectScores { get; set; }
 
+        /// <summary>
+        /// Gets/Sets count of places.
+        /// </summary>
+        [Column("count_of_places")]
+        public int CountOfPlaces { get; set; }
+
         #endregion
 
         #region Foreign keys

@@ -4,7 +4,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace GraduateWork.Server.Data.Migrations
 {
-    public partial class Initial : Migration
+    public partial class initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -29,7 +29,8 @@ namespace GraduateWork.Server.Data.Migrations
                     code = table.Column<string>(nullable: true),
                     name = table.Column<string>(nullable: true),
                     faculty = table.Column<string>(nullable: true),
-                    subject_scores = table.Column<string>(nullable: true)
+                    subject_scores = table.Column<string>(nullable: true),
+                    count_of_places = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -183,6 +184,8 @@ namespace GraduateWork.Server.Data.Migrations
                     id = table.Column<Guid>(nullable: false),
                     total_score = table.Column<float>(nullable: false),
                     extra_score = table.Column<float>(nullable: false),
+                    priority = table.Column<int>(nullable: false),
+                    is_accept = table.Column<bool>(nullable: false),
                     entrant_id = table.Column<Guid>(nullable: false),
                     speciality_id = table.Column<Guid>(nullable: false)
                 },

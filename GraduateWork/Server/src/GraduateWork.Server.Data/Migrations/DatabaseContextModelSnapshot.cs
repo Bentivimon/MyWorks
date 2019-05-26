@@ -142,6 +142,9 @@ namespace GraduateWork.Server.Data.Migrations
                     b.Property<string>("Code")
                         .HasColumnName("code");
 
+                    b.Property<int>("CountOfPlaces")
+                        .HasColumnName("count_of_places");
+
                     b.Property<string>("Faculty")
                         .HasColumnName("faculty");
 
@@ -167,6 +170,12 @@ namespace GraduateWork.Server.Data.Migrations
 
                     b.Property<float>("ExtraScore")
                         .HasColumnName("extra_score");
+
+                    b.Property<bool>("IsAccepted")
+                        .HasColumnName("is_accept");
+
+                    b.Property<int>("Priority")
+                        .HasColumnName("priority");
 
                     b.Property<Guid>("SpecialityId")
                         .HasColumnName("speciality_id");
