@@ -51,5 +51,7 @@ namespace GraduateWork.Server.Services.Abstractions
         /// <param name="universityId">University id.</param>
         /// <param name="cancellationToken"><see cref="CancellationToken"/> instance.</param>
         Task<List<SpecialityDto>> GetSpecialitiesInUniversityAsync(int skip, int take, Guid universityId, CancellationToken cancellationToken);
+
+        Task<SpecialityWithStatementsDto> GetSpecialityByIdWithStatementsAsync(Guid specialityId, CancellationToken cancellationToken);
     }
 }

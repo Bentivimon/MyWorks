@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
 using GraduateWork.Server.Models.Request;
 using GraduateWork.Server.Models.Response;
 
@@ -109,6 +110,19 @@ namespace GraduateWork.Server.Data.Entities
                 Name = Name,
                 Faculty = Faculty,
                 SubjectScores = SubjectScores
+            };
+        }
+
+        public SpecialityWithStatementsDto ToExtendedDto()
+        {
+            return new SpecialityWithStatementsDto
+            {
+                Id = Id,
+                Code = Code,
+                Name = Name,
+                Faculty = Faculty,
+                SubjectScores = SubjectScores,
+                Statements = Statements.Select(x=> x.ToDto()).ToList()
             };
         }
     }

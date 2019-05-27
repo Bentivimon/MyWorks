@@ -113,5 +113,19 @@ namespace GraduateWork.Server.Services.Implementations
                 return listOfSpecialities;
             }
         }
+
+        public async Task<SpecialityWithStatementsDto> GetSpecialityByIdWithStatementsAsync(Guid specialityId, CancellationToken cancellationToken)
+        {
+            using (var scope = _serviceProvider.CreateScope())
+            using (var context = scope.ServiceProvider.GetRequiredService<DatabaseContext>())
+            {
+                var speciality = await context.Specialties.AsNoTracking().Include(x => x.Statements)
+                    .FirstOrDefaultAsync(x => x.Id == specialityId, cancellationToken).ConfigureAwait(false);
+
+                speciality.Statements = speciality.Statements.Where(x => x.IsAccepted).OrderByDescending(x => x.TotalScore);
+
+                return speciality.ToExtendedDto();
+            }
+        }
     }
 }

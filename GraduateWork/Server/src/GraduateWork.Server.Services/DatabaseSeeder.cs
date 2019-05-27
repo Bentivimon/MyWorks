@@ -39,7 +39,7 @@ namespace GraduateWork.Server.Services
             foreach (var specialityEntity in specialties)
             {
                 var statement = await _context.Statements
-                    .Where(y => y.SpecialityId == specialityEntity.Id && y.Priority == 1).OrderBy(x=> x.TotalScore)
+                    .Where(y => y.SpecialityId == specialityEntity.Id && y.Priority == 1).OrderByDescending(x=> x.TotalScore)
                     .ToListAsync().ConfigureAwait(false);
 
                 if(!statement.Any())
@@ -76,7 +76,7 @@ namespace GraduateWork.Server.Services
                             .FirstAsync(x => x.Id == statementEntity.SpecialityId).ConfigureAwait(false);
 
                         var currentSpecialityStatements = await _context.Statements.AsNoTracking()
-                            .Where(x => x.IsAccepted && x.SpecialityId == speciality.Id).OrderBy(x => x.TotalScore)
+                            .Where(x => x.IsAccepted && x.SpecialityId == speciality.Id).OrderByDescending(x => x.TotalScore)
                             .ToListAsync().ConfigureAwait(false);
 
                         var lastTotalScore = currentSpecialityStatements.LastOrDefault()?.TotalScore ?? 0d;
@@ -108,7 +108,7 @@ namespace GraduateWork.Server.Services
                         await _context.SaveChangesAsync().ConfigureAwait(false);
 
                         currentSpecialityStatements.Add(statementEntity);
-                        currentSpecialityStatements = currentSpecialityStatements.OrderBy(x => x.TotalScore).ToList();
+                        currentSpecialityStatements = currentSpecialityStatements.OrderByDescending(x => x.TotalScore).ToList();
 
                         var lastStatements = currentSpecialityStatements.LastOrDefault();
 
@@ -265,10 +265,12 @@ namespace GraduateWork.Server.Services
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 151.358F, SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Національний університет Львівська політехніка")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Програмна інженерія").SpecialtyId,
+                            TotalScore = 151.358F, SpecialityId = (await _context.Universities
+                                    .Include(x => x.UniversitySpecialities).ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Національний університет Львівська політехніка")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 1,
                             IsAccepted = false
                         },
@@ -276,20 +278,24 @@ namespace GraduateWork.Server.Services
                         {
                             ExtraScore = 0,
                             TotalScore = 151.358F,
-                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Національний університет Львівська політехніка")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            SpecialityId = (await _context.Universities.Include(x => x.UniversitySpecialities)
+                                    .ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Національний університет Львівська політехніка")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 2,
                             IsAccepted = false
                         },
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 151.358F, SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Тернопільський Національний Економічний Університет")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Програмна інженерія").SpecialtyId,
+                            TotalScore = 151.358F, SpecialityId = (await _context.Universities
+                                    .Include(x => x.UniversitySpecialities).ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Тернопільський Національний Економічний Університет")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 3,
                             IsAccepted = false
                         },
@@ -297,16 +303,18 @@ namespace GraduateWork.Server.Services
                         {
                             ExtraScore = 0,
                             TotalScore = 151.358F,
-                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Тернопільський Національний Економічний Університет")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            SpecialityId = (await _context.Universities.Include(x => x.UniversitySpecialities)
+                                    .ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Тернопільський Національний Економічний Університет")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 4,
                             IsAccepted = false
                         }
                     }
                 },
-                 new EntrantEntity
+                new EntrantEntity
                 {
                     FirstName = "А.",
                     LastName = "Капран",
@@ -336,48 +344,56 @@ namespace GraduateWork.Server.Services
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 178.704F, SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Національний університет Львівська політехніка")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Програмна інженерія").SpecialtyId,
+                            TotalScore = 178.704F, SpecialityId = (await _context.Universities
+                                    .Include(x => x.UniversitySpecialities).ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Національний університет Львівська політехніка")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
+                            Priority = 4,
+                            IsAccepted = false
+                        },
+                        new StatementEntity
+                        {
+                            ExtraScore = 0,
+                            TotalScore = 178.704F,
+                            SpecialityId = (await _context.Universities.Include(x => x.UniversitySpecialities)
+                                    .ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Національний університет Львівська політехніка")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 1,
                             IsAccepted = false
                         },
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 178.704F,
-                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Національний університет Львівська політехніка")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            TotalScore = 178.704F, SpecialityId = (await _context.Universities
+                                    .Include(x => x.UniversitySpecialities).ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Тернопільський Національний Економічний Університет")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 2,
                             IsAccepted = false
                         },
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 178.704F, SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Тернопільський Національний Економічний Університет")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Програмна інженерія").SpecialtyId,
-                            Priority = 3,
-                            IsAccepted = false
-                        },
-                        new StatementEntity
-                        {
-                            ExtraScore = 0,
                             TotalScore = 178.704F,
-                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Тернопільський Національний Економічний Університет")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
-                            Priority = 4,
+                            SpecialityId = (await _context.Universities.Include(x => x.UniversitySpecialities)
+                                    .ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Тернопільський Національний Економічний Університет")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            Priority = 3,
                             IsAccepted = false
                         }
                     }
                 },
-                 new EntrantEntity
+                new EntrantEntity
                 {
                     FirstName = "В.",
                     LastName = "Шкрібинець",
@@ -407,31 +423,12 @@ namespace GraduateWork.Server.Services
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 178.500F, SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Національний університет Львівська політехніка")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Програмна інженерія").SpecialtyId,
-                            Priority = 1,
-                            IsAccepted = false
-                        },
-                        new StatementEntity
-                        {
-                            ExtraScore = 0,
-                            TotalScore = 178.500F,
-                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Національний університет Львівська політехніка")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
-                            Priority = 2,
-                            IsAccepted = false
-                        },
-                        new StatementEntity
-                        {
-                            ExtraScore = 0,
-                            TotalScore = 178.500F, SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Тернопільський Національний Економічний Університет")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Програмна інженерія").SpecialtyId,
+                            TotalScore = 178.500F, SpecialityId = (await _context.Universities
+                                    .Include(x => x.UniversitySpecialities).ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Національний університет Львівська політехніка")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 3,
                             IsAccepted = false
                         },
@@ -439,16 +436,43 @@ namespace GraduateWork.Server.Services
                         {
                             ExtraScore = 0,
                             TotalScore = 178.500F,
-                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Тернопільський Національний Економічний Університет")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            SpecialityId = (await _context.Universities.Include(x => x.UniversitySpecialities)
+                                    .ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Національний університет Львівська політехніка")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 4,
+                            IsAccepted = false
+                        },
+                        new StatementEntity
+                        {
+                            ExtraScore = 0,
+                            TotalScore = 178.500F, SpecialityId = (await _context.Universities
+                                    .Include(x => x.UniversitySpecialities).ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Тернопільський Національний Економічний Університет")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
+                            Priority = 1,
+                            IsAccepted = false
+                        },
+                        new StatementEntity
+                        {
+                            ExtraScore = 0,
+                            TotalScore = 178.500F,
+                            SpecialityId = (await _context.Universities.Include(x => x.UniversitySpecialities)
+                                    .ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Тернопільський Національний Економічний Університет")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            Priority = 2,
                             IsAccepted = false
                         }
                     }
                 },
-                 new EntrantEntity
+                new EntrantEntity
                 {
                     FirstName = "Б.",
                     LastName = "Лагода",
@@ -478,48 +502,56 @@ namespace GraduateWork.Server.Services
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 173.851F, SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Національний університет Львівська політехніка")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Програмна інженерія").SpecialtyId,
-                            Priority = 1,
-                            IsAccepted = false
-                        },
-                        new StatementEntity
-                        {
-                            ExtraScore = 0,
-                            TotalScore = 173.851F,
-                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Національний університет Львівська політехніка")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            TotalScore = 173.851F, SpecialityId = (await _context.Universities
+                                    .Include(x => x.UniversitySpecialities).ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Національний університет Львівська політехніка")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 2,
                             IsAccepted = false
                         },
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 173.851F, SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Тернопільський Національний Економічний Університет")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Програмна інженерія").SpecialtyId,
+                            TotalScore = 173.851F,
+                            SpecialityId = (await _context.Universities.Include(x => x.UniversitySpecialities)
+                                    .ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Національний університет Львівська політехніка")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 3,
                             IsAccepted = false
                         },
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 173.851F,
-                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Тернопільський Національний Економічний Університет")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            TotalScore = 173.851F, SpecialityId = (await _context.Universities
+                                    .Include(x => x.UniversitySpecialities).ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Тернопільський Національний Економічний Університет")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 4,
+                            IsAccepted = false
+                        },
+                        new StatementEntity
+                        {
+                            ExtraScore = 0,
+                            TotalScore = 173.851F,
+                            SpecialityId = (await _context.Universities.Include(x => x.UniversitySpecialities)
+                                    .ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Тернопільський Національний Економічний Університет")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            Priority = 1,
                             IsAccepted = false
                         }
                     }
                 },
-                 new EntrantEntity
+                new EntrantEntity
                 {
                     FirstName = "Ю.",
                     LastName = "Кріль",
@@ -549,10 +581,12 @@ namespace GraduateWork.Server.Services
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 168.708F, SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Національний університет Львівська політехніка")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Програмна інженерія").SpecialtyId,
+                            TotalScore = 168.708F, SpecialityId = (await _context.Universities
+                                    .Include(x => x.UniversitySpecialities).ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Національний університет Львівська політехніка")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 1,
                             IsAccepted = false
                         },
@@ -560,20 +594,24 @@ namespace GraduateWork.Server.Services
                         {
                             ExtraScore = 0,
                             TotalScore = 168.708F,
-                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Національний університет Львівська політехніка")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            SpecialityId = (await _context.Universities.Include(x => x.UniversitySpecialities)
+                                    .ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Національний університет Львівська політехніка")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 2,
                             IsAccepted = false
                         },
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 168.708F, SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Тернопільський Національний Економічний Університет")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Програмна інженерія").SpecialtyId,
+                            TotalScore = 168.708F, SpecialityId = (await _context.Universities
+                                    .Include(x => x.UniversitySpecialities).ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Тернопільський Національний Економічний Університет")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 3,
                             IsAccepted = false
                         },
@@ -581,16 +619,18 @@ namespace GraduateWork.Server.Services
                         {
                             ExtraScore = 0,
                             TotalScore = 168.708F,
-                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Тернопільський Національний Економічний Університет")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            SpecialityId = (await _context.Universities.Include(x => x.UniversitySpecialities)
+                                    .ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Тернопільський Національний Економічний Університет")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 4,
                             IsAccepted = false
                         }
                     }
                 },
-                 new EntrantEntity
+                new EntrantEntity
                 {
                     FirstName = "А.",
                     LastName = "Гарасівка",
@@ -620,48 +660,56 @@ namespace GraduateWork.Server.Services
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 168.708F, SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Національний університет Львівська політехніка")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Програмна інженерія").SpecialtyId,
+                            TotalScore = 168.708F, SpecialityId = (await _context.Universities
+                                    .Include(x => x.UniversitySpecialities).ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Національний університет Львівська політехніка")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
+                            Priority = 4,
+                            IsAccepted = false
+                        },
+                        new StatementEntity
+                        {
+                            ExtraScore = 0,
+                            TotalScore = 168.708F,
+                            SpecialityId = (await _context.Universities.Include(x => x.UniversitySpecialities)
+                                    .ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Національний університет Львівська політехніка")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 1,
                             IsAccepted = false
                         },
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 168.708F,
-                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Національний університет Львівська політехніка")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            TotalScore = 168.708F, SpecialityId = (await _context.Universities
+                                    .Include(x => x.UniversitySpecialities).ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Тернопільський Національний Економічний Університет")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 2,
                             IsAccepted = false
                         },
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 168.708F, SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Тернопільський Національний Економічний Університет")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Програмна інженерія").SpecialtyId,
-                            Priority = 3,
-                            IsAccepted = false
-                        },
-                        new StatementEntity
-                        {
-                            ExtraScore = 0,
                             TotalScore = 168.708F,
-                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Тернопільський Національний Економічний Університет")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
-                            Priority = 4,
+                            SpecialityId = (await _context.Universities.Include(x => x.UniversitySpecialities)
+                                    .ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Тернопільський Національний Економічний Університет")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            Priority = 3,
                             IsAccepted = false
                         }
                     }
                 },
-                 new EntrantEntity
+                new EntrantEntity
                 {
                     FirstName = "Б.",
                     LastName = "Глинський",
@@ -691,31 +739,12 @@ namespace GraduateWork.Server.Services
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 166.158F, SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Національний університет Львівська політехніка")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Програмна інженерія").SpecialtyId,
-                            Priority = 1,
-                            IsAccepted = false
-                        },
-                        new StatementEntity
-                        {
-                            ExtraScore = 0,
-                            TotalScore = 166.158F,
-                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Національний університет Львівська політехніка")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
-                            Priority = 2,
-                            IsAccepted = false
-                        },
-                        new StatementEntity
-                        {
-                            ExtraScore = 0,
-                            TotalScore = 166.158F, SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Тернопільський Національний Економічний Університет")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Програмна інженерія").SpecialtyId,
+                            TotalScore = 166.158F, SpecialityId = (await _context.Universities
+                                    .Include(x => x.UniversitySpecialities).ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Національний університет Львівська політехніка")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 3,
                             IsAccepted = false
                         },
@@ -723,16 +752,43 @@ namespace GraduateWork.Server.Services
                         {
                             ExtraScore = 0,
                             TotalScore = 166.158F,
-                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Тернопільський Національний Економічний Університет")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            SpecialityId = (await _context.Universities.Include(x => x.UniversitySpecialities)
+                                    .ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Національний університет Львівська політехніка")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 4,
+                            IsAccepted = false
+                        },
+                        new StatementEntity
+                        {
+                            ExtraScore = 0,
+                            TotalScore = 166.158F, SpecialityId = (await _context.Universities
+                                    .Include(x => x.UniversitySpecialities).ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Тернопільський Національний Економічний Університет")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
+                            Priority = 1,
+                            IsAccepted = false
+                        },
+                        new StatementEntity
+                        {
+                            ExtraScore = 0,
+                            TotalScore = 166.158F,
+                            SpecialityId = (await _context.Universities.Include(x => x.UniversitySpecialities)
+                                    .ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Тернопільський Національний Економічний Університет")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            Priority = 2,
                             IsAccepted = false
                         }
                     }
                 },
-                 new EntrantEntity
+                new EntrantEntity
                 {
                     FirstName = "А.",
                     LastName = "іванов",
@@ -762,48 +818,56 @@ namespace GraduateWork.Server.Services
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 162.894F, SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Національний університет Львівська політехніка")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Програмна інженерія").SpecialtyId,
-                            Priority = 1,
-                            IsAccepted = false
-                        },
-                        new StatementEntity
-                        {
-                            ExtraScore = 0,
-                            TotalScore = 162.894F,
-                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Національний університет Львівська політехніка")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            TotalScore = 162.894F, SpecialityId = (await _context.Universities
+                                    .Include(x => x.UniversitySpecialities).ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Національний університет Львівська політехніка")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 2,
                             IsAccepted = false
                         },
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 162.894F, SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Тернопільський Національний Економічний Університет")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Програмна інженерія").SpecialtyId,
+                            TotalScore = 162.894F,
+                            SpecialityId = (await _context.Universities.Include(x => x.UniversitySpecialities)
+                                    .ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Національний університет Львівська політехніка")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 3,
                             IsAccepted = false
                         },
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 162.894F,
-                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Тернопільський Національний Економічний Університет")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            TotalScore = 162.894F, SpecialityId = (await _context.Universities
+                                    .Include(x => x.UniversitySpecialities).ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Тернопільський Національний Економічний Університет")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 4,
+                            IsAccepted = false
+                        },
+                        new StatementEntity
+                        {
+                            ExtraScore = 0,
+                            TotalScore = 162.894F,
+                            SpecialityId = (await _context.Universities.Include(x => x.UniversitySpecialities)
+                                    .ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Тернопільський Національний Економічний Університет")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            Priority = 1,
                             IsAccepted = false
                         }
                     }
                 },
-                 new EntrantEntity
+                new EntrantEntity
                 {
                     FirstName = "С.",
                     LastName = "Козловський",
@@ -833,10 +897,12 @@ namespace GraduateWork.Server.Services
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 162.615F, SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Національний університет Львівська політехніка")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Програмна інженерія").SpecialtyId,
+                            TotalScore = 162.615F, SpecialityId = (await _context.Universities
+                                    .Include(x => x.UniversitySpecialities).ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Національний університет Львівська політехніка")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 1,
                             IsAccepted = false
                         },
@@ -844,20 +910,24 @@ namespace GraduateWork.Server.Services
                         {
                             ExtraScore = 0,
                             TotalScore = 162.615F,
-                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Національний університет Львівська політехніка")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            SpecialityId = (await _context.Universities.Include(x => x.UniversitySpecialities)
+                                    .ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Національний університет Львівська політехніка")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 2,
                             IsAccepted = false
                         },
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 162.615F, SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Тернопільський Національний Економічний Університет")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Програмна інженерія").SpecialtyId,
+                            TotalScore = 162.615F, SpecialityId = (await _context.Universities
+                                    .Include(x => x.UniversitySpecialities).ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Тернопільський Національний Економічний Університет")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 3,
                             IsAccepted = false
                         },
@@ -865,16 +935,18 @@ namespace GraduateWork.Server.Services
                         {
                             ExtraScore = 0,
                             TotalScore = 162.615F,
-                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Тернопільський Національний Економічний Університет")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            SpecialityId = (await _context.Universities.Include(x => x.UniversitySpecialities)
+                                    .ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Тернопільський Національний Економічний Університет")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 4,
                             IsAccepted = false
                         }
                     }
                 },
-                 new EntrantEntity
+                new EntrantEntity
                 {
                     FirstName = "В.",
                     LastName = "Козак",
@@ -904,48 +976,56 @@ namespace GraduateWork.Server.Services
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 162.486F, SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Національний університет Львівська політехніка")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Програмна інженерія").SpecialtyId,
+                            TotalScore = 162.486F, SpecialityId = (await _context.Universities
+                                    .Include(x => x.UniversitySpecialities).ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Національний університет Львівська політехніка")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
+                            Priority = 4,
+                            IsAccepted = false
+                        },
+                        new StatementEntity
+                        {
+                            ExtraScore = 0,
+                            TotalScore = 162.486F,
+                            SpecialityId = (await _context.Universities.Include(x => x.UniversitySpecialities)
+                                    .ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Національний університет Львівська політехніка")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 1,
                             IsAccepted = false
                         },
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 162.486F,
-                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Національний університет Львівська політехніка")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            TotalScore = 162.486F, SpecialityId = (await _context.Universities
+                                    .Include(x => x.UniversitySpecialities).ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Тернопільський Національний Економічний Університет")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 2,
                             IsAccepted = false
                         },
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 162.486F, SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Тернопільський Національний Економічний Університет")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Програмна інженерія").SpecialtyId,
-                            Priority = 3,
-                            IsAccepted = false
-                        },
-                        new StatementEntity
-                        {
-                            ExtraScore = 0,
                             TotalScore = 162.486F,
-                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Тернопільський Національний Економічний Університет")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
-                            Priority = 4,
+                            SpecialityId = (await _context.Universities.Include(x => x.UniversitySpecialities)
+                                    .ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Тернопільський Національний Економічний Університет")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            Priority = 3,
                             IsAccepted = false
                         }
                     }
                 },
-                 new EntrantEntity
+                new EntrantEntity
                 {
                     FirstName = "Р.",
                     LastName = "Бортник",
@@ -975,31 +1055,12 @@ namespace GraduateWork.Server.Services
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 159.222F, SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Національний університет Львівська політехніка")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Програмна інженерія").SpecialtyId,
-                            Priority = 1,
-                            IsAccepted = false
-                        },
-                        new StatementEntity
-                        {
-                            ExtraScore = 0,
-                            TotalScore = 159.222F,
-                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Національний університет Львівська політехніка")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
-                            Priority = 2,
-                            IsAccepted = false
-                        },
-                        new StatementEntity
-                        {
-                            ExtraScore = 0,
-                            TotalScore = 159.222F, SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Тернопільський Національний Економічний Університет")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Програмна інженерія").SpecialtyId,
+                            TotalScore = 159.222F, SpecialityId = (await _context.Universities
+                                    .Include(x => x.UniversitySpecialities).ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Національний університет Львівська політехніка")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 3,
                             IsAccepted = false
                         },
@@ -1007,16 +1068,43 @@ namespace GraduateWork.Server.Services
                         {
                             ExtraScore = 0,
                             TotalScore = 159.222F,
-                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Тернопільський Національний Економічний Університет")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            SpecialityId = (await _context.Universities.Include(x => x.UniversitySpecialities)
+                                    .ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Національний університет Львівська політехніка")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 4,
+                            IsAccepted = false
+                        },
+                        new StatementEntity
+                        {
+                            ExtraScore = 0,
+                            TotalScore = 159.222F, SpecialityId = (await _context.Universities
+                                    .Include(x => x.UniversitySpecialities).ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Тернопільський Національний Економічний Університет")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
+                            Priority = 1,
+                            IsAccepted = false
+                        },
+                        new StatementEntity
+                        {
+                            ExtraScore = 0,
+                            TotalScore = 159.222F,
+                            SpecialityId = (await _context.Universities.Include(x => x.UniversitySpecialities)
+                                    .ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Тернопільський Національний Економічний Університет")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            Priority = 2,
                             IsAccepted = false
                         }
                     }
                 },
-                 new EntrantEntity
+                new EntrantEntity
                 {
                     FirstName = "В.",
                     LastName = "Лавренчук",
@@ -1046,48 +1134,56 @@ namespace GraduateWork.Server.Services
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 157.590F, SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Національний університет Львівська політехніка")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Програмна інженерія").SpecialtyId,
-                            Priority = 1,
-                            IsAccepted = false
-                        },
-                        new StatementEntity
-                        {
-                            ExtraScore = 0,
-                            TotalScore = 157.590F,
-                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Національний університет Львівська політехніка")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            TotalScore = 157.590F, SpecialityId = (await _context.Universities
+                                    .Include(x => x.UniversitySpecialities).ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Національний університет Львівська політехніка")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 2,
                             IsAccepted = false
                         },
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 157.590F, SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Тернопільський Національний Економічний Університет")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Програмна інженерія").SpecialtyId,
+                            TotalScore = 157.590F,
+                            SpecialityId = (await _context.Universities.Include(x => x.UniversitySpecialities)
+                                    .ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Національний університет Львівська політехніка")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 3,
                             IsAccepted = false
                         },
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 157.590F,
-                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Тернопільський Національний Економічний Університет")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            TotalScore = 157.590F, SpecialityId = (await _context.Universities
+                                    .Include(x => x.UniversitySpecialities).ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Тернопільський Національний Економічний Університет")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 4,
+                            IsAccepted = false
+                        },
+                        new StatementEntity
+                        {
+                            ExtraScore = 0,
+                            TotalScore = 157.590F,
+                            SpecialityId = (await _context.Universities.Include(x => x.UniversitySpecialities)
+                                    .ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Тернопільський Національний Економічний Університет")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            Priority = 1,
                             IsAccepted = false
                         }
                     }
                 },
-                 new EntrantEntity
+                new EntrantEntity
                 {
                     FirstName = "Т.",
                     LastName = "Гук",
@@ -1117,10 +1213,12 @@ namespace GraduateWork.Server.Services
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 156.162F, SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Національний університет Львівська політехніка")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Програмна інженерія").SpecialtyId,
+                            TotalScore = 156.162F, SpecialityId = (await _context.Universities
+                                    .Include(x => x.UniversitySpecialities).ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Національний університет Львівська політехніка")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 1,
                             IsAccepted = false
                         },
@@ -1128,20 +1226,24 @@ namespace GraduateWork.Server.Services
                         {
                             ExtraScore = 0,
                             TotalScore = 156.162F,
-                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Національний університет Львівська політехніка")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            SpecialityId = (await _context.Universities.Include(x => x.UniversitySpecialities)
+                                    .ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Національний університет Львівська політехніка")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 2,
                             IsAccepted = false
                         },
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 156.162F, SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Тернопільський Національний Економічний Університет")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Програмна інженерія").SpecialtyId,
+                            TotalScore = 156.162F, SpecialityId = (await _context.Universities
+                                    .Include(x => x.UniversitySpecialities).ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Тернопільський Національний Економічний Університет")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 3,
                             IsAccepted = false
                         },
@@ -1149,16 +1251,18 @@ namespace GraduateWork.Server.Services
                         {
                             ExtraScore = 0,
                             TotalScore = 156.162F,
-                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Тернопільський Національний Економічний Університет")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            SpecialityId = (await _context.Universities.Include(x => x.UniversitySpecialities)
+                                    .ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Тернопільський Національний Економічний Університет")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 4,
                             IsAccepted = false
                         }
                     }
                 },
-                 new EntrantEntity
+                new EntrantEntity
                 {
                     FirstName = "А.",
                     LastName = "Кобозєв",
@@ -1188,48 +1292,56 @@ namespace GraduateWork.Server.Services
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 154.530F, SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Національний університет Львівська політехніка")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Програмна інженерія").SpecialtyId,
+                            TotalScore = 154.530F, SpecialityId = (await _context.Universities
+                                    .Include(x => x.UniversitySpecialities).ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Національний університет Львівська політехніка")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
+                            Priority = 4,
+                            IsAccepted = false
+                        },
+                        new StatementEntity
+                        {
+                            ExtraScore = 0,
+                            TotalScore = 154.530F,
+                            SpecialityId = (await _context.Universities.Include(x => x.UniversitySpecialities)
+                                    .ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Національний університет Львівська політехніка")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 1,
                             IsAccepted = false
                         },
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 154.530F,
-                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Національний університет Львівська політехніка")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            TotalScore = 154.530F, SpecialityId = (await _context.Universities
+                                    .Include(x => x.UniversitySpecialities).ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Тернопільський Національний Економічний Університет")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 2,
                             IsAccepted = false
                         },
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 154.530F, SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Тернопільський Національний Економічний Університет")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Програмна інженерія").SpecialtyId,
-                            Priority = 3,
-                            IsAccepted = false
-                        },
-                        new StatementEntity
-                        {
-                            ExtraScore = 0,
                             TotalScore = 154.530F,
-                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Тернопільський Національний Економічний Університет")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
-                            Priority = 4,
+                            SpecialityId = (await _context.Universities.Include(x => x.UniversitySpecialities)
+                                    .ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Тернопільський Національний Економічний Університет")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            Priority = 3,
                             IsAccepted = false
                         }
                     }
                 },
-                 new EntrantEntity
+                new EntrantEntity
                 {
                     FirstName = "А.",
                     LastName = "Коваль",
@@ -1259,31 +1371,12 @@ namespace GraduateWork.Server.Services
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 150.546F, SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Національний університет Львівська політехніка")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Програмна інженерія").SpecialtyId,
-                            Priority = 1,
-                            IsAccepted = false
-                        },
-                        new StatementEntity
-                        {
-                            ExtraScore = 0,
-                            TotalScore = 150.546F,
-                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Національний університет Львівська політехніка")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
-                            Priority = 2,
-                            IsAccepted = false
-                        },
-                        new StatementEntity
-                        {
-                            ExtraScore = 0,
-                            TotalScore = 150.546F, SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Тернопільський Національний Економічний Університет")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Програмна інженерія").SpecialtyId,
+                            TotalScore = 150.546F, SpecialityId = (await _context.Universities
+                                    .Include(x => x.UniversitySpecialities).ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Національний університет Львівська політехніка")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 3,
                             IsAccepted = false
                         },
@@ -1291,16 +1384,43 @@ namespace GraduateWork.Server.Services
                         {
                             ExtraScore = 0,
                             TotalScore = 150.546F,
-                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Тернопільський Національний Економічний Університет")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            SpecialityId = (await _context.Universities.Include(x => x.UniversitySpecialities)
+                                    .ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Національний університет Львівська політехніка")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 4,
+                            IsAccepted = false
+                        },
+                        new StatementEntity
+                        {
+                            ExtraScore = 0,
+                            TotalScore = 150.546F, SpecialityId = (await _context.Universities
+                                    .Include(x => x.UniversitySpecialities).ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Тернопільський Національний Економічний Університет")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
+                            Priority = 1,
+                            IsAccepted = false
+                        },
+                        new StatementEntity
+                        {
+                            ExtraScore = 0,
+                            TotalScore = 150.546F,
+                            SpecialityId = (await _context.Universities.Include(x => x.UniversitySpecialities)
+                                    .ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Тернопільський Національний Економічний Університет")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            Priority = 2,
                             IsAccepted = false
                         }
                     }
                 },
-                 new EntrantEntity
+                new EntrantEntity
                 {
                     FirstName = "Ю.",
                     LastName = "Заяць",
@@ -1330,48 +1450,56 @@ namespace GraduateWork.Server.Services
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 147.492F, SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Національний університет Львівська політехніка")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Програмна інженерія").SpecialtyId,
-                            Priority = 1,
-                            IsAccepted = false
-                        },
-                        new StatementEntity
-                        {
-                            ExtraScore = 0,
-                            TotalScore = 147.492F,
-                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Національний університет Львівська політехніка")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            TotalScore = 147.492F, SpecialityId = (await _context.Universities
+                                    .Include(x => x.UniversitySpecialities).ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Національний університет Львівська політехніка")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 2,
                             IsAccepted = false
                         },
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 147.492F, SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Тернопільський Національний Економічний Університет")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Програмна інженерія").SpecialtyId,
+                            TotalScore = 147.492F,
+                            SpecialityId = (await _context.Universities.Include(x => x.UniversitySpecialities)
+                                    .ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Національний університет Львівська політехніка")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 3,
                             IsAccepted = false
                         },
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 147.492F,
-                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Тернопільський Національний Економічний Університет")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            TotalScore = 147.492F, SpecialityId = (await _context.Universities
+                                    .Include(x => x.UniversitySpecialities).ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Тернопільський Національний Економічний Університет")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 4,
+                            IsAccepted = false
+                        },
+                        new StatementEntity
+                        {
+                            ExtraScore = 0,
+                            TotalScore = 147.492F,
+                            SpecialityId = (await _context.Universities.Include(x => x.UniversitySpecialities)
+                                    .ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Тернопільський Національний Економічний Університет")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            Priority = 1,
                             IsAccepted = false
                         }
                     }
                 },
-                 new EntrantEntity
+                new EntrantEntity
                 {
                     FirstName = "Т.",
                     LastName = "Шнуренко",
@@ -1401,10 +1529,12 @@ namespace GraduateWork.Server.Services
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 144.228F, SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Національний університет Львівська політехніка")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Програмна інженерія").SpecialtyId,
+                            TotalScore = 144.228F, SpecialityId = (await _context.Universities
+                                    .Include(x => x.UniversitySpecialities).ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Національний університет Львівська політехніка")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 1,
                             IsAccepted = false
                         },
@@ -1412,20 +1542,24 @@ namespace GraduateWork.Server.Services
                         {
                             ExtraScore = 0,
                             TotalScore = 144.228F,
-                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Національний університет Львівська політехніка")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            SpecialityId = (await _context.Universities.Include(x => x.UniversitySpecialities)
+                                    .ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Національний університет Львівська політехніка")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 2,
                             IsAccepted = false
                         },
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 144.228F, SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Тернопільський Національний Економічний Університет")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Програмна інженерія").SpecialtyId,
+                            TotalScore = 144.228F, SpecialityId = (await _context.Universities
+                                    .Include(x => x.UniversitySpecialities).ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Тернопільський Національний Економічний Університет")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 3,
                             IsAccepted = false
                         },
@@ -1433,16 +1567,18 @@ namespace GraduateWork.Server.Services
                         {
                             ExtraScore = 0,
                             TotalScore = 144.228F,
-                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Тернопільський Національний Економічний Університет")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            SpecialityId = (await _context.Universities.Include(x => x.UniversitySpecialities)
+                                    .ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Тернопільський Національний Економічний Університет")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 4,
                             IsAccepted = false
                         }
                     }
                 },
-                 new EntrantEntity
+                new EntrantEntity
                 {
                     FirstName = "Ю.",
                     LastName = "Репетило",
@@ -1472,48 +1608,56 @@ namespace GraduateWork.Server.Services
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 139.740F, SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Національний університет Львівська політехніка")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Програмна інженерія").SpecialtyId,
+                            TotalScore = 139.740F, SpecialityId = (await _context.Universities
+                                    .Include(x => x.UniversitySpecialities).ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Національний університет Львівська політехніка")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
+                            Priority = 4,
+                            IsAccepted = false
+                        },
+                        new StatementEntity
+                        {
+                            ExtraScore = 0,
+                            TotalScore = 139.740F,
+                            SpecialityId = (await _context.Universities.Include(x => x.UniversitySpecialities)
+                                    .ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Національний університет Львівська політехніка")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 1,
                             IsAccepted = false
                         },
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 139.740F,
-                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Національний університет Львівська політехніка")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            TotalScore = 139.740F, SpecialityId = (await _context.Universities
+                                    .Include(x => x.UniversitySpecialities).ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Тернопільський Національний Економічний Університет")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 2,
                             IsAccepted = false
                         },
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 139.740F, SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Тернопільський Національний Економічний Університет")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Програмна інженерія").SpecialtyId,
-                            Priority = 3,
-                            IsAccepted = false
-                        },
-                        new StatementEntity
-                        {
-                            ExtraScore = 0,
                             TotalScore = 139.740F,
-                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Тернопільський Національний Економічний Університет")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
-                            Priority = 4,
+                            SpecialityId = (await _context.Universities.Include(x => x.UniversitySpecialities)
+                                    .ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Тернопільський Національний Економічний Університет")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            Priority = 3,
                             IsAccepted = false
                         }
                     }
                 },
-                 new EntrantEntity
+                new EntrantEntity
                 {
                     FirstName = "Н.",
                     LastName = "Микитюк",
@@ -1543,31 +1687,12 @@ namespace GraduateWork.Server.Services
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 139.726F, SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Національний університет Львівська політехніка")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Програмна інженерія").SpecialtyId,
-                            Priority = 1,
-                            IsAccepted = false
-                        },
-                        new StatementEntity
-                        {
-                            ExtraScore = 0,
-                            TotalScore = 139.726F,
-                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Національний університет Львівська політехніка")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
-                            Priority = 2,
-                            IsAccepted = false
-                        },
-                        new StatementEntity
-                        {
-                            ExtraScore = 0,
-                            TotalScore = 139.726F, SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Тернопільський Національний Економічний Університет")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Програмна інженерія").SpecialtyId,
+                            TotalScore = 139.726F, SpecialityId = (await _context.Universities
+                                    .Include(x => x.UniversitySpecialities).ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Національний університет Львівська політехніка")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 3,
                             IsAccepted = false
                         },
@@ -1575,16 +1700,43 @@ namespace GraduateWork.Server.Services
                         {
                             ExtraScore = 0,
                             TotalScore = 139.726F,
-                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Тернопільський Національний Економічний Університет")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            SpecialityId = (await _context.Universities.Include(x => x.UniversitySpecialities)
+                                    .ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Національний університет Львівська політехніка")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 4,
+                            IsAccepted = false
+                        },
+                        new StatementEntity
+                        {
+                            ExtraScore = 0,
+                            TotalScore = 139.726F, SpecialityId = (await _context.Universities
+                                    .Include(x => x.UniversitySpecialities).ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Тернопільський Національний Економічний Університет")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
+                            Priority = 1,
+                            IsAccepted = false
+                        },
+                        new StatementEntity
+                        {
+                            ExtraScore = 0,
+                            TotalScore = 139.726F,
+                            SpecialityId = (await _context.Universities.Include(x => x.UniversitySpecialities)
+                                    .ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Тернопільський Національний Економічний Університет")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            Priority = 2,
                             IsAccepted = false
                         }
                     }
                 },
-                 new EntrantEntity
+                new EntrantEntity
                 {
                     FirstName = "В.",
                     LastName = "Олійник",
@@ -1614,48 +1766,56 @@ namespace GraduateWork.Server.Services
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 139.026F, SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Національний університет Львівська політехніка")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Програмна інженерія").SpecialtyId,
-                            Priority = 1,
-                            IsAccepted = false
-                        },
-                        new StatementEntity
-                        {
-                            ExtraScore = 0,
-                            TotalScore = 139.026F,
-                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Національний університет Львівська політехніка")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            TotalScore = 139.026F, SpecialityId = (await _context.Universities
+                                    .Include(x => x.UniversitySpecialities).ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Національний університет Львівська політехніка")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 2,
                             IsAccepted = false
                         },
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 139.026F, SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Тернопільський Національний Економічний Університет")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Програмна інженерія").SpecialtyId,
+                            TotalScore = 139.026F,
+                            SpecialityId = (await _context.Universities.Include(x => x.UniversitySpecialities)
+                                    .ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Національний університет Львівська політехніка")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 3,
                             IsAccepted = false
                         },
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 139.026F,
-                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Тернопільський Національний Економічний Університет")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            TotalScore = 139.026F, SpecialityId = (await _context.Universities
+                                    .Include(x => x.UniversitySpecialities).ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Тернопільський Національний Економічний Університет")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 4,
+                            IsAccepted = false
+                        },
+                        new StatementEntity
+                        {
+                            ExtraScore = 0,
+                            TotalScore = 139.026F,
+                            SpecialityId = (await _context.Universities.Include(x => x.UniversitySpecialities)
+                                    .ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Тернопільський Національний Економічний Університет")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            Priority = 1,
                             IsAccepted = false
                         }
                     }
                 },
-                 new EntrantEntity
+                new EntrantEntity
                 {
                     FirstName = "Р.",
                     LastName = "Лаута",
@@ -1685,10 +1845,12 @@ namespace GraduateWork.Server.Services
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 137.292F, SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Національний університет Львівська політехніка")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Програмна інженерія").SpecialtyId,
+                            TotalScore = 137.292F, SpecialityId = (await _context.Universities
+                                    .Include(x => x.UniversitySpecialities).ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Національний університет Львівська політехніка")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 1,
                             IsAccepted = false
                         },
@@ -1696,20 +1858,24 @@ namespace GraduateWork.Server.Services
                         {
                             ExtraScore = 0,
                             TotalScore = 137.292F,
-                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Національний університет Львівська політехніка")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            SpecialityId = (await _context.Universities.Include(x => x.UniversitySpecialities)
+                                    .ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Національний університет Львівська політехніка")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 2,
                             IsAccepted = false
                         },
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 137.292F, SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Тернопільський Національний Економічний Університет")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Програмна інженерія").SpecialtyId,
+                            TotalScore = 137.292F, SpecialityId = (await _context.Universities
+                                    .Include(x => x.UniversitySpecialities).ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Тернопільський Національний Економічний Університет")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 3,
                             IsAccepted = false
                         },
@@ -1717,16 +1883,18 @@ namespace GraduateWork.Server.Services
                         {
                             ExtraScore = 0,
                             TotalScore = 137.292F,
-                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Тернопільський Національний Економічний Університет")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            SpecialityId = (await _context.Universities.Include(x => x.UniversitySpecialities)
+                                    .ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Тернопільський Національний Економічний Університет")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 4,
                             IsAccepted = false
                         }
                     }
                 },
-                 new EntrantEntity
+                new EntrantEntity
                 {
                     FirstName = "А.",
                     LastName = "Німчаковський",
@@ -1756,48 +1924,56 @@ namespace GraduateWork.Server.Services
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 132.547F, SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Національний університет Львівська політехніка")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Програмна інженерія").SpecialtyId,
+                            TotalScore = 132.547F, SpecialityId = (await _context.Universities
+                                    .Include(x => x.UniversitySpecialities).ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Національний університет Львівська політехніка")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
+                            Priority = 4,
+                            IsAccepted = false
+                        },
+                        new StatementEntity
+                        {
+                            ExtraScore = 0,
+                            TotalScore = 132.547F,
+                            SpecialityId = (await _context.Universities.Include(x => x.UniversitySpecialities)
+                                    .ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Національний університет Львівська політехніка")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 1,
                             IsAccepted = false
                         },
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 132.547F,
-                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Національний університет Львівська політехніка")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            TotalScore = 132.547F, SpecialityId = (await _context.Universities
+                                    .Include(x => x.UniversitySpecialities).ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Тернопільський Національний Економічний Університет")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 2,
                             IsAccepted = false
                         },
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 132.547F, SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Тернопільський Національний Економічний Університет")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Програмна інженерія").SpecialtyId,
-                            Priority = 3,
-                            IsAccepted = false
-                        },
-                        new StatementEntity
-                        {
-                            ExtraScore = 0,
                             TotalScore = 132.547F,
-                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Тернопільський Національний Економічний Університет")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
-                            Priority = 4,
+                            SpecialityId = (await _context.Universities.Include(x => x.UniversitySpecialities)
+                                    .ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Тернопільський Національний Економічний Університет")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            Priority = 3,
                             IsAccepted = false
                         }
                     }
                 },
-                 new EntrantEntity
+                new EntrantEntity
                 {
                     FirstName = "А.",
                     LastName = "Паламарчук",
@@ -1827,31 +2003,12 @@ namespace GraduateWork.Server.Services
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 125.562F, SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Національний університет Львівська політехніка")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Програмна інженерія").SpecialtyId,
-                            Priority = 1,
-                            IsAccepted = false
-                        },
-                        new StatementEntity
-                        {
-                            ExtraScore = 0,
-                            TotalScore = 125.562F,
-                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Національний університет Львівська політехніка")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
-                            Priority = 2,
-                            IsAccepted = false
-                        },
-                        new StatementEntity
-                        {
-                            ExtraScore = 0,
-                            TotalScore = 125.562F, SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Тернопільський Національний Економічний Університет")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Програмна інженерія").SpecialtyId,
+                            TotalScore = 125.562F, SpecialityId = (await _context.Universities
+                                    .Include(x => x.UniversitySpecialities).ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Національний університет Львівська політехніка")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 3,
                             IsAccepted = false
                         },
@@ -1859,16 +2016,43 @@ namespace GraduateWork.Server.Services
                         {
                             ExtraScore = 0,
                             TotalScore = 125.562F,
-                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Тернопільський Національний Економічний Університет")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            SpecialityId = (await _context.Universities.Include(x => x.UniversitySpecialities)
+                                    .ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Національний університет Львівська політехніка")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 4,
+                            IsAccepted = false
+                        },
+                        new StatementEntity
+                        {
+                            ExtraScore = 0,
+                            TotalScore = 125.562F, SpecialityId = (await _context.Universities
+                                    .Include(x => x.UniversitySpecialities).ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Тернопільський Національний Економічний Університет")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
+                            Priority = 1,
+                            IsAccepted = false
+                        },
+                        new StatementEntity
+                        {
+                            ExtraScore = 0,
+                            TotalScore = 125.562F,
+                            SpecialityId = (await _context.Universities.Include(x => x.UniversitySpecialities)
+                                    .ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Тернопільський Національний Економічний Університет")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            Priority = 2,
                             IsAccepted = false
                         }
                     }
                 },
-                 new EntrantEntity
+                new EntrantEntity
                 {
                     FirstName = "Р.",
                     LastName = "Бубало",
@@ -1898,48 +2082,56 @@ namespace GraduateWork.Server.Services
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 122.502F, SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Національний університет Львівська політехніка")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Програмна інженерія").SpecialtyId,
-                            Priority = 1,
-                            IsAccepted = false
-                        },
-                        new StatementEntity
-                        {
-                            ExtraScore = 0,
-                            TotalScore = 122.502F,
-                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Національний університет Львівська політехніка")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            TotalScore = 122.502F, SpecialityId = (await _context.Universities
+                                    .Include(x => x.UniversitySpecialities).ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Національний університет Львівська політехніка")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 2,
                             IsAccepted = false
                         },
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 122.502F, SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Тернопільський Національний Економічний Університет")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Програмна інженерія").SpecialtyId,
+                            TotalScore = 122.502F,
+                            SpecialityId = (await _context.Universities.Include(x => x.UniversitySpecialities)
+                                    .ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Національний університет Львівська політехніка")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 3,
                             IsAccepted = false
                         },
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 122.502F,
-                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Тернопільський Національний Економічний Університет")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            TotalScore = 122.502F, SpecialityId = (await _context.Universities
+                                    .Include(x => x.UniversitySpecialities).ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Тернопільський Національний Економічний Університет")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 4,
+                            IsAccepted = false
+                        },
+                        new StatementEntity
+                        {
+                            ExtraScore = 0,
+                            TotalScore = 122.502F,
+                            SpecialityId = (await _context.Universities.Include(x => x.UniversitySpecialities)
+                                    .ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Тернопільський Національний Економічний Університет")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            Priority = 1,
                             IsAccepted = false
                         }
                     }
                 },
-                                 new EntrantEntity
+                new EntrantEntity
                 {
                     FirstName = "Ю.",
                     LastName = "Чипак",
@@ -1969,31 +2161,12 @@ namespace GraduateWork.Server.Services
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 189.669F, SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Національний університет Львівська політехніка")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Програмна інженерія").SpecialtyId,
-                            Priority = 3,
-                            IsAccepted = false
-                        },
-                        new StatementEntity
-                        {
-                            ExtraScore = 0,
-                            TotalScore = 189.669F,
-                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Національний університет Львівська політехніка")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
-                            Priority = 4,
-                            IsAccepted = false
-                        },
-                        new StatementEntity
-                        {
-                            ExtraScore = 0,
-                            TotalScore = 189.669F, SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Тернопільський Національний Економічний Університет")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Програмна інженерія").SpecialtyId,
+                            TotalScore = 189.669F, SpecialityId = (await _context.Universities
+                                    .Include(x => x.UniversitySpecialities).ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Національний університет Львівська політехніка")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 1,
                             IsAccepted = false
                         },
@@ -2001,16 +2174,43 @@ namespace GraduateWork.Server.Services
                         {
                             ExtraScore = 0,
                             TotalScore = 189.669F,
-                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Тернопільський Національний Економічний Університет")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            SpecialityId = (await _context.Universities.Include(x => x.UniversitySpecialities)
+                                    .ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Національний університет Львівська політехніка")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 2,
+                            IsAccepted = false
+                        },
+                        new StatementEntity
+                        {
+                            ExtraScore = 0,
+                            TotalScore = 189.669F, SpecialityId = (await _context.Universities
+                                    .Include(x => x.UniversitySpecialities).ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Тернопільський Національний Економічний Університет")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
+                            Priority = 3,
+                            IsAccepted = false
+                        },
+                        new StatementEntity
+                        {
+                            ExtraScore = 0,
+                            TotalScore = 189.669F,
+                            SpecialityId = (await _context.Universities.Include(x => x.UniversitySpecialities)
+                                    .ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Тернопільський Національний Економічний Університет")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            Priority = 4,
                             IsAccepted = false
                         }
                     }
                 },
-                 new EntrantEntity
+                new EntrantEntity
                 {
                     FirstName = "А.",
                     LastName = "Павлючик",
@@ -2040,48 +2240,56 @@ namespace GraduateWork.Server.Services
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 176.358F, SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Національний університет Львівська політехніка")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Програмна інженерія").SpecialtyId,
-                            Priority = 3,
-                            IsAccepted = false
-                        },
-                        new StatementEntity
-                        {
-                            ExtraScore = 0,
-                            TotalScore = 176.358F,
-                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Національний університет Львівська політехніка")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            TotalScore = 176.358F, SpecialityId = (await _context.Universities
+                                    .Include(x => x.UniversitySpecialities).ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Національний університет Львівська політехніка")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 4,
                             IsAccepted = false
                         },
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 176.358F, SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Тернопільський Національний Економічний Університет")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Програмна інженерія").SpecialtyId,
+                            TotalScore = 176.358F,
+                            SpecialityId = (await _context.Universities.Include(x => x.UniversitySpecialities)
+                                    .ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Національний університет Львівська політехніка")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 1,
                             IsAccepted = false
                         },
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 176.358F,
-                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Тернопільський Національний Економічний Університет")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            TotalScore = 176.358F, SpecialityId = (await _context.Universities
+                                    .Include(x => x.UniversitySpecialities).ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Тернопільський Національний Економічний Університет")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 2,
+                            IsAccepted = false
+                        },
+                        new StatementEntity
+                        {
+                            ExtraScore = 0,
+                            TotalScore = 176.358F,
+                            SpecialityId = (await _context.Universities.Include(x => x.UniversitySpecialities)
+                                    .ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Тернопільський Національний Економічний Університет")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            Priority = 3,
                             IsAccepted = false
                         }
                     }
                 },
-                 new EntrantEntity
+                new EntrantEntity
                 {
                     FirstName = "Д.",
                     LastName = "Аксьонов",
@@ -2111,10 +2319,12 @@ namespace GraduateWork.Server.Services
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 175.593F, SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Національний університет Львівська політехніка")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Програмна інженерія").SpecialtyId,
+                            TotalScore = 175.593F, SpecialityId = (await _context.Universities
+                                    .Include(x => x.UniversitySpecialities).ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Національний університет Львівська політехніка")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 3,
                             IsAccepted = false
                         },
@@ -2122,20 +2332,24 @@ namespace GraduateWork.Server.Services
                         {
                             ExtraScore = 0,
                             TotalScore = 175.593F,
-                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Національний університет Львівська політехніка")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            SpecialityId = (await _context.Universities.Include(x => x.UniversitySpecialities)
+                                    .ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Національний університет Львівська політехніка")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 4,
                             IsAccepted = false
                         },
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 175.593F, SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Тернопільський Національний Економічний Університет")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Програмна інженерія").SpecialtyId,
+                            TotalScore = 175.593F, SpecialityId = (await _context.Universities
+                                    .Include(x => x.UniversitySpecialities).ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Тернопільський Національний Економічний Університет")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 1,
                             IsAccepted = false
                         },
@@ -2143,16 +2357,18 @@ namespace GraduateWork.Server.Services
                         {
                             ExtraScore = 0,
                             TotalScore = 175.593F,
-                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Тернопільський Національний Економічний Університет")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            SpecialityId = (await _context.Universities.Include(x => x.UniversitySpecialities)
+                                    .ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Тернопільський Національний Економічний Університет")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 2,
                             IsAccepted = false
                         }
                     }
                 },
-                 new EntrantEntity
+                new EntrantEntity
                 {
                     FirstName = "і.",
                     LastName = "Гапончук",
@@ -2182,48 +2398,56 @@ namespace GraduateWork.Server.Services
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 172.737F, SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Національний університет Львівська політехніка")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Програмна інженерія").SpecialtyId,
+                            TotalScore = 172.737F, SpecialityId = (await _context.Universities
+                                    .Include(x => x.UniversitySpecialities).ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Національний університет Львівська політехніка")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
+                            Priority = 2,
+                            IsAccepted = false
+                        },
+                        new StatementEntity
+                        {
+                            ExtraScore = 0,
+                            TotalScore = 172.737F,
+                            SpecialityId = (await _context.Universities.Include(x => x.UniversitySpecialities)
+                                    .ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Національний університет Львівська політехніка")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 3,
                             IsAccepted = false
                         },
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 172.737F,
-                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Національний університет Львівська політехніка")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            TotalScore = 172.737F, SpecialityId = (await _context.Universities
+                                    .Include(x => x.UniversitySpecialities).ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Тернопільський Національний Економічний Університет")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 4,
                             IsAccepted = false
                         },
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 172.737F, SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Тернопільський Національний Економічний Університет")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Програмна інженерія").SpecialtyId,
-                            Priority = 1,
-                            IsAccepted = false
-                        },
-                        new StatementEntity
-                        {
-                            ExtraScore = 0,
                             TotalScore = 172.737F,
-                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Тернопільський Національний Економічний Університет")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
-                            Priority = 2,
+                            SpecialityId = (await _context.Universities.Include(x => x.UniversitySpecialities)
+                                    .ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Тернопільський Національний Економічний Університет")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            Priority = 1,
                             IsAccepted = false
                         }
                     }
                 },
-                 new EntrantEntity
+                new EntrantEntity
                 {
                     FirstName = "Д.",
                     LastName = "Кононова",
@@ -2253,31 +2477,12 @@ namespace GraduateWork.Server.Services
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 170.799F, SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Національний університет Львівська політехніка")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Програмна інженерія").SpecialtyId,
-                            Priority = 3,
-                            IsAccepted = false
-                        },
-                        new StatementEntity
-                        {
-                            ExtraScore = 0,
-                            TotalScore = 170.799F,
-                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Національний університет Львівська політехніка")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
-                            Priority = 4,
-                            IsAccepted = false
-                        },
-                        new StatementEntity
-                        {
-                            ExtraScore = 0,
-                            TotalScore = 170.799F, SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Тернопільський Національний Економічний Університет")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Програмна інженерія").SpecialtyId,
+                            TotalScore = 170.799F, SpecialityId = (await _context.Universities
+                                    .Include(x => x.UniversitySpecialities).ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Національний університет Львівська політехніка")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 1,
                             IsAccepted = false
                         },
@@ -2285,16 +2490,43 @@ namespace GraduateWork.Server.Services
                         {
                             ExtraScore = 0,
                             TotalScore = 170.799F,
-                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Тернопільський Національний Економічний Університет")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            SpecialityId = (await _context.Universities.Include(x => x.UniversitySpecialities)
+                                    .ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Національний університет Львівська політехніка")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 2,
+                            IsAccepted = false
+                        },
+                        new StatementEntity
+                        {
+                            ExtraScore = 0,
+                            TotalScore = 170.799F, SpecialityId = (await _context.Universities
+                                    .Include(x => x.UniversitySpecialities).ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Тернопільський Національний Економічний Університет")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
+                            Priority = 3,
+                            IsAccepted = false
+                        },
+                        new StatementEntity
+                        {
+                            ExtraScore = 0,
+                            TotalScore = 170.799F,
+                            SpecialityId = (await _context.Universities.Include(x => x.UniversitySpecialities)
+                                    .ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Тернопільський Національний Економічний Університет")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            Priority = 4,
                             IsAccepted = false
                         }
                     }
                 },
-                 new EntrantEntity
+                new EntrantEntity
                 {
                     FirstName = "В.",
                     LastName = "Поленчук",
@@ -2324,48 +2556,56 @@ namespace GraduateWork.Server.Services
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 145.448F, SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Національний університет Львівська політехніка")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Програмна інженерія").SpecialtyId,
-                            Priority = 3,
-                            IsAccepted = false
-                        },
-                        new StatementEntity
-                        {
-                            ExtraScore = 0,
-                            TotalScore = 145.448F,
-                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Національний університет Львівська політехніка")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            TotalScore = 145.448F, SpecialityId = (await _context.Universities
+                                    .Include(x => x.UniversitySpecialities).ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Національний університет Львівська політехніка")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 4,
                             IsAccepted = false
                         },
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 145.448F, SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Тернопільський Національний Економічний Університет")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Програмна інженерія").SpecialtyId,
+                            TotalScore = 145.448F,
+                            SpecialityId = (await _context.Universities.Include(x => x.UniversitySpecialities)
+                                    .ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Національний університет Львівська політехніка")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 1,
                             IsAccepted = false
                         },
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 145.448F,
-                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Тернопільський Національний Економічний Університет")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            TotalScore = 145.448F, SpecialityId = (await _context.Universities
+                                    .Include(x => x.UniversitySpecialities).ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Тернопільський Національний Економічний Університет")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 2,
+                            IsAccepted = false
+                        },
+                        new StatementEntity
+                        {
+                            ExtraScore = 0,
+                            TotalScore = 145.448F,
+                            SpecialityId = (await _context.Universities.Include(x => x.UniversitySpecialities)
+                                    .ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Тернопільський Національний Економічний Університет")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            Priority = 3,
                             IsAccepted = false
                         }
                     }
                 },
-                 new EntrantEntity
+                new EntrantEntity
                 {
                     FirstName = "М.",
                     LastName = "Тракало",
@@ -2395,10 +2635,12 @@ namespace GraduateWork.Server.Services
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 200.000F, SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Національний університет Львівська політехніка")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Програмна інженерія").SpecialtyId,
+                            TotalScore = 200.000F, SpecialityId = (await _context.Universities
+                                    .Include(x => x.UniversitySpecialities).ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Національний університет Львівська політехніка")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 3,
                             IsAccepted = false
                         },
@@ -2406,20 +2648,24 @@ namespace GraduateWork.Server.Services
                         {
                             ExtraScore = 0,
                             TotalScore = 200.000F,
-                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Національний університет Львівська політехніка")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            SpecialityId = (await _context.Universities.Include(x => x.UniversitySpecialities)
+                                    .ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Національний університет Львівська політехніка")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 4,
                             IsAccepted = false
                         },
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 200.000F, SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Тернопільський Національний Економічний Університет")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Програмна інженерія").SpecialtyId,
+                            TotalScore = 200.000F, SpecialityId = (await _context.Universities
+                                    .Include(x => x.UniversitySpecialities).ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Тернопільський Національний Економічний Університет")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 1,
                             IsAccepted = false
                         },
@@ -2427,16 +2673,18 @@ namespace GraduateWork.Server.Services
                         {
                             ExtraScore = 0,
                             TotalScore = 200.000F,
-                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Тернопільський Національний Економічний Університет")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            SpecialityId = (await _context.Universities.Include(x => x.UniversitySpecialities)
+                                    .ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Тернопільський Національний Економічний Університет")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 2,
                             IsAccepted = false
                         }
                     }
                 },
-                 new EntrantEntity
+                new EntrantEntity
                 {
                     FirstName = "А.",
                     LastName = "Калимон",
@@ -2466,48 +2714,56 @@ namespace GraduateWork.Server.Services
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 200.000F, SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Національний університет Львівська політехніка")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Програмна інженерія").SpecialtyId,
+                            TotalScore = 200.000F, SpecialityId = (await _context.Universities
+                                    .Include(x => x.UniversitySpecialities).ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Національний університет Львівська політехніка")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
+                            Priority = 2,
+                            IsAccepted = false
+                        },
+                        new StatementEntity
+                        {
+                            ExtraScore = 0,
+                            TotalScore = 200.000F,
+                            SpecialityId = (await _context.Universities.Include(x => x.UniversitySpecialities)
+                                    .ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Національний університет Львівська політехніка")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 3,
                             IsAccepted = false
                         },
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 200.000F,
-                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Національний університет Львівська політехніка")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            TotalScore = 200.000F, SpecialityId = (await _context.Universities
+                                    .Include(x => x.UniversitySpecialities).ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Тернопільський Національний Економічний Університет")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 4,
                             IsAccepted = false
                         },
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 200.000F, SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Тернопільський Національний Економічний Університет")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Програмна інженерія").SpecialtyId,
-                            Priority = 1,
-                            IsAccepted = false
-                        },
-                        new StatementEntity
-                        {
-                            ExtraScore = 0,
                             TotalScore = 200.000F,
-                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Тернопільський Національний Економічний Університет")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
-                            Priority = 2,
+                            SpecialityId = (await _context.Universities.Include(x => x.UniversitySpecialities)
+                                    .ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Тернопільський Національний Економічний Університет")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            Priority = 1,
                             IsAccepted = false
                         }
                     }
                 },
-                 new EntrantEntity
+                new EntrantEntity
                 {
                     FirstName = "Б.",
                     LastName = "Яріш",
@@ -2537,31 +2793,12 @@ namespace GraduateWork.Server.Services
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 200.000F, SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Національний університет Львівська політехніка")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Програмна інженерія").SpecialtyId,
-                            Priority = 3,
-                            IsAccepted = false
-                        },
-                        new StatementEntity
-                        {
-                            ExtraScore = 0,
-                            TotalScore = 200.000F,
-                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Національний університет Львівська політехніка")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
-                            Priority = 4,
-                            IsAccepted = false
-                        },
-                        new StatementEntity
-                        {
-                            ExtraScore = 0,
-                            TotalScore = 200.000F, SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Тернопільський Національний Економічний Університет")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Програмна інженерія").SpecialtyId,
+                            TotalScore = 200.000F, SpecialityId = (await _context.Universities
+                                    .Include(x => x.UniversitySpecialities).ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Національний університет Львівська політехніка")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 1,
                             IsAccepted = false
                         },
@@ -2569,16 +2806,43 @@ namespace GraduateWork.Server.Services
                         {
                             ExtraScore = 0,
                             TotalScore = 200.000F,
-                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Тернопільський Національний Економічний Університет")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            SpecialityId = (await _context.Universities.Include(x => x.UniversitySpecialities)
+                                    .ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Національний університет Львівська політехніка")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 2,
+                            IsAccepted = false
+                        },
+                        new StatementEntity
+                        {
+                            ExtraScore = 0,
+                            TotalScore = 200.000F, SpecialityId = (await _context.Universities
+                                    .Include(x => x.UniversitySpecialities).ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Тернопільський Національний Економічний Університет")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
+                            Priority = 3,
+                            IsAccepted = false
+                        },
+                        new StatementEntity
+                        {
+                            ExtraScore = 0,
+                            TotalScore = 200.000F,
+                            SpecialityId = (await _context.Universities.Include(x => x.UniversitySpecialities)
+                                    .ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Тернопільський Національний Економічний Університет")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            Priority = 4,
                             IsAccepted = false
                         }
                     }
                 },
-                 new EntrantEntity
+                new EntrantEntity
                 {
                     FirstName = "Я.",
                     LastName = "Керніцький",
@@ -2608,48 +2872,56 @@ namespace GraduateWork.Server.Services
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 200.000F, SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Національний університет Львівська політехніка")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Програмна інженерія").SpecialtyId,
-                            Priority = 3,
-                            IsAccepted = false
-                        },
-                        new StatementEntity
-                        {
-                            ExtraScore = 0,
-                            TotalScore = 200.000F,
-                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Національний університет Львівська політехніка")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            TotalScore = 200.000F, SpecialityId = (await _context.Universities
+                                    .Include(x => x.UniversitySpecialities).ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Національний університет Львівська політехніка")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 4,
                             IsAccepted = false
                         },
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 200.000F, SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Тернопільський Національний Економічний Університет")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Програмна інженерія").SpecialtyId,
+                            TotalScore = 200.000F,
+                            SpecialityId = (await _context.Universities.Include(x => x.UniversitySpecialities)
+                                    .ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Національний університет Львівська політехніка")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 1,
                             IsAccepted = false
                         },
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 200.000F,
-                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Тернопільський Національний Економічний Університет")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            TotalScore = 200.000F, SpecialityId = (await _context.Universities
+                                    .Include(x => x.UniversitySpecialities).ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Тернопільський Національний Економічний Університет")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 2,
+                            IsAccepted = false
+                        },
+                        new StatementEntity
+                        {
+                            ExtraScore = 0,
+                            TotalScore = 200.000F,
+                            SpecialityId = (await _context.Universities.Include(x => x.UniversitySpecialities)
+                                    .ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Тернопільський Національний Економічний Університет")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            Priority = 3,
                             IsAccepted = false
                         }
                     }
                 },
-                 new EntrantEntity
+                new EntrantEntity
                 {
                     FirstName = "А.",
                     LastName = "Кашапов",
@@ -2679,10 +2951,12 @@ namespace GraduateWork.Server.Services
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 200.000F, SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Національний університет Львівська політехніка")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Програмна інженерія").SpecialtyId,
+                            TotalScore = 200.000F, SpecialityId = (await _context.Universities
+                                    .Include(x => x.UniversitySpecialities).ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Національний університет Львівська політехніка")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 3,
                             IsAccepted = false
                         },
@@ -2690,20 +2964,24 @@ namespace GraduateWork.Server.Services
                         {
                             ExtraScore = 0,
                             TotalScore = 200.000F,
-                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Національний університет Львівська політехніка")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            SpecialityId = (await _context.Universities.Include(x => x.UniversitySpecialities)
+                                    .ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Національний університет Львівська політехніка")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 4,
                             IsAccepted = false
                         },
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 200.000F, SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Тернопільський Національний Економічний Університет")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Програмна інженерія").SpecialtyId,
+                            TotalScore = 200.000F, SpecialityId = (await _context.Universities
+                                    .Include(x => x.UniversitySpecialities).ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Тернопільський Національний Економічний Університет")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 1,
                             IsAccepted = false
                         },
@@ -2711,16 +2989,18 @@ namespace GraduateWork.Server.Services
                         {
                             ExtraScore = 0,
                             TotalScore = 200.000F,
-                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Тернопільський Національний Економічний Університет")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            SpecialityId = (await _context.Universities.Include(x => x.UniversitySpecialities)
+                                    .ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Тернопільський Національний Економічний Університет")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 2,
                             IsAccepted = false
                         }
                     }
                 },
-                 new EntrantEntity
+                new EntrantEntity
                 {
                     FirstName = "Н.",
                     LastName = "Скоропад",
@@ -2750,48 +3030,56 @@ namespace GraduateWork.Server.Services
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 200.000F, SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Національний університет Львівська політехніка")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Програмна інженерія").SpecialtyId,
+                            TotalScore = 200.000F, SpecialityId = (await _context.Universities
+                                    .Include(x => x.UniversitySpecialities).ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Національний університет Львівська політехніка")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
+                            Priority = 2,
+                            IsAccepted = false
+                        },
+                        new StatementEntity
+                        {
+                            ExtraScore = 0,
+                            TotalScore = 200.000F,
+                            SpecialityId = (await _context.Universities.Include(x => x.UniversitySpecialities)
+                                    .ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Національний університет Львівська політехніка")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 3,
                             IsAccepted = false
                         },
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 200.000F,
-                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Національний університет Львівська політехніка")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            TotalScore = 200.000F, SpecialityId = (await _context.Universities
+                                    .Include(x => x.UniversitySpecialities).ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Тернопільський Національний Економічний Університет")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 4,
                             IsAccepted = false
                         },
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 200.000F, SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Тернопільський Національний Економічний Університет")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Програмна інженерія").SpecialtyId,
-                            Priority = 1,
-                            IsAccepted = false
-                        },
-                        new StatementEntity
-                        {
-                            ExtraScore = 0,
                             TotalScore = 200.000F,
-                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Тернопільський Національний Економічний Університет")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
-                            Priority = 2,
+                            SpecialityId = (await _context.Universities.Include(x => x.UniversitySpecialities)
+                                    .ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Тернопільський Національний Економічний Університет")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            Priority = 1,
                             IsAccepted = false
                         }
                     }
                 },
-                 new EntrantEntity
+                new EntrantEntity
                 {
                     FirstName = "В.",
                     LastName = "Селіверстова",
@@ -2821,31 +3109,12 @@ namespace GraduateWork.Server.Services
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 200.000F, SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Національний університет Львівська політехніка")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Програмна інженерія").SpecialtyId,
-                            Priority = 3,
-                            IsAccepted = false
-                        },
-                        new StatementEntity
-                        {
-                            ExtraScore = 0,
-                            TotalScore = 200.000F,
-                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Національний університет Львівська політехніка")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
-                            Priority = 4,
-                            IsAccepted = false
-                        },
-                        new StatementEntity
-                        {
-                            ExtraScore = 0,
-                            TotalScore = 200.000F, SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Тернопільський Національний Економічний Університет")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Програмна інженерія").SpecialtyId,
+                            TotalScore = 200.000F, SpecialityId = (await _context.Universities
+                                    .Include(x => x.UniversitySpecialities).ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Національний університет Львівська політехніка")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 1,
                             IsAccepted = false
                         },
@@ -2853,16 +3122,43 @@ namespace GraduateWork.Server.Services
                         {
                             ExtraScore = 0,
                             TotalScore = 200.000F,
-                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Тернопільський Національний Економічний Університет")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            SpecialityId = (await _context.Universities.Include(x => x.UniversitySpecialities)
+                                    .ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Національний університет Львівська політехніка")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 2,
+                            IsAccepted = false
+                        },
+                        new StatementEntity
+                        {
+                            ExtraScore = 0,
+                            TotalScore = 200.000F, SpecialityId = (await _context.Universities
+                                    .Include(x => x.UniversitySpecialities).ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Тернопільський Національний Економічний Університет")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
+                            Priority = 3,
+                            IsAccepted = false
+                        },
+                        new StatementEntity
+                        {
+                            ExtraScore = 0,
+                            TotalScore = 200.000F,
+                            SpecialityId = (await _context.Universities.Include(x => x.UniversitySpecialities)
+                                    .ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Тернопільський Національний Економічний Університет")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            Priority = 4,
                             IsAccepted = false
                         }
                     }
                 },
-                 new EntrantEntity
+                new EntrantEntity
                 {
                     FirstName = "С.",
                     LastName = "Химера",
@@ -2892,48 +3188,56 @@ namespace GraduateWork.Server.Services
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 199.487F, SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Національний університет Львівська політехніка")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Програмна інженерія").SpecialtyId,
-                            Priority = 3,
-                            IsAccepted = false
-                        },
-                        new StatementEntity
-                        {
-                            ExtraScore = 0,
-                            TotalScore = 199.487F,
-                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Національний університет Львівська політехніка")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            TotalScore = 199.487F, SpecialityId = (await _context.Universities
+                                    .Include(x => x.UniversitySpecialities).ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Національний університет Львівська політехніка")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 4,
                             IsAccepted = false
                         },
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 199.487F, SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Тернопільський Національний Економічний Університет")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Програмна інженерія").SpecialtyId,
+                            TotalScore = 199.487F,
+                            SpecialityId = (await _context.Universities.Include(x => x.UniversitySpecialities)
+                                    .ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Національний університет Львівська політехніка")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 1,
                             IsAccepted = false
                         },
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 199.487F,
-                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Тернопільський Національний Економічний Університет")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            TotalScore = 199.487F, SpecialityId = (await _context.Universities
+                                    .Include(x => x.UniversitySpecialities).ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Тернопільський Національний Економічний Університет")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 2,
+                            IsAccepted = false
+                        },
+                        new StatementEntity
+                        {
+                            ExtraScore = 0,
+                            TotalScore = 199.487F,
+                            SpecialityId = (await _context.Universities.Include(x => x.UniversitySpecialities)
+                                    .ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Тернопільський Національний Економічний Університет")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            Priority = 3,
                             IsAccepted = false
                         }
                     }
                 },
-                 new EntrantEntity
+                new EntrantEntity
                 {
                     FirstName = "А.",
                     LastName = "Голда",
@@ -2963,10 +3267,12 @@ namespace GraduateWork.Server.Services
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 198.314F, SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Національний університет Львівська політехніка")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Програмна інженерія").SpecialtyId,
+                            TotalScore = 198.314F, SpecialityId = (await _context.Universities
+                                    .Include(x => x.UniversitySpecialities).ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Національний університет Львівська політехніка")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 3,
                             IsAccepted = false
                         },
@@ -2974,20 +3280,24 @@ namespace GraduateWork.Server.Services
                         {
                             ExtraScore = 0,
                             TotalScore = 198.314F,
-                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Національний університет Львівська політехніка")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            SpecialityId = (await _context.Universities.Include(x => x.UniversitySpecialities)
+                                    .ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Національний університет Львівська політехніка")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 4,
                             IsAccepted = false
                         },
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 198.314F, SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Тернопільський Національний Економічний Університет")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Програмна інженерія").SpecialtyId,
+                            TotalScore = 198.314F, SpecialityId = (await _context.Universities
+                                    .Include(x => x.UniversitySpecialities).ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Тернопільський Національний Економічний Університет")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 1,
                             IsAccepted = false
                         },
@@ -2995,16 +3305,18 @@ namespace GraduateWork.Server.Services
                         {
                             ExtraScore = 0,
                             TotalScore = 198.314F,
-                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Тернопільський Національний Економічний Університет")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            SpecialityId = (await _context.Universities.Include(x => x.UniversitySpecialities)
+                                    .ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Тернопільський Національний Економічний Університет")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 2,
                             IsAccepted = false
                         }
                     }
                 },
-                 new EntrantEntity
+                new EntrantEntity
                 {
                     FirstName = "В.",
                     LastName = "Бенюх",
@@ -3034,48 +3346,56 @@ namespace GraduateWork.Server.Services
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 198.033F, SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Національний університет Львівська політехніка")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Програмна інженерія").SpecialtyId,
+                            TotalScore = 198.033F, SpecialityId = (await _context.Universities
+                                    .Include(x => x.UniversitySpecialities).ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Національний університет Львівська політехніка")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
+                            Priority = 2,
+                            IsAccepted = false
+                        },
+                        new StatementEntity
+                        {
+                            ExtraScore = 0,
+                            TotalScore = 198.033F,
+                            SpecialityId = (await _context.Universities.Include(x => x.UniversitySpecialities)
+                                    .ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Національний університет Львівська політехніка")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 3,
                             IsAccepted = false
                         },
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 198.033F,
-                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Національний університет Львівська політехніка")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            TotalScore = 198.033F, SpecialityId = (await _context.Universities
+                                    .Include(x => x.UniversitySpecialities).ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Тернопільський Національний Економічний Університет")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 4,
                             IsAccepted = false
                         },
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 198.033F, SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Тернопільський Національний Економічний Університет")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Програмна інженерія").SpecialtyId,
-                            Priority = 1,
-                            IsAccepted = false
-                        },
-                        new StatementEntity
-                        {
-                            ExtraScore = 0,
                             TotalScore = 198.033F,
-                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Тернопільський Національний Економічний Університет")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
-                            Priority = 2,
+                            SpecialityId = (await _context.Universities.Include(x => x.UniversitySpecialities)
+                                    .ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Тернопільський Національний Економічний Університет")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            Priority = 1,
                             IsAccepted = false
                         }
                     }
                 },
-                 new EntrantEntity
+                new EntrantEntity
                 {
                     FirstName = "Р.",
                     LastName = "Гудима",
@@ -3105,31 +3425,12 @@ namespace GraduateWork.Server.Services
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 198.033F, SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Національний університет Львівська політехніка")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Програмна інженерія").SpecialtyId,
-                            Priority = 3,
-                            IsAccepted = false
-                        },
-                        new StatementEntity
-                        {
-                            ExtraScore = 0,
-                            TotalScore = 198.033F,
-                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Національний університет Львівська політехніка")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
-                            Priority = 4,
-                            IsAccepted = false
-                        },
-                        new StatementEntity
-                        {
-                            ExtraScore = 0,
-                            TotalScore = 198.033F, SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Тернопільський Національний Економічний Університет")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Програмна інженерія").SpecialtyId,
+                            TotalScore = 198.033F, SpecialityId = (await _context.Universities
+                                    .Include(x => x.UniversitySpecialities).ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Національний університет Львівська політехніка")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 1,
                             IsAccepted = false
                         },
@@ -3137,16 +3438,43 @@ namespace GraduateWork.Server.Services
                         {
                             ExtraScore = 0,
                             TotalScore = 198.033F,
-                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Тернопільський Національний Економічний Університет")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            SpecialityId = (await _context.Universities.Include(x => x.UniversitySpecialities)
+                                    .ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Національний університет Львівська політехніка")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 2,
+                            IsAccepted = false
+                        },
+                        new StatementEntity
+                        {
+                            ExtraScore = 0,
+                            TotalScore = 198.033F, SpecialityId = (await _context.Universities
+                                    .Include(x => x.UniversitySpecialities).ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Тернопільський Національний Економічний Університет")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
+                            Priority = 3,
+                            IsAccepted = false
+                        },
+                        new StatementEntity
+                        {
+                            ExtraScore = 0,
+                            TotalScore = 198.033F,
+                            SpecialityId = (await _context.Universities.Include(x => x.UniversitySpecialities)
+                                    .ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Тернопільський Національний Економічний Університет")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            Priority = 4,
                             IsAccepted = false
                         }
                     }
                 },
-                 new EntrantEntity
+                new EntrantEntity
                 {
                     FirstName = "В.",
                     LastName = "Долинський",
@@ -3176,48 +3504,56 @@ namespace GraduateWork.Server.Services
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 197.931F, SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Національний університет Львівська політехніка")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Програмна інженерія").SpecialtyId,
-                            Priority = 3,
-                            IsAccepted = false
-                        },
-                        new StatementEntity
-                        {
-                            ExtraScore = 0,
-                            TotalScore = 197.931F,
-                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Національний університет Львівська політехніка")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            TotalScore = 197.931F, SpecialityId = (await _context.Universities
+                                    .Include(x => x.UniversitySpecialities).ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Національний університет Львівська політехніка")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 4,
                             IsAccepted = false
                         },
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 197.931F, SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Тернопільський Національний Економічний Університет")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Програмна інженерія").SpecialtyId,
+                            TotalScore = 197.931F,
+                            SpecialityId = (await _context.Universities.Include(x => x.UniversitySpecialities)
+                                    .ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Національний університет Львівська політехніка")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 1,
                             IsAccepted = false
                         },
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 197.931F,
-                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Тернопільський Національний Економічний Університет")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            TotalScore = 197.931F, SpecialityId = (await _context.Universities
+                                    .Include(x => x.UniversitySpecialities).ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Тернопільський Національний Економічний Університет")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 2,
+                            IsAccepted = false
+                        },
+                        new StatementEntity
+                        {
+                            ExtraScore = 0,
+                            TotalScore = 197.931F,
+                            SpecialityId = (await _context.Universities.Include(x => x.UniversitySpecialities)
+                                    .ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Тернопільський Національний Економічний Університет")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            Priority = 3,
                             IsAccepted = false
                         }
                     }
                 },
-                 new EntrantEntity
+                new EntrantEntity
                 {
                     FirstName = "і.",
                     LastName = "Бойчук",
@@ -3247,10 +3583,12 @@ namespace GraduateWork.Server.Services
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 197.931F, SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Національний університет Львівська політехніка")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Програмна інженерія").SpecialtyId,
+                            TotalScore = 197.931F, SpecialityId = (await _context.Universities
+                                    .Include(x => x.UniversitySpecialities).ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Національний університет Львівська політехніка")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 3,
                             IsAccepted = false
                         },
@@ -3258,20 +3596,24 @@ namespace GraduateWork.Server.Services
                         {
                             ExtraScore = 0,
                             TotalScore = 197.931F,
-                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Національний університет Львівська політехніка")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            SpecialityId = (await _context.Universities.Include(x => x.UniversitySpecialities)
+                                    .ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Національний університет Львівська політехніка")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 4,
                             IsAccepted = false
                         },
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 197.931F, SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Тернопільський Національний Економічний Університет")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Програмна інженерія").SpecialtyId,
+                            TotalScore = 197.931F, SpecialityId = (await _context.Universities
+                                    .Include(x => x.UniversitySpecialities).ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Тернопільський Національний Економічний Університет")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 1,
                             IsAccepted = false
                         },
@@ -3279,16 +3621,18 @@ namespace GraduateWork.Server.Services
                         {
                             ExtraScore = 0,
                             TotalScore = 197.931F,
-                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Тернопільський Національний Економічний Університет")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            SpecialityId = (await _context.Universities.Include(x => x.UniversitySpecialities)
+                                    .ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Тернопільський Національний Економічний Університет")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 2,
                             IsAccepted = false
                         }
                     }
                 },
-                 new EntrantEntity
+                new EntrantEntity
                 {
                     FirstName = "Т.",
                     LastName = "Лисак",
@@ -3318,48 +3662,56 @@ namespace GraduateWork.Server.Services
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 197.727F, SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Національний університет Львівська політехніка")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Програмна інженерія").SpecialtyId,
+                            TotalScore = 197.727F, SpecialityId = (await _context.Universities
+                                    .Include(x => x.UniversitySpecialities).ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Національний університет Львівська політехніка")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
+                            Priority = 2,
+                            IsAccepted = false
+                        },
+                        new StatementEntity
+                        {
+                            ExtraScore = 0,
+                            TotalScore = 197.727F,
+                            SpecialityId = (await _context.Universities.Include(x => x.UniversitySpecialities)
+                                    .ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Національний університет Львівська політехніка")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 3,
                             IsAccepted = false
                         },
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 197.727F,
-                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Національний університет Львівська політехніка")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            TotalScore = 197.727F, SpecialityId = (await _context.Universities
+                                    .Include(x => x.UniversitySpecialities).ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Тернопільський Національний Економічний Університет")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 4,
                             IsAccepted = false
                         },
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 197.727F, SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Тернопільський Національний Економічний Університет")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Програмна інженерія").SpecialtyId,
-                            Priority = 1,
-                            IsAccepted = false
-                        },
-                        new StatementEntity
-                        {
-                            ExtraScore = 0,
                             TotalScore = 197.727F,
-                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Тернопільський Національний Економічний Університет")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
-                            Priority = 2,
+                            SpecialityId = (await _context.Universities.Include(x => x.UniversitySpecialities)
+                                    .ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Тернопільський Національний Економічний Університет")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            Priority = 1,
                             IsAccepted = false
                         }
                     }
                 },
-                 new EntrantEntity
+                new EntrantEntity
                 {
                     FirstName = "В.",
                     LastName = "Вєтров",
@@ -3389,31 +3741,12 @@ namespace GraduateWork.Server.Services
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 197.676F, SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Національний університет Львівська політехніка")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Програмна інженерія").SpecialtyId,
-                            Priority = 3,
-                            IsAccepted = false
-                        },
-                        new StatementEntity
-                        {
-                            ExtraScore = 0,
-                            TotalScore = 197.676F,
-                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Національний університет Львівська політехніка")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
-                            Priority = 4,
-                            IsAccepted = false
-                        },
-                        new StatementEntity
-                        {
-                            ExtraScore = 0,
-                            TotalScore = 197.676F, SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Тернопільський Національний Економічний Університет")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Програмна інженерія").SpecialtyId,
+                            TotalScore = 197.676F, SpecialityId = (await _context.Universities
+                                    .Include(x => x.UniversitySpecialities).ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Національний університет Львівська політехніка")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 1,
                             IsAccepted = false
                         },
@@ -3421,16 +3754,43 @@ namespace GraduateWork.Server.Services
                         {
                             ExtraScore = 0,
                             TotalScore = 197.676F,
-                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Тернопільський Національний Економічний Університет")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            SpecialityId = (await _context.Universities.Include(x => x.UniversitySpecialities)
+                                    .ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Національний університет Львівська політехніка")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 2,
+                            IsAccepted = false
+                        },
+                        new StatementEntity
+                        {
+                            ExtraScore = 0,
+                            TotalScore = 197.676F, SpecialityId = (await _context.Universities
+                                    .Include(x => x.UniversitySpecialities).ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Тернопільський Національний Економічний Університет")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
+                            Priority = 3,
+                            IsAccepted = false
+                        },
+                        new StatementEntity
+                        {
+                            ExtraScore = 0,
+                            TotalScore = 197.676F,
+                            SpecialityId = (await _context.Universities.Include(x => x.UniversitySpecialities)
+                                    .ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Тернопільський Національний Економічний Університет")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            Priority = 4,
                             IsAccepted = false
                         }
                     }
                 },
-                 new EntrantEntity
+                new EntrantEntity
                 {
                     FirstName = "Л.",
                     LastName = "іванська",
@@ -3460,48 +3820,56 @@ namespace GraduateWork.Server.Services
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 197.676F, SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Національний університет Львівська політехніка")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Програмна інженерія").SpecialtyId,
-                            Priority = 3,
-                            IsAccepted = false
-                        },
-                        new StatementEntity
-                        {
-                            ExtraScore = 0,
-                            TotalScore = 197.676F,
-                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Національний університет Львівська політехніка")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            TotalScore = 197.676F, SpecialityId = (await _context.Universities
+                                    .Include(x => x.UniversitySpecialities).ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Національний університет Львівська політехніка")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 4,
                             IsAccepted = false
                         },
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 197.676F, SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Тернопільський Національний Економічний Університет")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Програмна інженерія").SpecialtyId,
+                            TotalScore = 197.676F,
+                            SpecialityId = (await _context.Universities.Include(x => x.UniversitySpecialities)
+                                    .ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Національний університет Львівська політехніка")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 1,
                             IsAccepted = false
                         },
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 197.676F,
-                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Тернопільський Національний Економічний Університет")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            TotalScore = 197.676F, SpecialityId = (await _context.Universities
+                                    .Include(x => x.UniversitySpecialities).ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Тернопільський Національний Економічний Університет")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 2,
+                            IsAccepted = false
+                        },
+                        new StatementEntity
+                        {
+                            ExtraScore = 0,
+                            TotalScore = 197.676F,
+                            SpecialityId = (await _context.Universities.Include(x => x.UniversitySpecialities)
+                                    .ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Тернопільський Національний Економічний Університет")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            Priority = 3,
                             IsAccepted = false
                         }
                     }
                 },
-                 new EntrantEntity
+                new EntrantEntity
                 {
                     FirstName = "В.",
                     LastName = "Прищепа",
@@ -3531,10 +3899,12 @@ namespace GraduateWork.Server.Services
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 197.370F, SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Національний університет Львівська політехніка")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Програмна інженерія").SpecialtyId,
+                            TotalScore = 197.370F, SpecialityId = (await _context.Universities
+                                    .Include(x => x.UniversitySpecialities).ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Національний університет Львівська політехніка")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 3,
                             IsAccepted = false
                         },
@@ -3542,20 +3912,24 @@ namespace GraduateWork.Server.Services
                         {
                             ExtraScore = 0,
                             TotalScore = 197.370F,
-                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Національний університет Львівська політехніка")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            SpecialityId = (await _context.Universities.Include(x => x.UniversitySpecialities)
+                                    .ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Національний університет Львівська політехніка")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 4,
                             IsAccepted = false
                         },
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 197.370F, SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Тернопільський Національний Економічний Університет")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Програмна інженерія").SpecialtyId,
+                            TotalScore = 197.370F, SpecialityId = (await _context.Universities
+                                    .Include(x => x.UniversitySpecialities).ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Тернопільський Національний Економічний Університет")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 1,
                             IsAccepted = false
                         },
@@ -3563,16 +3937,18 @@ namespace GraduateWork.Server.Services
                         {
                             ExtraScore = 0,
                             TotalScore = 197.370F,
-                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Тернопільський Національний Економічний Університет")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            SpecialityId = (await _context.Universities.Include(x => x.UniversitySpecialities)
+                                    .ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Тернопільський Національний Економічний Університет")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 2,
                             IsAccepted = false
                         }
                     }
                 },
-                 new EntrantEntity
+                new EntrantEntity
                 {
                     FirstName = "В.",
                     LastName = "Заворотний",
@@ -3602,48 +3978,56 @@ namespace GraduateWork.Server.Services
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 197.319F, SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Національний університет Львівська політехніка")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Програмна інженерія").SpecialtyId,
+                            TotalScore = 197.319F, SpecialityId = (await _context.Universities
+                                    .Include(x => x.UniversitySpecialities).ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Національний університет Львівська політехніка")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
+                            Priority = 2,
+                            IsAccepted = false
+                        },
+                        new StatementEntity
+                        {
+                            ExtraScore = 0,
+                            TotalScore = 197.319F,
+                            SpecialityId = (await _context.Universities.Include(x => x.UniversitySpecialities)
+                                    .ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Національний університет Львівська політехніка")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 3,
                             IsAccepted = false
                         },
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 197.319F,
-                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Національний університет Львівська політехніка")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            TotalScore = 197.319F, SpecialityId = (await _context.Universities
+                                    .Include(x => x.UniversitySpecialities).ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Тернопільський Національний Економічний Університет")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 4,
                             IsAccepted = false
                         },
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 197.319F, SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Тернопільський Національний Економічний Університет")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Програмна інженерія").SpecialtyId,
-                            Priority = 1,
-                            IsAccepted = false
-                        },
-                        new StatementEntity
-                        {
-                            ExtraScore = 0,
                             TotalScore = 197.319F,
-                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Тернопільський Національний Економічний Університет")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
-                            Priority = 2,
+                            SpecialityId = (await _context.Universities.Include(x => x.UniversitySpecialities)
+                                    .ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Тернопільський Національний Економічний Університет")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            Priority = 1,
                             IsAccepted = false
                         }
                     }
                 },
-                 new EntrantEntity
+                new EntrantEntity
                 {
                     FirstName = "Д.",
                     LastName = "Гопайнич",
@@ -3673,31 +4057,12 @@ namespace GraduateWork.Server.Services
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 197.156F, SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Національний університет Львівська політехніка")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Програмна інженерія").SpecialtyId,
-                            Priority = 3,
-                            IsAccepted = false
-                        },
-                        new StatementEntity
-                        {
-                            ExtraScore = 0,
-                            TotalScore = 197.156F,
-                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Національний університет Львівська політехніка")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
-                            Priority = 4,
-                            IsAccepted = false
-                        },
-                        new StatementEntity
-                        {
-                            ExtraScore = 0,
-                            TotalScore = 197.156F, SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Тернопільський Національний Економічний Університет")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Програмна інженерія").SpecialtyId,
+                            TotalScore = 197.156F, SpecialityId = (await _context.Universities
+                                    .Include(x => x.UniversitySpecialities).ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Національний університет Львівська політехніка")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 1,
                             IsAccepted = false
                         },
@@ -3705,16 +4070,43 @@ namespace GraduateWork.Server.Services
                         {
                             ExtraScore = 0,
                             TotalScore = 197.156F,
-                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Тернопільський Національний Економічний Університет")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            SpecialityId = (await _context.Universities.Include(x => x.UniversitySpecialities)
+                                    .ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Національний університет Львівська політехніка")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 2,
+                            IsAccepted = false
+                        },
+                        new StatementEntity
+                        {
+                            ExtraScore = 0,
+                            TotalScore = 197.156F, SpecialityId = (await _context.Universities
+                                    .Include(x => x.UniversitySpecialities).ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Тернопільський Національний Економічний Університет")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
+                            Priority = 3,
+                            IsAccepted = false
+                        },
+                        new StatementEntity
+                        {
+                            ExtraScore = 0,
+                            TotalScore = 197.156F,
+                            SpecialityId = (await _context.Universities.Include(x => x.UniversitySpecialities)
+                                    .ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Тернопільський Національний Економічний Університет")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            Priority = 4,
                             IsAccepted = false
                         }
                     }
                 },
-                 new EntrantEntity
+                new EntrantEntity
                 {
                     FirstName = "М.",
                     LastName = "Коток",
@@ -3744,43 +4136,51 @@ namespace GraduateWork.Server.Services
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 197.115F, SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Національний університет Львівська політехніка")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Програмна інженерія").SpecialtyId,
-                            Priority = 3,
-                            IsAccepted = false
-                        },
-                        new StatementEntity
-                        {
-                            ExtraScore = 0,
-                            TotalScore = 197.115F,
-                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Національний університет Львівська політехніка")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            TotalScore = 197.115F, SpecialityId = (await _context.Universities
+                                    .Include(x => x.UniversitySpecialities).ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Національний університет Львівська політехніка")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 4,
                             IsAccepted = false
                         },
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 197.115F, SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Тернопільський Національний Економічний Університет")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Програмна інженерія").SpecialtyId,
+                            TotalScore = 197.115F,
+                            SpecialityId = (await _context.Universities.Include(x => x.UniversitySpecialities)
+                                    .ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Національний університет Львівська політехніка")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 1,
                             IsAccepted = false
                         },
                         new StatementEntity
                         {
                             ExtraScore = 0,
-                            TotalScore = 197.115F,
-                            SpecialityId = (await _context.Universities.Include(x=> x.UniversitySpecialities).ThenInclude(x=> x.Specialty)
-                                .FirstOrDefaultAsync(
-                                    x => x.FullName == "Тернопільський Національний Економічний Університет")
-                                .ConfigureAwait(false)).UniversitySpecialities.First(x=> x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            TotalScore = 197.115F, SpecialityId = (await _context.Universities
+                                    .Include(x => x.UniversitySpecialities).ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Тернопільський Національний Економічний Університет")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 2,
+                            IsAccepted = false
+                        },
+                        new StatementEntity
+                        {
+                            ExtraScore = 0,
+                            TotalScore = 197.115F,
+                            SpecialityId = (await _context.Universities.Include(x => x.UniversitySpecialities)
+                                    .ThenInclude(x => x.Specialty)
+                                    .FirstOrDefaultAsync(
+                                        x => x.FullName == "Тернопільський Національний Економічний Університет")
+                                    .ConfigureAwait(false)).UniversitySpecialities
+                                .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
+                            Priority = 3,
                             IsAccepted = false
                         }
                     }

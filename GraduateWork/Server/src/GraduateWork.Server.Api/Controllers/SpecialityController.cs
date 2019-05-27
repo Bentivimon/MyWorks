@@ -102,5 +102,22 @@ namespace GraduateWork.Server.Api.Controllers
 
             return result;
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="specialityId"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [HttpGet("statements")]
+        public async Task<SpecialityWithStatementsDto> GetSpecialityWithStatementsAsync([FromQuery] Guid specialityId,
+            CancellationToken cancellationToken)
+        {
+            var result = await _specialityService.GetSpecialityByIdWithStatementsAsync(specialityId, cancellationToken)
+                .ConfigureAwait(false);
+
+            return result;
+        }
     }
 }

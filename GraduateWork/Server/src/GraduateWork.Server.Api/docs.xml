@@ -223,6 +223,14 @@
             <param name="universityId"> Represent university id.</param>
             <param name="cancellationToken"><see cref="T:System.Threading.CancellationToken"/> instance.</param>
         </member>
+        <member name="M:GraduateWork.Server.Api.Controllers.SpecialityController.GetSpecialityWithStatementsAsync(System.Guid,System.Threading.CancellationToken)">
+            <summary>
+            
+            </summary>
+            <param name="specialityId"></param>
+            <param name="cancellationToken"></param>
+            <returns></returns>
+        </member>
         <member name="T:GraduateWork.Server.Api.Controllers.UniversityController">
             <summary>
             Controller for manage university.

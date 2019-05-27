@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using GraduateWork.Server.Models.Response;
 
 namespace GraduateWork.Server.Data.Entities
 {
@@ -70,5 +71,19 @@ namespace GraduateWork.Server.Data.Entities
         public SpecialityEntity Speciality { get; set; }
         
         #endregion
+
+        public StatementDto ToDto()
+        {
+            return new StatementDto
+            {
+                Id = Id,
+                TotalScore = TotalScore,
+                EntrantId = EntrantId,
+                IsAccepted = IsAccepted,
+                ExtraScore = ExtraScore,
+                Priority = Priority,
+                SpecialityId = SpecialityId
+            };
+        }
     }
 }
