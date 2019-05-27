@@ -46,13 +46,10 @@ namespace GraduateWork.Server.Services
                     continue;
 
                 for (var i = 0; i < statement.Count; i++)
-                {
                     if(i+1 < specialityEntity.CountOfPlaces)
                         statement[i].IsAccepted = true;
-                }
 
                 await _context.SaveChangesAsync().ConfigureAwait(false);
-                
             }
 
             var isSomethingChanged = true;
@@ -66,42 +63,33 @@ namespace GraduateWork.Server.Services
                         .Where(x => x.Statements.All(y => !y.IsAccepted)).Select(x => x.Id).ToListAsync()
                         .ConfigureAwait(false);
 
+                    if (!entrantIds.Any())
+                        continue;
+
                     var statements = await _context.Statements
                         .Where(x => entrantIds.Contains(x.EntrantId) && x.Priority == i).ToListAsync()
                         .ConfigureAwait(false);
 
                     foreach (var statementEntity in statements)
                     {
-                        var speciality = await _context.Specialties.AsNoTracking()
-                            .FirstAsync(x => x.Id == statementEntity.SpecialityId).ConfigureAwait(false);
+                        var speciality = specialties.First(x => x.Id == statementEntity.SpecialityId);
 
                         var currentSpecialityStatements = await _context.Statements.AsNoTracking()
-                            .Where(x => x.IsAccepted && x.SpecialityId == speciality.Id).OrderByDescending(x => x.TotalScore)
+                            .Where(x => x.IsAccepted && x.SpecialityId == speciality.Id)
+                            .OrderByDescending(x => x.TotalScore)
                             .ToListAsync().ConfigureAwait(false);
+
+                        if (speciality.CountOfPlaces > currentSpecialityStatements.Count)
+                        {
+                            statementEntity.IsAccepted = true;
+                            await _context.SaveChangesAsync().ConfigureAwait(false);
+                            isSomethingChanged = true;
+                            continue;
+                        }
 
                         var lastTotalScore = currentSpecialityStatements.LastOrDefault()?.TotalScore ?? 0d;
 
-                        if (lastTotalScore > statementEntity.TotalScore)
-                        {
-                            if (speciality.CountOfPlaces == currentSpecialityStatements.Count)
-                                continue;
-
-                            statementEntity.IsAccepted = true;
-                            await _context.SaveChangesAsync().ConfigureAwait(false);
-                            isSomethingChanged = true;
-                            continue;
-                        }
-
-                        if (lastTotalScore <= statementEntity.TotalScore &&
-                            speciality.CountOfPlaces > currentSpecialityStatements.Count)
-                        {
-                            statementEntity.IsAccepted = true;
-                            await _context.SaveChangesAsync().ConfigureAwait(false);
-                            isSomethingChanged = true;
-                            continue;
-                        }
-
-                        if (Math.Abs(lastTotalScore - statementEntity.TotalScore) < 1e-6)
+                        if (lastTotalScore >= statementEntity.TotalScore)
                             continue;
 
                         statementEntity.IsAccepted = true;
@@ -110,19 +98,16 @@ namespace GraduateWork.Server.Services
                         currentSpecialityStatements.Add(statementEntity);
                         currentSpecialityStatements = currentSpecialityStatements.OrderByDescending(x => x.TotalScore).ToList();
 
-                        var lastStatements = currentSpecialityStatements.LastOrDefault();
+                        var lastStatements = currentSpecialityStatements.Last();
 
-                        if (lastStatements != null)
-                        {
-                            currentSpecialityStatements.Remove(lastStatements);
+                        currentSpecialityStatements.Remove(lastStatements);
 
-                            var lastStatementsEntity = await _context.Statements
-                                .FirstAsync(x => x.Id == lastStatements.Id)
-                                .ConfigureAwait(false);
+                        var lastStatementsEntity = await _context.Statements
+                            .FirstAsync(x => x.Id == lastStatements.Id)
+                            .ConfigureAwait(false);
 
-                            lastStatementsEntity.IsAccepted = false;
-                            await _context.SaveChangesAsync().ConfigureAwait(false);
-                        }
+                        lastStatementsEntity.IsAccepted = false;
+                        await _context.SaveChangesAsync().ConfigureAwait(false);
 
                         isSomethingChanged = true;
                     }
