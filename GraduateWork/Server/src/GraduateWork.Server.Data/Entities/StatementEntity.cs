@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using GraduateWork.Server.Models.Enums;
 using GraduateWork.Server.Models.Response;
 
 namespace GraduateWork.Server.Data.Entities
@@ -41,8 +42,8 @@ namespace GraduateWork.Server.Data.Entities
         /// <summary>
         /// Gets/Sets is accepted
         /// </summary>
-        [Column("is_accept")]
-        public bool IsAccepted { get; set; }
+        [Column("status")]
+        public StatementStatus Status { get; set; }
 
         /// <summary>
         /// Gets/Sets statement associated with entrant by id.
@@ -79,7 +80,7 @@ namespace GraduateWork.Server.Data.Entities
                 Id = Id,
                 TotalScore = TotalScore,
                 EntrantId = EntrantId,
-                IsAccepted = IsAccepted,
+                Status = Status,
                 ExtraScore = ExtraScore,
                 Priority = Priority,
                 SpecialityId = SpecialityId

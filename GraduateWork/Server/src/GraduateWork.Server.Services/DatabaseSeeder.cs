@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using GraduateWork.Server.Data;
 using GraduateWork.Server.Data.Entities;
+using GraduateWork.Server.Models.Enums;
 using GraduateWork.Server.Services.Abstractions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace GraduateWork.Server.Services
 {
@@ -27,92 +30,17 @@ namespace GraduateWork.Server.Services
             _context = services.GetRequiredService<DatabaseContext>();
             _cryptoProvider = services.GetRequiredService<ICryptoProvider>();
 
+            var calculationService = services.GetRequiredService<IRatingCalculationService>();
+
             await SeedUsersAsync().ConfigureAwait(false);
             await SeedUniversitiesAsync().ConfigureAwait(false);
             await SeedEntrantsAsync().ConfigureAwait(false);
-        }
 
-        private async Task CalculateRatings()
-        {
-            var specialties = await _context.Specialties.ToListAsync().ConfigureAwait(false);
-
-            foreach (var specialityEntity in specialties)
-            {
-                var statement = await _context.Statements
-                    .Where(y => y.SpecialityId == specialityEntity.Id && y.Priority == 1).OrderByDescending(x=> x.TotalScore)
-                    .ToListAsync().ConfigureAwait(false);
-
-                if(!statement.Any())
-                    continue;
-
-                for (var i = 0; i < statement.Count; i++)
-                    if(i+1 < specialityEntity.CountOfPlaces)
-                        statement[i].IsAccepted = true;
-
-                await _context.SaveChangesAsync().ConfigureAwait(false);
-            }
-
-            var isSomethingChanged = true;
-            while (isSomethingChanged)
-            {
-                isSomethingChanged = false;
-                
-                for (var i = 2; i < 16; i++)
-                {
-                    var entrantIds = await _context.Entrants.Include(x => x.Statements)
-                        .Where(x => x.Statements.All(y => !y.IsAccepted)).Select(x => x.Id).ToListAsync()
-                        .ConfigureAwait(false);
-
-                    if (!entrantIds.Any())
-                        continue;
-
-                    var statements = await _context.Statements
-                        .Where(x => entrantIds.Contains(x.EntrantId) && x.Priority == i).ToListAsync()
-                        .ConfigureAwait(false);
-
-                    foreach (var statementEntity in statements)
-                    {
-                        var speciality = specialties.First(x => x.Id == statementEntity.SpecialityId);
-
-                        var currentSpecialityStatements = await _context.Statements.AsNoTracking()
-                            .Where(x => x.IsAccepted && x.SpecialityId == speciality.Id)
-                            .OrderByDescending(x => x.TotalScore)
-                            .ToListAsync().ConfigureAwait(false);
-
-                        if (speciality.CountOfPlaces > currentSpecialityStatements.Count)
-                        {
-                            statementEntity.IsAccepted = true;
-                            await _context.SaveChangesAsync().ConfigureAwait(false);
-                            isSomethingChanged = true;
-                            continue;
-                        }
-
-                        var lastTotalScore = currentSpecialityStatements.LastOrDefault()?.TotalScore ?? 0d;
-
-                        if (lastTotalScore >= statementEntity.TotalScore)
-                            continue;
-
-                        statementEntity.IsAccepted = true;
-                        await _context.SaveChangesAsync().ConfigureAwait(false);
-
-                        currentSpecialityStatements.Add(statementEntity);
-                        currentSpecialityStatements = currentSpecialityStatements.OrderByDescending(x => x.TotalScore).ToList();
-
-                        var lastStatements = currentSpecialityStatements.Last();
-
-                        currentSpecialityStatements.Remove(lastStatements);
-
-                        var lastStatementsEntity = await _context.Statements
-                            .FirstAsync(x => x.Id == lastStatements.Id)
-                            .ConfigureAwait(false);
-
-                        lastStatementsEntity.IsAccepted = false;
-                        await _context.SaveChangesAsync().ConfigureAwait(false);
-
-                        isSomethingChanged = true;
-                    }
-                }
-            }
+            var stopWatch = new Stopwatch();
+            stopWatch.Start();
+            await calculationService.CalculateAsync((new CancellationTokenSource(new TimeSpan(0,8,0,0))).Token).ConfigureAwait(false);
+            stopWatch.Stop();
+            Console.WriteLine($"\n\n\n\n-------------------------------------------------- {stopWatch.Elapsed}\n\n\n\n");
         }
 
         private async Task SeedUniversitiesAsync()
@@ -140,7 +68,7 @@ namespace GraduateWork.Server.Services
                                 Code = "123",
                                 SubjectScores = "Українська мова та література (ЗНО), k=0,25 ,балмін 100\n\n Математика (ЗНО), k=0,4 ,балмін 100\n\nФізика(ЗНО), k=0,35 ,балмін 100\n\nАнглійська мова (ЗНО), k=0,35 ,балмін 100\n\nСередній бал документа про освіту, k=0",
                                 Faculty = "Факультет комп'ютерних інформаційних технологій",
-                                CountOfPlaces = 20
+                                CountOfPlaces = 10
                             }
                         },
                         new UniversitySpecialityEntity
@@ -151,7 +79,7 @@ namespace GraduateWork.Server.Services
                                 Code = "124",
                                 SubjectScores = "Українська мова та література (ЗНО), k=0,25 ,балмін 100\n\n Математика (ЗНО), k=0,4 ,балмін 100\n\nФізика(ЗНО), k=0,35 ,балмін 100\n\nАнглійська мова (ЗНО), k=0,35 ,балмін 100\n\nСередній бал документа про освіту, k=0",
                                 Faculty = "Факультет комп'ютерних інформаційних технологій",
-                                CountOfPlaces = 20
+                                CountOfPlaces = 10
                             }
                         }
                     },
@@ -182,7 +110,7 @@ namespace GraduateWork.Server.Services
                                 Code = "123",
                                 SubjectScores = "Українська мова та література (ЗНО), k=0,25 ,балмін 100\n\n Математика (ЗНО), k=0,4 ,балмін 100\n\nФізика(ЗНО), k=0,35 ,балмін 100\n\nАнглійська мова (ЗНО), k=0,35 ,балмін 100\n\nСередній бал документа про освіту, k=0",
                                 Faculty = "Факультет комп'ютерних інформаційних технологій",
-                                CountOfPlaces = 20
+                                CountOfPlaces = 10
                             }
                         },
                         new UniversitySpecialityEntity
@@ -193,7 +121,7 @@ namespace GraduateWork.Server.Services
                                 Code = "124",
                                 SubjectScores = "Українська мова та література (ЗНО), k=0,25 ,балмін 100\n\n Математика (ЗНО), k=0,4 ,балмін 100\n\nФізика(ЗНО), k=0,35 ,балмін 100\n\nАнглійська мова (ЗНО), k=0,35 ,балмін 100\n\nСередній бал документа про освіту, k=0",
                                 Faculty = "Факультет комп'ютерних інформаційних технологій",
-                                CountOfPlaces = 20
+                                CountOfPlaces = 10
                             }
                         }
                     },
@@ -257,7 +185,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 1,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -270,7 +198,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 2,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -282,7 +210,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 3,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -295,7 +223,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 4,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         }
                     }
                 },
@@ -336,7 +264,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 4,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -349,7 +277,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 1,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -361,7 +289,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 2,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -374,7 +302,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 3,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         }
                     }
                 },
@@ -415,7 +343,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 3,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -428,7 +356,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 4,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -440,7 +368,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 1,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -453,7 +381,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 2,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         }
                     }
                 },
@@ -494,7 +422,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 2,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -507,7 +435,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 3,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -519,7 +447,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 4,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -532,7 +460,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 1,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         }
                     }
                 },
@@ -573,7 +501,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 1,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -586,7 +514,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 2,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -598,7 +526,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 3,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -611,7 +539,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 4,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         }
                     }
                 },
@@ -652,7 +580,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 4,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -665,7 +593,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 1,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -677,7 +605,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 2,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -690,7 +618,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 3,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         }
                     }
                 },
@@ -731,7 +659,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 3,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -744,7 +672,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 4,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -756,7 +684,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 1,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -769,7 +697,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 2,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         }
                     }
                 },
@@ -810,7 +738,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 2,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -823,7 +751,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 3,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -835,7 +763,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 4,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -848,7 +776,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 1,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         }
                     }
                 },
@@ -889,7 +817,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 1,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -902,7 +830,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 2,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -914,7 +842,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 3,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -927,7 +855,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 4,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         }
                     }
                 },
@@ -968,7 +896,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 4,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -981,7 +909,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 1,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -993,7 +921,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 2,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -1006,7 +934,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 3,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         }
                     }
                 },
@@ -1047,7 +975,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 3,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -1060,7 +988,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 4,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -1072,7 +1000,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 1,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -1085,7 +1013,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 2,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         }
                     }
                 },
@@ -1126,7 +1054,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 2,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -1139,7 +1067,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 3,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -1151,7 +1079,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 4,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -1164,7 +1092,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 1,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         }
                     }
                 },
@@ -1205,7 +1133,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 1,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -1218,7 +1146,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 2,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -1230,7 +1158,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 3,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -1243,7 +1171,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 4,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         }
                     }
                 },
@@ -1284,7 +1212,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 4,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -1297,7 +1225,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 1,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -1309,7 +1237,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 2,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -1322,7 +1250,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 3,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         }
                     }
                 },
@@ -1363,7 +1291,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 3,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -1376,7 +1304,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 4,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -1388,7 +1316,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 1,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -1401,7 +1329,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 2,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         }
                     }
                 },
@@ -1442,7 +1370,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 2,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -1455,7 +1383,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 3,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -1467,7 +1395,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 4,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -1480,7 +1408,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 1,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         }
                     }
                 },
@@ -1521,7 +1449,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 1,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -1534,7 +1462,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 2,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -1546,7 +1474,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 3,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -1559,7 +1487,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 4,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         }
                     }
                 },
@@ -1600,7 +1528,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 4,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -1613,7 +1541,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 1,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -1625,7 +1553,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 2,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -1638,7 +1566,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 3,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         }
                     }
                 },
@@ -1679,7 +1607,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 3,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -1692,7 +1620,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 4,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -1704,7 +1632,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 1,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -1717,7 +1645,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 2,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         }
                     }
                 },
@@ -1758,7 +1686,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 2,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -1771,7 +1699,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 3,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -1783,7 +1711,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 4,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -1796,7 +1724,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 1,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         }
                     }
                 },
@@ -1837,7 +1765,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 1,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -1850,7 +1778,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 2,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -1862,7 +1790,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 3,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -1875,7 +1803,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 4,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         }
                     }
                 },
@@ -1916,7 +1844,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 4,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -1929,7 +1857,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 1,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -1941,7 +1869,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 2,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -1954,7 +1882,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 3,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         }
                     }
                 },
@@ -1995,7 +1923,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 3,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -2008,7 +1936,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 4,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -2020,7 +1948,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 1,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -2033,7 +1961,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 2,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         }
                     }
                 },
@@ -2074,7 +2002,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 2,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -2087,7 +2015,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 3,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -2099,7 +2027,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 4,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -2112,7 +2040,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 1,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         }
                     }
                 },
@@ -2153,7 +2081,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 1,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -2166,7 +2094,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 2,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -2178,7 +2106,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 3,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -2191,7 +2119,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 4,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         }
                     }
                 },
@@ -2232,7 +2160,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 4,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -2245,7 +2173,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 1,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -2257,7 +2185,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 2,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -2270,7 +2198,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 3,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         }
                     }
                 },
@@ -2311,7 +2239,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 3,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -2324,7 +2252,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 4,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -2336,7 +2264,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 1,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -2349,7 +2277,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 2,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         }
                     }
                 },
@@ -2390,7 +2318,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 2,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -2403,7 +2331,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 3,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -2415,7 +2343,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 4,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -2428,7 +2356,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 1,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         }
                     }
                 },
@@ -2469,7 +2397,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 1,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -2482,7 +2410,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 2,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -2494,7 +2422,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 3,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -2507,7 +2435,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 4,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         }
                     }
                 },
@@ -2548,7 +2476,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 4,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -2561,7 +2489,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 1,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -2573,7 +2501,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 2,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -2586,7 +2514,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 3,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         }
                     }
                 },
@@ -2627,7 +2555,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 3,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -2640,7 +2568,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 4,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -2652,7 +2580,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 1,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -2665,7 +2593,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 2,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         }
                     }
                 },
@@ -2706,7 +2634,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 2,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -2719,7 +2647,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 3,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -2731,7 +2659,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 4,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -2744,7 +2672,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 1,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         }
                     }
                 },
@@ -2785,7 +2713,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 1,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -2798,7 +2726,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 2,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -2810,7 +2738,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 3,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -2823,7 +2751,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 4,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         }
                     }
                 },
@@ -2864,7 +2792,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 4,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -2877,7 +2805,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 1,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -2889,7 +2817,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 2,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -2902,7 +2830,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 3,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         }
                     }
                 },
@@ -2943,7 +2871,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 3,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -2956,7 +2884,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 4,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -2968,7 +2896,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 1,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -2981,7 +2909,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 2,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         }
                     }
                 },
@@ -3022,7 +2950,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 2,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -3035,7 +2963,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 3,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -3047,7 +2975,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 4,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -3060,7 +2988,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 1,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         }
                     }
                 },
@@ -3101,7 +3029,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 1,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -3114,7 +3042,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 2,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -3126,7 +3054,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 3,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -3139,7 +3067,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 4,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         }
                     }
                 },
@@ -3180,7 +3108,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 4,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -3193,7 +3121,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 1,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -3205,7 +3133,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 2,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -3218,7 +3146,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 3,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         }
                     }
                 },
@@ -3259,7 +3187,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 3,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -3272,7 +3200,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 4,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -3284,7 +3212,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 1,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -3297,7 +3225,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 2,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         }
                     }
                 },
@@ -3338,7 +3266,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 2,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -3351,7 +3279,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 3,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -3363,7 +3291,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 4,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -3376,7 +3304,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 1,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         }
                     }
                 },
@@ -3417,7 +3345,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 1,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -3430,7 +3358,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 2,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -3442,7 +3370,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 3,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -3455,7 +3383,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 4,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         }
                     }
                 },
@@ -3496,7 +3424,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 4,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -3509,7 +3437,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 1,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -3521,7 +3449,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 2,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -3534,7 +3462,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 3,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         }
                     }
                 },
@@ -3575,7 +3503,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 3,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -3588,7 +3516,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 4,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -3600,7 +3528,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 1,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -3613,7 +3541,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 2,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         }
                     }
                 },
@@ -3654,7 +3582,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 2,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -3667,7 +3595,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 3,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -3679,7 +3607,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 4,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -3692,7 +3620,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 1,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         }
                     }
                 },
@@ -3733,7 +3661,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 1,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -3746,7 +3674,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 2,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -3758,7 +3686,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 3,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -3771,7 +3699,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 4,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         }
                     }
                 },
@@ -3812,7 +3740,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 4,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -3825,7 +3753,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 1,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -3837,7 +3765,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 2,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -3850,7 +3778,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 3,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         }
                     }
                 },
@@ -3891,7 +3819,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 3,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -3904,7 +3832,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 4,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -3916,7 +3844,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 1,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -3929,7 +3857,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 2,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         }
                     }
                 },
@@ -3970,7 +3898,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 2,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -3983,7 +3911,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 3,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -3995,7 +3923,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 4,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -4008,7 +3936,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 1,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         }
                     }
                 },
@@ -4049,7 +3977,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 1,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -4062,7 +3990,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 2,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -4074,7 +4002,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 3,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -4087,7 +4015,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 4,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         }
                     }
                 },
@@ -4128,7 +4056,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 4,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -4141,7 +4069,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 1,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -4153,7 +4081,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Програмна інженерія").SpecialtyId,
                             Priority = 2,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         },
                         new StatementEntity
                         {
@@ -4166,7 +4094,7 @@ namespace GraduateWork.Server.Services
                                     .ConfigureAwait(false)).UniversitySpecialities
                                 .First(x => x.Specialty.Name == "Комп’ютерна інженерія").SpecialtyId,
                             Priority = 3,
-                            IsAccepted = false
+                            Status = StatementStatus.Holding
                         }
                     }
                 },
@@ -4174,12 +4102,6 @@ namespace GraduateWork.Server.Services
 
             await _context.Entrants.AddRangeAsync(entrants).ConfigureAwait(false);
             await _context.SaveChangesAsync().ConfigureAwait(false);
-
-            var stopWatch = new Stopwatch();
-            stopWatch.Start();
-            await CalculateRatings().ConfigureAwait(false);
-            stopWatch.Stop();
-            Console.WriteLine(stopWatch.Elapsed);
         }
 
         private async Task SeedUsersAsync()

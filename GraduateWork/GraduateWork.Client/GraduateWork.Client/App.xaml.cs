@@ -13,8 +13,7 @@ namespace GraduateWork.Client
         {
             InitializeComponent();
 
-
-            MainPage = new NavigationPage(new LoginPage());
+            MainPage = new NavigationPage(new LoginPage());    
         }
 
         protected override void OnStart()

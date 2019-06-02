@@ -42,6 +42,7 @@ namespace GraduateWork.Client.ViewModels
         {
             Navigation = navigation;
             _regions = regions;
+            Locations = null;
             Locations = new ObservableCollection<LocationListModel>(regions.Select(x=> new LocationListModel{Region = x.Name}));
             _httpClient = new UniversitiesHttpClient();
         }
@@ -53,6 +54,7 @@ namespace GraduateWork.Client.ViewModels
                 _regions.First(x => x.Name == _locationsSelectedItem.Region).Id);
 
             await Navigation.PushAsync(new UniversityPage(university, _locationsSelectedItem.Region), true);
+            LocationsSelectedItem = null;
         }
     }
 }

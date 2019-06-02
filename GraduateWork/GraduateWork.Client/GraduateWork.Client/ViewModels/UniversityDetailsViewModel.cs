@@ -47,6 +47,7 @@ namespace GraduateWork.Client.ViewModels
             _specialities = specialities;
             UniversityName = university.FullName;
             Navigation = navigation;
+            SpecialitySelectedItem = null;
             InitializeCollection(regionName);
             Specialities = new ObservableCollection<SpecialityListModel>(specialities.Select(x=> new SpecialityListModel{ Speciality = x.Name, Faculty = x.Faculty}));
             ShowAlertCommand = new Command<object>(async (arg) => await ShowAlertWithRequirementsAsync(arg));

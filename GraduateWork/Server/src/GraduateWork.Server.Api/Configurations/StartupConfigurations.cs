@@ -122,6 +122,7 @@ namespace GraduateWork.Server.Api.Configurations
             services.AddTransient<IEntrantService, EntrantService>();
             services.AddTransient<IJwtTokenService, JwtTokenService>();
             services.AddTransient<IRegionService, RegionService>();
+            services.AddTransient<IRatingCalculationService, RatingCalculationService>();
             services.AddTransient<DatabaseSeeder>();
         }
 

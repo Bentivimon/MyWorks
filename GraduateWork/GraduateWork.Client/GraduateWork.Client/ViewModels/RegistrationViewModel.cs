@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using GraduateWork.Client.Models.RequestModels;
 using GraduateWork.Client.Services;
 using GraduateWork.Client.Views;
 using Xamarin.Forms;
+using Xamarin.Forms.PlatformConfiguration;
 
 namespace GraduateWork.Client.ViewModels
 {
@@ -37,6 +39,19 @@ namespace GraduateWork.Client.ViewModels
             set
             {
                 _inputPassword = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private string _inputConfirmationPassword;
+
+        public string InputConfirmationPassword
+        {
+            get => _inputConfirmationPassword;
+
+            set
+            {
+                _inputConfirmationPassword = value;
                 OnPropertyChanged();
             }
         }
@@ -86,9 +101,34 @@ namespace GraduateWork.Client.ViewModels
             RegistrationCommand = new Command(async() => await RegistrationAsync());
             Navigation = navigation;
         }
-        //TODO fix this
+        
         private async Task RegistrationAsync()
         {
+            if (!IsValidEmail(_inputEmail))
+            {
+                await Application.Current.MainPage.DisplayAlert("Помилка реєстрації", "Невалідна пошта", "Закрити");
+                InputEmail = "";
+                return;
+            }
+
+            var regex = new Regex("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^\\da-zA-Z]).{8,15}$");
+
+            if (!regex.IsMatch(_inputPassword))
+            {
+                await Application.Current.MainPage.DisplayAlert("Помилка реєстрації", "Невалідний пароль", "Закрити");
+                InputPassword = "";
+                InputConfirmationPassword = "";
+                return;
+            }
+
+            if (_inputPassword != _inputConfirmationPassword)
+            {
+                await Application.Current.MainPage.DisplayAlert("Помилка реєстрації", "Паролі не співпадають", "Закрити");
+                InputPassword = "";
+                InputConfirmationPassword = "";
+                return;
+            }
+
             var result = await _httpClient.RegistrationAsync(new RegistrationModel
             {
                 FirstName = _inputName,
@@ -96,9 +136,31 @@ namespace GraduateWork.Client.ViewModels
                 Email = _inputEmail,
                 Password = _inputPassword,
                 MobileNumber = _inputNumber
-            }).ConfigureAwait(false);
+            });
+
+            if (!result)
+            {
+                await Application.Current.MainPage.DisplayAlert("Помилка реєстрації", "Дана пошта вже використовується", "Закрити");
+                InputEmail = "";
+                InputPassword = "";
+                InputConfirmationPassword = "";
+                return;
+            }
 
             await Navigation.PopAsync(true);
+        }
+
+        private bool IsValidEmail(string email)
+        {
+            try
+            {
+                var address = new System.Net.Mail.MailAddress(email);
+                return address.Address == email;
+            }
+            catch
+            {
+                return false;
+            }
         }
     }
 }

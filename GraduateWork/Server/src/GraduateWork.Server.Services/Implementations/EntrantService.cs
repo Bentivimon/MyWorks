@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using GraduateWork.Server.Data;
 using GraduateWork.Server.Data.Entities;
 using GraduateWork.Server.Models.CustomExceptions;
+using GraduateWork.Server.Models.Enums;
 using GraduateWork.Server.Models.Request;
 using GraduateWork.Server.Models.Response;
 using GraduateWork.Server.Services.Abstractions;
@@ -111,14 +112,14 @@ namespace GraduateWork.Server.Services.Implementations
                     .Include(x => x.CertificateOfTesting)
                     .Include(x => x.CertificateOfSecondaryEducation)
                     .Include(x => x.Statements)
-                    .Where(x => x.Statements.Any(y => y.SpecialityId == specialityId))
+                    .Where(x => x.Statements.Any(y => y.SpecialityId == specialityId && y.Status == StatementStatus.Accepted))
                     .ToListAsync(cancellationToken)
                     .ConfigureAwait(false);
 
                 if (result == null)
                     throw new NotFoundException("Entrant not found.");
 
-                return result.Select(x => x.ToExtendedDto()).ToList();
+                return result.Select(x => x.ToExtendedDto()).OrderByDescending(x=> x.TotalScore).ToList();
             }
         }
 

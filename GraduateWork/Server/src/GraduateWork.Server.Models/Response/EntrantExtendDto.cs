@@ -14,5 +14,10 @@
         /// Gets/Sets certificate of secondary education.
         /// </summary>
         public CertificateOfSecondaryEducationDto CertificateOfSecondaryEducation { get; set; }
+
+        /// <summary>
+        /// Gets/Sets total score by speciality.
+        /// </summary>
+        public float TotalScore { get; set; }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using GraduateWork.Client.Models.RequestModels;
 using GraduateWork.Client.Services;
@@ -67,6 +68,22 @@ namespace GraduateWork.Client.ViewModels
 
         private async Task LoginAsync()
         {
+            if (!IsValidEmail(_inputEmail))
+            {
+                await Application.Current.MainPage.DisplayAlert("Помилка авторизації", "Невалідна пошта", "Закрити");
+                InputEmail = "";
+                return;
+            }
+
+            var regex = new Regex("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^\\da-zA-Z]).{8,15}$");
+
+            if (!regex.IsMatch(_inputPassword))
+            {
+                await Application.Current.MainPage.DisplayAlert("Помилка авторизації", "Невалідний пароль", "Закрити");
+                InputPassword = "";
+                return;
+            }
+            
             var token = await _httpClient.LoginAsync(new UserLoginModel
             {
                 Login = _inputEmail,
@@ -75,7 +92,7 @@ namespace GraduateWork.Client.ViewModels
 
             if (string.IsNullOrEmpty(token))
             {
-                ErrorMessage = "Невірний Email або пароль.";
+                await Application.Current.MainPage.DisplayAlert("Помилка авторизації", "Невірна пошта або пароль.", "Закрити");
                 InputPassword = "";
                 return;
             }
@@ -90,6 +107,19 @@ namespace GraduateWork.Client.ViewModels
         {
             await Navigation.PushAsync(new RegistrationPage(), true);
             
+        }
+
+        private bool IsValidEmail(string email)
+        {
+            try
+            {
+                var address = new System.Net.Mail.MailAddress(email);
+                return address.Address == email;
+            }
+            catch
+            {
+                return false;
+            }
         }
     }
 }

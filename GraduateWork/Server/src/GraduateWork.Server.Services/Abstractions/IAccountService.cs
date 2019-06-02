@@ -55,5 +55,14 @@ namespace GraduateWork.Server.Services.Abstractions
         /// <param name="model">Change user email model.</param>
         /// <param name="cancellationToken">Token for cancel operation.</param>
         Task ChangeUserEmailAsync(Guid id, ChangeUserEmailModel model, CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Set tracking entrant.
+        /// </summary>
+        /// <param name="userId">User id.</param>
+        /// <param name="entrantId">Entrant id.</param>
+        /// <param name="cancellationToken"><see cref="CancellationToken"/> instance.</param>
+        /// <returns></returns>
+        Task SetTrackingEntrantAsync(Guid userId, Guid entrantId, CancellationToken cancellationToken);
     }
 }

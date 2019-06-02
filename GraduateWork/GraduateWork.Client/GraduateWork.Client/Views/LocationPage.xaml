@@ -1,8 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:client="clr-namespace:GraduateWork.Client;assembly=GraduateWork.Client"
              x:Class="GraduateWork.Client.Views.LocationPage"
-             BackgroundColor="White">
+             BackgroundColor="White"
+             Title="Міста, області">
     <ContentPage.Content>
        <Grid>
            <Grid.ColumnDefinitions>
@@ -21,14 +23,16 @@
                 <ListView ItemsSource="{Binding Locations}" SelectionMode="Single" SeparatorColor="LightGray" HasUnevenRows ="True" SelectedItem="{Binding LocationsSelectedItem, Mode=TwoWay}">
                     <ListView.ItemTemplate>
                         <DataTemplate>
-                            <ViewCell>
+                            <client:CustomViewCell SelectedItemBackgroundColor="#fafafa">
+                            <ViewCell.View>
                                 <StackLayout Margin="0,10,0,0" BackgroundColor="#fafafa">
                                     <Label Text="{Binding Region}" 
                                            LineBreakMode="NoWrap" 
                                            FontSize="24"
                                            HorizontalTextAlignment="Center"/>
                                 </StackLayout>
-                            </ViewCell>
+                            </ViewCell.View>
+                            </client:CustomViewCell>
                         </DataTemplate>
                     </ListView.ItemTemplate>
                 </ListView>

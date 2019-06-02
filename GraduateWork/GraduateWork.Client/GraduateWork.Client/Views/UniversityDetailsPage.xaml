@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <TabbedPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:client="clr-namespace:GraduateWork.Client;assembly=GraduateWork.Client"
              x:Class="GraduateWork.Client.Views.UniversityDetailsPage" 
              BackgroundColor="White" 
              Title="{Binding UniversityName}"
@@ -26,8 +27,9 @@
                 <ListView x:Name="TestName" ItemsSource="{Binding Specialities}" HasUnevenRows ="True" SelectionMode="None" SeparatorColor="LightGray" SelectedItem="{Binding SpecialitySelectedItem, Mode=TwoWay}" >
                     <ListView.ItemTemplate>
                         <DataTemplate>
-                            <ViewCell>
-                                <StackLayout BackgroundColor="White" Margin="0,20,0,20" Padding="5">
+                            <client:CustomViewCell SelectedItemBackgroundColor="#fafafa">
+                                <ViewCell.View>
+                                    <StackLayout BackgroundColor="White" Margin="0,20,0,20" Padding="5">
                                     <Label Text="Бакалавр" TextColor="Black" FontAttributes="Bold" Margin="0"/>
                                     <Label Text="(на основі ПЗСО 11кл.)" Margin="0"/>
                                     <BoxView BackgroundColor="LightGray" HeightRequest="1"/>
@@ -41,11 +43,12 @@
                                     <BoxView BackgroundColor="LightGray" HeightRequest="1"/>
 
                                     <StackLayout Orientation="Horizontal" Padding ="10" Margin="0">
-                                        <Button BackgroundColor="LightGray" Text="Конкурсний бал" HorizontalOptions="StartAndExpand" BindingContext="{Binding Source={x:Reference TestName}, Path=BindingContext}" Command="{Binding ShowAlertCommand}" CommandParameter="{Binding Source={x:Reference Speciality}, Path=Text}"/>
-                                        <Button BackgroundColor="DodgerBlue" Text="Конкурс" HorizontalOptions="EndAndExpand" BindingContext="{Binding Source={x:Reference TestName}, Path=BindingContext}" Command="{Binding ShowSpecialityInfoCommand}" CommandParameter="{Binding Source={x:Reference Speciality}, Path=Text}"/>
+                                        <Button BackgroundColor="#fafafa" Text="Конкурсний бал" HorizontalOptions="StartAndExpand" BindingContext="{Binding Source={x:Reference TestName}, Path=BindingContext}" Command="{Binding ShowAlertCommand}" CommandParameter="{Binding Source={x:Reference Speciality}, Path=Text}"/>
+                                        <Button BackgroundColor="DodgerBlue" Text="Конкурс" HorizontalOptions="EndAndExpand" TextColor="White" BindingContext="{Binding Source={x:Reference TestName}, Path=BindingContext}" Command="{Binding ShowSpecialityInfoCommand}" CommandParameter="{Binding Source={x:Reference Speciality}, Path=Text}"/>
                                     </StackLayout>
-                                </StackLayout>
-                            </ViewCell>
+                                    </StackLayout>
+                                </ViewCell.View>
+                            </client:CustomViewCell>
                         </DataTemplate>
                     </ListView.ItemTemplate>
                 </ListView>

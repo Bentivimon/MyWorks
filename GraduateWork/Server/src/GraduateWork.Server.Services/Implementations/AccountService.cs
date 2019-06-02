@@ -132,5 +132,25 @@ namespace GraduateWork.Server.Services.Implementations
                 await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
             }
         }
+
+        /// <inheritdoc/>
+        public async Task SetTrackingEntrantAsync(Guid userId, Guid entrantId, CancellationToken cancellationToken)
+        {
+            using (var scope = _serviceProvider.CreateScope())
+            using (var context = scope.ServiceProvider.GetRequiredService<DatabaseContext>())
+            {
+                var user = await context.Users.FirstOrDefaultAsync(x => x.Id == userId, cancellationToken)
+                    .ConfigureAwait(false);
+
+                if (user == null)
+                    throw new ArgumentException("User not found");
+
+                if(!await context.Entrants.AnyAsync(x=> x.Id == entrantId, cancellationToken).ConfigureAwait(false))
+                    throw new ArgumentException("Entrant not found.");
+
+                user.EntrantId = entrantId;
+                await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+            }
+        }
     }
 }

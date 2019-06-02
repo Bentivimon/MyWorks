@@ -1,4 +1,5 @@
 ﻿using System;
+using GraduateWork.Server.Models.Enums;
 
 namespace GraduateWork.Server.Models.Response
 {
@@ -27,7 +28,7 @@ namespace GraduateWork.Server.Models.Response
         /// <summary>
         /// Gets/Sets is accepted
         /// </summary>
-        public bool IsAccepted { get; set; }
+        public StatementStatus Status { get; set; }
 
         /// <summary>
         /// Gets/Sets statement associated with entrant by id.

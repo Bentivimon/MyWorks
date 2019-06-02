@@ -1,7 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="GraduateWork.Client.Views.UniversityPage" BackgroundColor="White">
+             xmlns:client="clr-namespace:GraduateWork.Client;assembly=GraduateWork.Client"
+             x:Class="GraduateWork.Client.Views.UniversityPage" 
+             Title="Університети" BackgroundColor="White">
     <ContentPage.Content>
         <Grid>
             <Grid.ColumnDefinitions>
@@ -20,8 +22,9 @@
                 <ListView ItemsSource="{Binding Universities}" HasUnevenRows ="True" SeparatorColor="LightGray" SelectionMode="Single" SelectedItem="{Binding UniversitiesSelectedItem, Mode=TwoWay}">
                     <ListView.ItemTemplate>
                         <DataTemplate>
-                            <ViewCell>
-                                <StackLayout Padding="12" Orientation="Horizontal" VerticalOptions="FillAndExpand" 
+                            <client:CustomViewCell SelectedItemBackgroundColor="#fafafa">
+                                <ViewCell.View>
+                                    <StackLayout Padding="12" Orientation="Horizontal" VerticalOptions="FillAndExpand" 
                                              HorizontalOptions="FillAndExpand">
                                     <Label Text="{Binding FullName}" 
                                            LineBreakMode="WordWrap"
@@ -30,7 +33,8 @@
                                            FontSize="16"/>
                                     <Label VerticalTextAlignment="Center" Text=">" FontSize="18"  TextColor="Black" HorizontalTextAlignment="Center" />
                                 </StackLayout>
-                            </ViewCell>
+                            </ViewCell.View>
+                            </client:CustomViewCell>
                         </DataTemplate>
                     </ListView.ItemTemplate>
                 </ListView>

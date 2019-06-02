@@ -40,6 +40,7 @@ namespace GraduateWork.Client.ViewModels
         {
             var entrant = _entrants.First(x => x.Id == _selectedAbiturient.Id);
             await Navigation.PushAsync(new AbiturientPage(entrant), true);
+            SelectedAbiturient = null;
         }
 
 
@@ -49,34 +50,23 @@ namespace GraduateWork.Client.ViewModels
         {
             _entrants = entrants;
             Navigation = navigation;
+            SelectedAbiturient = null;
             SpecialityInfo =
                     $"Бакалавр (на основі ПЗСНО 11кл.). Спеціальність: {speciality.Code} {speciality.Name}. Факультет: {speciality.Faculty}";
             UniversityName = universityName;
             Abiturients = new ObservableCollection<EntrantListModel>();
-            InitializeEntrants(entrants);
+            InitializeEntrants(entrants.OrderByDescending(x=> x.TotalScore).ToList());
         }
 
         private void InitializeEntrants(List<EntrantDto> entrants)
         {
             for (int i = 0; i < entrants.Count; i++)
             {
-                var score = entrants[i].CertificateOfTesting.FirstMark + entrants[i].CertificateOfTesting.SecondMark + entrants[i].CertificateOfTesting.ThirdMark;
-
-                if (entrants[i].CertificateOfTesting.FourthMark.Equals(0))
-                {
-                    score += entrants[i].CertificateOfTesting.FourthMark;
-                    score /= 4;
-                }
-                else
-                {
-                    score /= 3;
-                }
-
                 Abiturients.Add(new EntrantListModel
                 {
                     Id = entrants[i].Id,
                     Title = $"{i + 1}. {entrants[i].Surname} {entrants[i].Name}.",
-                    Score = $"Конкурсний бал: {Math.Round(score, 1)}"
+                    Score = $"Конкурсний бал: {entrants[i].TotalScore}"
                 });
             }
         }

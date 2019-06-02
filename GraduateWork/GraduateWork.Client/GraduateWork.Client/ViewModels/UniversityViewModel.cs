@@ -44,6 +44,8 @@ namespace GraduateWork.Client.ViewModels
             var university = _universities.First(x => x.FullName == _universitiesSelectedItem.FullName);
           
             await Navigation.PushAsync(new UniversityDetailsPage(university, _regionName), true);
+
+            UniversitiesSelectedItem = null;
         }
 
 
@@ -52,6 +54,7 @@ namespace GraduateWork.Client.ViewModels
             _regionName = regionName;
             _universities = universities;
             Navigation = navigation;
+            UniversitiesSelectedItem = null;
             Universities = new ObservableCollection<UniversityListModel>(universities.Select(x=> new UniversityListModel{ FullName = x.FullName }));
         }
 

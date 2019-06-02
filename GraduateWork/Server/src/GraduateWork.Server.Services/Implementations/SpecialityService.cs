@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using GraduateWork.Server.Data;
 using GraduateWork.Server.Data.Entities;
 using GraduateWork.Server.Models.CustomExceptions;
+using GraduateWork.Server.Models.Enums;
 using GraduateWork.Server.Models.Request;
 using GraduateWork.Server.Models.Response;
 using GraduateWork.Server.Services.Abstractions;
@@ -122,7 +123,7 @@ namespace GraduateWork.Server.Services.Implementations
                 var speciality = await context.Specialties.AsNoTracking().Include(x => x.Statements)
                     .FirstOrDefaultAsync(x => x.Id == specialityId, cancellationToken).ConfigureAwait(false);
 
-                speciality.Statements = speciality.Statements.Where(x => x.IsAccepted).OrderByDescending(x => x.TotalScore);
+                speciality.Statements = speciality.Statements.Where(x => x.Status ==  StatementStatus.Accepted).OrderByDescending(x => x.TotalScore);
 
                 return speciality.ToExtendedDto();
             }
