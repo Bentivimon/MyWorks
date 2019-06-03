@@ -106,13 +106,6 @@
             <param name="model"><see cref="T:GraduateWork.Server.Models.Request.ChangeUserEmailModel"/> instance.</param>
             <param name="cancellationToken"><see cref="T:System.Threading.CancellationToken"/> instance.</param>
         </member>
-        <member name="M:GraduateWork.Server.Api.Controllers.AccountController.SetTrackingEntrantAsync(System.Guid,System.Threading.CancellationToken)">
-            <summary>
-            Set tracking entrant.
-            </summary>
-            <param name="entrantId">Entrant id.</param>
-            <param name="cancellationToken"><see cref="T:System.Threading.CancellationToken"/> instance.</param>
-        </member>
         <member name="T:GraduateWork.Server.Api.Controllers.EntrantController">
             <summary>
             Controller for manage entrant.

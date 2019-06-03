@@ -110,16 +110,5 @@ namespace GraduateWork.Server.Api.Controllers
         {
            await _accountService.ChangeUserEmailAsync(Guid.Parse(User.Identity.Name), model, cancellationToken).ConfigureAwait(false);
         }
-
-        /// <summary>
-        /// Set tracking entrant.
-        /// </summary>
-        /// <param name="entrantId">Entrant id.</param>
-        /// <param name="cancellationToken"><see cref="CancellationToken"/> instance.</param>
-        [HttpPost("tracking")]
-        public async Task SetTrackingEntrantAsync([FromQuery] Guid entrantId, CancellationToken cancellationToken)
-        {
-            await _accountService.SetTrackingEntrantAsync(Guid.Parse(User.Identity.Name), entrantId, cancellationToken).ConfigureAwait(false);
-        }
     }
 }
