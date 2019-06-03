@@ -65,7 +65,7 @@ namespace GraduateWork.Client.ViewModels
                 Abiturients.Add(new EntrantListModel
                 {
                     Id = entrants[i].Id,
-                    Title = $"{i + 1}. {entrants[i].Surname} {entrants[i].Name}.",
+                    Title = $"{i + 1}. {entrants[i].Surname} {entrants[i].Name}",
                     Score = $"Конкурсний бал: {entrants[i].TotalScore}"
                 });
             }
