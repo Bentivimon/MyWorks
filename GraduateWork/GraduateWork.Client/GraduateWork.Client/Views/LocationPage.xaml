@@ -17,8 +17,10 @@
                <RowDefinition Height="25*"/>
                <RowDefinition Height="*"/>
            </Grid.RowDefinitions>
-
-           <Label Grid.Row="0" Grid.Column="1" Text="Оберіть місто або область" TextColor="Black" VerticalTextAlignment="Center" FontSize="24"/>
+            <StackLayout Grid.Row="0" Grid.Column="1"  Orientation="Horizontal" Spacing="5">
+                <Label Text="Оберіть місто або область" TextColor="Black" VerticalTextAlignment="Center" FontSize="24"/>
+                <ImageButton BackgroundColor="Transparent" Source="network_user.png" Command="{Binding OpenPersonalPageCommand}" HorizontalOptions="EndAndExpand"/>
+            </StackLayout>
             <Frame Grid.Row="1" Grid.Column="1" BackgroundColor="#fafafa" CornerRadius="3">
                 <ListView ItemsSource="{Binding Locations}" SelectionMode="Single" SeparatorColor="LightGray" HasUnevenRows ="True" SelectedItem="{Binding LocationsSelectedItem, Mode=TwoWay}">
                     <ListView.ItemTemplate>

@@ -70,6 +70,10 @@ namespace GraduateWork.Server.Services.Implementations
             using (var context = scope.ServiceProvider.GetRequiredService<DatabaseContext>())
             {
                 var userEntity = await context.Users
+                    .Include(x => x.Entrant)
+                    .ThenInclude(x => x.Statements)
+                    .ThenInclude(x => x.Speciality).ThenInclude(x => x.UniversitySpecialities)
+                    .ThenInclude(x => x.University)
                     .AsNoTracking()
                     .FirstOrDefaultAsync(x => x.Id == id, cancellationToken).ConfigureAwait(false);
 

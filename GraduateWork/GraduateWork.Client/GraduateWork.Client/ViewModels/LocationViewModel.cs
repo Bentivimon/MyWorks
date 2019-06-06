@@ -16,8 +16,11 @@ namespace GraduateWork.Client.ViewModels
     public class LocationViewModel: BaseViewModel
     {
         private UniversitiesHttpClient _httpClient;
+        private AccountHttpClient _accountHttpClient;
         private List<RegionDto> _regions;
         public ObservableCollection<LocationListModel> Locations { get; set; }
+
+        public Command OpenPersonalPageCommand { get; set; }
 
         public INavigation Navigation { get; set; }
 
@@ -42,9 +45,18 @@ namespace GraduateWork.Client.ViewModels
         {
             Navigation = navigation;
             _regions = regions;
+            _accountHttpClient = new AccountHttpClient();
             Locations = null;
             Locations = new ObservableCollection<LocationListModel>(regions.Select(x=> new LocationListModel{Region = x.Name}));
             _httpClient = new UniversitiesHttpClient();
+            OpenPersonalPageCommand = new Command(async () => await OpenPersonalPageAsync());
+        }
+
+        private async Task OpenPersonalPageAsync()
+        {
+            var userInfo = await _accountHttpClient.GetUserInfo(Application.Current.Properties["token"].ToString());
+
+            await Navigation.PushAsync(new PersonalPage(userInfo));
         }
 
         private async Task ShowDetailPage()

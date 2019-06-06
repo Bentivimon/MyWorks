@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace GraduateWork.Server.Models.Response
+namespace GraduateWork.Client.Models.ResponseModels
 {
-    /// <summary>
-    /// Represent user response model.
-    /// </summary>
-    public class UserDto
+    public class UserInfo
     {
         /// <summary>
         /// Gets/Sets user email.

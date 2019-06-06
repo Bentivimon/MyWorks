@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using GraduateWork.Server.Models.Request;
 using GraduateWork.Server.Models.Response;
 
@@ -86,14 +89,35 @@ namespace GraduateWork.Server.Data.Entities
         /// <summary>
         /// Method for convert <see cref="UserEntity"/> to <see cref="UserDto"/>
         /// </summary>
-        public UserDto ToDto() => new UserDto()
+        public UserDto ToDto()
         {
-            Birthday = Birthday.UtcDateTime,
-            Email = Email,
-            FirstName = FirstName,
-            LastName = LastName,
-            MobileNumber = Phone
-        };
+            var user = new UserDto()
+            {
+                Birthday = Birthday.UtcDateTime,
+                Email = Email,
+                FirstName = FirstName,
+                LastName = LastName,
+                MobileNumber = Phone,
+                Statements = new List<EntrantStatementDto>()
+            };
+
+            if(Entrant != null)
+                foreach (var statementEntity in Entrant.Statements)
+                {
+                    var statementDto = new EntrantStatementDto
+                    {
+                        Priority = statementEntity.Priority,
+                        EntrantScore = statementEntity.TotalScore,
+                        StatementStatus = statementEntity.Status,
+                        SpecialityName = statementEntity.Speciality.Name,
+                        UniversityName = statementEntity.Speciality.UniversitySpecialities.First().University.FullName
+                    };
+
+                    user.Statements.Add(statementDto);
+                }
+
+            return user;
+        }
 
         /// <summary>
         /// Method for convert <see cref="RegistrationModel"/> to <see cref="RegistrationModel"/>.

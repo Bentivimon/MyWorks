@@ -298,6 +298,24 @@
             </summary>
             <param name="context"><see cref="T:Microsoft.AspNetCore.Mvc.Filters.ExceptionContext"/> instance.</param>
         </member>
+        <member name="T:GraduateWork.Server.Api.HostedServices.CalculationHostedService">
+            <summary>
+            Base hosted service for schedule.
+            </summary>
+        </member>
+        <member name="M:GraduateWork.Server.Api.HostedServices.CalculationHostedService.#ctor(Microsoft.Extensions.Hosting.IApplicationLifetime,GraduateWork.Server.Services.Abstractions.IRatingCalculationService)">
+            <summary>
+            Basic constructor
+            </summary>
+            <param name="applicationLifetime"><see cref="T:Microsoft.Extensions.Hosting.IApplicationLifetime"/> instance.</param>
+            <param name="ratingCalculationService"><see cref="T:GraduateWork.Server.Services.Abstractions.IRatingCalculationService"/> instance.</param>
+        </member>
+        <member name="M:GraduateWork.Server.Api.HostedServices.CalculationHostedService.StartAsync(System.Threading.CancellationToken)">
+            <inheritdoc/>
+        </member>
+        <member name="M:GraduateWork.Server.Api.HostedServices.CalculationHostedService.StopAsync(System.Threading.CancellationToken)">
+            <inheritdoc/>
+        </member>
         <member name="T:GraduateWork.Server.Api.Options.SwaggerOptions">
             <summary>
             Options for swagger.
