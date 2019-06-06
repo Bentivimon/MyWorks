@@ -24,8 +24,8 @@
                     <Label Text="{Binding MobilePhone}"/>
                 </StackLayout>
                 <StackLayout Orientation="Horizontal" Spacing="10">
-                    <Button Text="Cторінка абітурієнта" FontSize="10"  VerticalOptions ="CenterAndExpand" HorizontalOptions="CenterAndExpand"/>
-                    <Button Text="Вибрати абітурієнта" FontSize="10"  VerticalOptions ="CenterAndExpand" HorizontalOptions="CenterAndExpand"/>
+                <Button Text="Cторінка абітурієнта" FontSize="12"  VerticalOptions ="CenterAndExpand" HorizontalOptions="CenterAndExpand" Command="{Binding ShowAbiturientCommand}" IsEnabled="{Binding IsShowAbiturientButtonEnabled}"/>
+                    <Button Text="Вибрати абітурієнта" FontSize="12"  VerticalOptions ="CenterAndExpand" HorizontalOptions="CenterAndExpand" Command="{Binding ShowSelectEntrantCommand}"/>
                 </StackLayout>
                 <Label Text="Заяви абітурієнта за котрим ви стежите" FontSize="16" FontAttributes="Bold"/> 
                 <ListView HasUnevenRows="True"  BackgroundColor="#fafafa" SeparatorColor="LightGray"  ItemsSource="{Binding Statements}" SelectionMode="None">

@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:client="clr-namespace:GraduateWork.Client;assembly=GraduateWork.Client"
+             x:Class="GraduateWork.Client.Views.SelectEntrantPage"
+             Title="Вибір абітурієнта"
+             BackgroundColor="White">
+    <ContentPage.Content>
+        <StackLayout Spacing="15" Padding="10,10,10,0">
+            <StackLayout Orientation="Horizontal" Spacing="15" BackgroundColor="#fafafa">
+                <Entry FontSize="16" BackgroundColor="Transparent" />
+                <ImageButton Source="network_user.png" BackgroundColor="Transparent"/>
+            </StackLayout>
+
+            <ListView HasUnevenRows="True"  BackgroundColor="#fafafa" SeparatorColor="LightGray"  ItemsSource="" SelectionMode="None">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <client:CustomViewCell SelectedItemBackgroundColor="#fafafa">
+                            <ViewCell.View>
+                                
+                            </ViewCell.View>
+                        </client:CustomViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

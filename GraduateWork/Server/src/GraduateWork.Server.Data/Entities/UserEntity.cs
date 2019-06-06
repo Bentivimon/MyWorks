@@ -98,6 +98,7 @@ namespace GraduateWork.Server.Data.Entities
                 FirstName = FirstName,
                 LastName = LastName,
                 MobileNumber = Phone,
+                EntrantId = Entrant?.Id ?? Guid.Empty,
                 Statements = new List<EntrantStatementDto>()
             };
 

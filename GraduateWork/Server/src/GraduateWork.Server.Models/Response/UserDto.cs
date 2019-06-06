@@ -34,6 +34,11 @@ namespace GraduateWork.Server.Models.Response
         public DateTime Birthday { get; set; }
 
         /// <summary>
+        /// Gets/Sets entrant id.
+        /// </summary>
+        public Guid EntrantId { get; set; }
+
+        /// <summary>
         /// Gets/Sets attached entrant.
         /// </summary>
         public List<EntrantStatementDto> Statements { get; set; }

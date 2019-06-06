@@ -29,5 +29,46 @@ namespace GraduateWork.Client.Services
                 return null;
             }
         }
+
+        public async Task<EntrantDto> GetEntrantByIdAsync(string accessToken, Guid entrantId)
+        {
+            using (var client = new HttpClient())
+            {
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+                var requestUri = Consts.BaseUrl + $"v1/Entrant/byId?entrantId={entrantId}";
+
+                var response = await client.GetAsync(requestUri).ConfigureAwait(false);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var body = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                    var result = JsonConvert.DeserializeObject<EntrantDto>(body);
+                    return result;
+                }
+
+                return null;
+            }
+        }
+
+
+        public async Task<List<ShortEntrantDto>> GetEntrantsAsync(string accessToken)
+        {
+            using (var client = new HttpClient())
+            {
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+                var requestUri = Consts.BaseUrl + $"v1/Entrant/pagination?skip=0&take=1000";
+
+                var response = await client.GetAsync(requestUri).ConfigureAwait(false);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var body = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                    var result = JsonConvert.DeserializeObject<List<ShortEntrantDto>>(body);
+                    return result;
+                }
+
+                return null;
+            }
+        }
     }
 }
