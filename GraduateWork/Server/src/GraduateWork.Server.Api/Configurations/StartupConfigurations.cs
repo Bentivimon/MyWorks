@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using GraduateWork.Server.Api.Filters;
+using GraduateWork.Server.Api.HostedServices;
 using GraduateWork.Server.Data;
 using GraduateWork.Server.Models;
 using GraduateWork.Server.Models.Configurations;
@@ -124,6 +125,7 @@ namespace GraduateWork.Server.Api.Configurations
             services.AddTransient<IRegionService, RegionService>();
             services.AddTransient<IRatingCalculationService, RatingCalculationService>();
             services.AddTransient<DatabaseSeeder>();
+            services.AddHostedService<CalculationHostedService>();
         }
 
         /// <summary>
