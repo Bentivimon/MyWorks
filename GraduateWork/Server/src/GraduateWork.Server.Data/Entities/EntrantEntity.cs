@@ -42,13 +42,7 @@ namespace GraduateWork.Server.Data.Entities
         /// </summary>
         [Column("birthday")]
         public DateTimeOffset Birthday { get; set; }
-
-        /// <summary>
-        /// Gets/Sets entrant associated with user by id. 
-        /// </summary>
-        [Column("user_id")]
-        public Guid? UserId { get; set; }
-
+        
         #endregion
 
         #region Foreign keys
@@ -56,7 +50,7 @@ namespace GraduateWork.Server.Data.Entities
         /// <summary>
         /// Gets/Sets entrant associated with user entity.
         /// </summary>
-        public UserEntity User { get; set; }
+        public List<UserEntity> Users { get; set; }
 
         /// <summary>
         /// Gets/Sets entrant associated with certificate of testing.
@@ -125,7 +119,7 @@ namespace GraduateWork.Server.Data.Entities
                 BDay = Birthday.UtcDateTime,
                 CertificateOfTesting = CertificateOfTesting?.ToDto(),
                 CertificateOfSecondaryEducation = CertificateOfSecondaryEducation?.ToDto(),
-                TotalScore = Statements?.First(x=> x.Status == StatementStatus.Accepted).TotalScore ?? 0f
+                TotalScore = Statements?.First().TotalScore ?? 0f
             };
         }
 

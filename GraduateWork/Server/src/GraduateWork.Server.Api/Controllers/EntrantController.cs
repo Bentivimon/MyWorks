@@ -51,8 +51,8 @@ namespace GraduateWork.Server.Api.Controllers
         /// <param name="name">Part of name.</param>
         /// <param name="cancellationToken"><see cref="CancellationToken"/> instance.</param>
         [HttpGet("pagination/filter")]
-        public async Task<List<EntrantDto>> GetEntrantsByNameAsync([FromRoute] int skip, [FromRoute] int take,
-            [FromRoute] string name, CancellationToken cancellationToken)
+        public async Task<List<EntrantExtendDto>> GetEntrantsByNameAsync([FromQuery] int skip, [FromQuery] int take,
+            [FromQuery] string name, CancellationToken cancellationToken)
         {
             var result = await _entrantService.GetEntrantsByNameAsync(skip, take, name, cancellationToken).ConfigureAwait(false);
 

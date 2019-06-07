@@ -70,5 +70,36 @@ namespace GraduateWork.Client.Services
                 return null;
             }
         }
+
+        public async Task<List<EntrantDto>> GetEntrantsByNameAsync(string accessToken, string name)
+        {
+            using (var client = new HttpClient())
+            {
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+                var requestUri = Consts.BaseUrl + $"v1/Entrant/pagination/filter?skip=0&take=1000&name={name}";
+
+                var response = await client.GetAsync(requestUri).ConfigureAwait(false);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var body = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                    var result = JsonConvert.DeserializeObject<List<EntrantDto>>(body);
+                    return result;
+                }
+
+                return null;
+            }
+        }
+
+        public async Task CombineEntrantAndUserAsync(string accessToken, Guid entrantId)
+        {
+            using (var client = new HttpClient())
+            {
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+                var requestUri = Consts.BaseUrl + $"v1/Entrant/combine?entrantId={entrantId}";
+
+                await client.PutAsync(requestUri, null).ConfigureAwait(false);
+            }
+        }
     }
 }

@@ -59,7 +59,7 @@
                </StackLayout>
 
                <StackLayout>
-                    <Button Text="Реєстрація" BackgroundColor="DodgerBlue" Margin="15,10,15,0" HeightRequest="50" TextColor="White" Command="{Binding RegistrationCommand}"/>
+                    <Button Text="Реєстрація" BackgroundColor="DodgerBlue" Margin="15,10,15,0" HeightRequest="50" TextColor="White" Command="{Binding RegistrationCommand}" IsEnabled="{Binding IsRegistrationButtonEnabled}"/>
                </StackLayout>
             </StackLayout>
             </Frame>

@@ -18,6 +18,18 @@ namespace GraduateWork.Client.ViewModels
         public Command LoginCommand { get; set; }
         public INavigation Navigation { get; set; }
 
+        private bool _isLoginButtonEnabled;
+
+        public bool IsLoginButtonEnabled
+        {
+            get => _isLoginButtonEnabled;
+            set
+            {
+                _isLoginButtonEnabled = value;
+                OnPropertyChanged();
+            }
+        }
+
         private string _inputEmail;
 
         public string InputEmail
@@ -64,14 +76,17 @@ namespace GraduateWork.Client.ViewModels
             LoginCommand = new Command(async () => await LoginAsync());
             _httpClient = new AccountHttpClient();
             _regionsHttpClient = new RegionsHttpClient();
+            IsLoginButtonEnabled = true;
         }
 
         private async Task LoginAsync()
         {
+            IsLoginButtonEnabled = false;
             if (!IsValidEmail(_inputEmail))
             {
                 await Application.Current.MainPage.DisplayAlert("Помилка авторизації", "Невалідна пошта", "Закрити");
                 InputEmail = "";
+                IsLoginButtonEnabled = true;
                 return;
             }
 
@@ -81,6 +96,7 @@ namespace GraduateWork.Client.ViewModels
             {
                 await Application.Current.MainPage.DisplayAlert("Помилка авторизації", "Невалідний пароль", "Закрити");
                 InputPassword = "";
+                IsLoginButtonEnabled = true;
                 return;
             }
             
@@ -94,6 +110,7 @@ namespace GraduateWork.Client.ViewModels
             {
                 await Application.Current.MainPage.DisplayAlert("Помилка авторизації", "Невірна пошта або пароль.", "Закрити");
                 InputPassword = "";
+                IsLoginButtonEnabled = true;
                 return;
             }
 
@@ -101,6 +118,8 @@ namespace GraduateWork.Client.ViewModels
             var regions =
                 await _regionsHttpClient.GetAllRegionsAsync(Application.Current.Properties["token"].ToString());
             await Navigation.PushAsync(new LocationPage(regions), true);
+
+            IsLoginButtonEnabled = true;
         }
 
         private async Task NavigateToRegistrationPage()

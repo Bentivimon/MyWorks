@@ -36,6 +36,16 @@ namespace GraduateWork.Client.Models.ResponseModels
         public Guid EntrantId { get; set; }
 
         /// <summary>
+        /// Gets/Sets entrant first name.
+        /// </summary>
+        public string EntrantFistName { get; set; }
+
+        /// <summary>
+        /// Gets/Sets entrant last name.
+        /// </summary>
+        public string EntrantLastName { get; set; }
+
+        /// <summary>
         /// Gets/Sets attached entrant.
         /// </summary>
         public List<EntrantStatementDto> Statements { get; set; }

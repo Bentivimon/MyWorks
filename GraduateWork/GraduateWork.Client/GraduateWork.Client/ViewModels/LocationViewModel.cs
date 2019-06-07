@@ -54,9 +54,7 @@ namespace GraduateWork.Client.ViewModels
 
         private async Task OpenPersonalPageAsync()
         {
-            var userInfo = await _accountHttpClient.GetUserInfo(Application.Current.Properties["token"].ToString());
-
-            await Navigation.PushAsync(new PersonalPage(userInfo));
+            await Navigation.PushAsync(new PersonalPage());
         }
 
         private async Task ShowDetailPage()

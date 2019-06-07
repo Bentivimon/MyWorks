@@ -9,6 +9,20 @@ namespace GraduateWork.Server.Data.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "entrants",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(nullable: false),
+                    firs_name = table.Column<string>(nullable: true),
+                    last_name = table.Column<string>(nullable: true),
+                    birthday = table.Column<DateTimeOffset>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_entrants", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Regions",
                 columns: table => new
                 {
@@ -35,96 +49,6 @@ namespace GraduateWork.Server.Data.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_specialities", x => x.id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "users",
-                columns: table => new
-                {
-                    id = table.Column<Guid>(nullable: false),
-                    password = table.Column<string>(nullable: true),
-                    email = table.Column<string>(nullable: true),
-                    first_name = table.Column<string>(nullable: true),
-                    last_name = table.Column<string>(nullable: true),
-                    phone = table.Column<string>(nullable: true),
-                    birthday = table.Column<DateTimeOffset>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_users", x => x.id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "universities",
-                columns: table => new
-                {
-                    id = table.Column<Guid>(nullable: false),
-                    full_name = table.Column<string>(nullable: true),
-                    level_of_accreditation = table.Column<string>(nullable: true),
-                    ownership = table.Column<string>(nullable: true),
-                    chief = table.Column<string>(nullable: true),
-                    subordination = table.Column<string>(nullable: true),
-                    post_index = table.Column<string>(nullable: true),
-                    address = table.Column<string>(nullable: true),
-                    phone = table.Column<string>(nullable: true),
-                    site = table.Column<string>(nullable: true),
-                    email = table.Column<string>(nullable: true),
-                    region_id = table.Column<int>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_universities", x => x.id);
-                    table.ForeignKey(
-                        name: "FK_universities_Regions_region_id",
-                        column: x => x.region_id,
-                        principalTable: "Regions",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "entrants",
-                columns: table => new
-                {
-                    id = table.Column<Guid>(nullable: false),
-                    firs_name = table.Column<string>(nullable: true),
-                    last_name = table.Column<string>(nullable: true),
-                    birthday = table.Column<DateTimeOffset>(nullable: false),
-                    user_id = table.Column<Guid>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_entrants", x => x.id);
-                    table.ForeignKey(
-                        name: "FK_entrants_users_user_id",
-                        column: x => x.user_id,
-                        principalTable: "users",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "university_specialities",
-                columns: table => new
-                {
-                    university_id = table.Column<Guid>(nullable: false),
-                    specialty_id = table.Column<Guid>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_university_specialities", x => new { x.specialty_id, x.university_id });
-                    table.ForeignKey(
-                        name: "FK_university_specialities_specialities_specialty_id",
-                        column: x => x.specialty_id,
-                        principalTable: "specialities",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_university_specialities_universities_university_id",
-                        column: x => x.university_id,
-                        principalTable: "universities",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -178,6 +102,58 @@ namespace GraduateWork.Server.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "users",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(nullable: false),
+                    password = table.Column<string>(nullable: true),
+                    email = table.Column<string>(nullable: true),
+                    first_name = table.Column<string>(nullable: true),
+                    last_name = table.Column<string>(nullable: true),
+                    phone = table.Column<string>(nullable: true),
+                    birthday = table.Column<DateTimeOffset>(nullable: false),
+                    entrant_id = table.Column<Guid>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_users", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_users_entrants_entrant_id",
+                        column: x => x.entrant_id,
+                        principalTable: "entrants",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "universities",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(nullable: false),
+                    full_name = table.Column<string>(nullable: true),
+                    level_of_accreditation = table.Column<string>(nullable: true),
+                    ownership = table.Column<string>(nullable: true),
+                    chief = table.Column<string>(nullable: true),
+                    subordination = table.Column<string>(nullable: true),
+                    post_index = table.Column<string>(nullable: true),
+                    address = table.Column<string>(nullable: true),
+                    phone = table.Column<string>(nullable: true),
+                    site = table.Column<string>(nullable: true),
+                    email = table.Column<string>(nullable: true),
+                    region_id = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_universities", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_universities_Regions_region_id",
+                        column: x => x.region_id,
+                        principalTable: "Regions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "statements",
                 columns: table => new
                 {
@@ -206,6 +182,30 @@ namespace GraduateWork.Server.Data.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "university_specialities",
+                columns: table => new
+                {
+                    university_id = table.Column<Guid>(nullable: false),
+                    specialty_id = table.Column<Guid>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_university_specialities", x => new { x.specialty_id, x.university_id });
+                    table.ForeignKey(
+                        name: "FK_university_specialities_specialities_specialty_id",
+                        column: x => x.specialty_id,
+                        principalTable: "specialities",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_university_specialities_universities_university_id",
+                        column: x => x.university_id,
+                        principalTable: "universities",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_certificate_of_secondary_education_entrant_id",
                 table: "certificate_of_secondary_education",
@@ -216,12 +216,6 @@ namespace GraduateWork.Server.Data.Migrations
                 name: "IX_certificates_of_testing_entrant_id",
                 table: "certificates_of_testing",
                 column: "entrant_id",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_entrants_user_id",
-                table: "entrants",
-                column: "user_id",
                 unique: true);
 
             migrationBuilder.CreateIndex(
@@ -243,6 +237,11 @@ namespace GraduateWork.Server.Data.Migrations
                 name: "IX_university_specialities_university_id",
                 table: "university_specialities",
                 column: "university_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_users_entrant_id",
+                table: "users",
+                column: "entrant_id");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -260,7 +259,7 @@ namespace GraduateWork.Server.Data.Migrations
                 name: "university_specialities");
 
             migrationBuilder.DropTable(
-                name: "entrants");
+                name: "users");
 
             migrationBuilder.DropTable(
                 name: "specialities");
@@ -269,7 +268,7 @@ namespace GraduateWork.Server.Data.Migrations
                 name: "universities");
 
             migrationBuilder.DropTable(
-                name: "users");
+                name: "entrants");
 
             migrationBuilder.DropTable(
                 name: "Regions");

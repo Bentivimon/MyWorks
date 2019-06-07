@@ -9,16 +9,17 @@ namespace GraduateWork.Client.Views
 	public partial class PersonalPage : ContentPage
 	{
         private PersonalPageViewModel _viewModel;
-
-        public PersonalPage()
-        {
-            InitializeComponent();
-        }
-
-        public PersonalPage (UserInfo userInfo)
+        
+        public PersonalPage ()
 		{
 			InitializeComponent ();
-            BindingContext = _viewModel = new PersonalPageViewModel(userInfo, Navigation);
+            BindingContext = _viewModel = new PersonalPageViewModel(Navigation);
         }
-	}
+
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+            BindingContext = _viewModel = new PersonalPageViewModel(Navigation);
+        }
+    }
 }

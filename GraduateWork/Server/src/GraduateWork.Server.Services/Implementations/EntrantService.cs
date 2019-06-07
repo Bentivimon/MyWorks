@@ -69,22 +69,22 @@ namespace GraduateWork.Server.Services.Implementations
             }
         }
 
-        public async Task<List<EntrantDto>> GetEntrantsByNameAsync(int skip, int take, string name, CancellationToken cancellationToken)
+        public async Task<List<EntrantExtendDto>> GetEntrantsByNameAsync(int skip, int take, string name, CancellationToken cancellationToken)
         {
             using (var scope = _serviceProvider.CreateScope())
             using (var context = scope.ServiceProvider.GetRequiredService<DatabaseContext>())
             {
-                var result = await context.Entrants
+                var result = await context.Entrants.Include(x=> x.CertificateOfSecondaryEducation).Include(x=>x.CertificateOfTesting).Include(x=> x.Statements)
                     .Where(x =>
                         x.FirstName.ToLower(CultureInfo.InvariantCulture)
                             .Contains(name.ToLower(CultureInfo.InvariantCulture), StringComparison.InvariantCulture) ||
-                        x.FirstName.ToLower(CultureInfo.InvariantCulture)
+                        x.LastName.ToLower(CultureInfo.InvariantCulture)
                             .Contains(name.ToLower(CultureInfo.InvariantCulture), StringComparison.InvariantCulture))
                     .Skip(skip)
                     .Take(take)
                     .ToListAsync(cancellationToken).ConfigureAwait(false);
 
-                return result.Select(x => x.ToDto()).ToList();
+                return result.Select(x => x.ToExtendedDto()).ToList();
             }
         }
 
@@ -93,7 +93,7 @@ namespace GraduateWork.Server.Services.Implementations
             using (var scope = _serviceProvider.CreateScope())
             using (var context = scope.ServiceProvider.GetRequiredService<DatabaseContext>())
             {
-                var result = await context.Entrants
+                var result = await context.Entrants.Include(x=> x.CertificateOfSecondaryEducation).Include(x=>x.CertificateOfTesting).Include(x=> x.Statements)
                     .FirstOrDefaultAsync(x => x.Id == entrantId, cancellationToken).ConfigureAwait(false);
 
                 if (result == null)
@@ -134,7 +134,16 @@ namespace GraduateWork.Server.Services.Implementations
                 if (entrantEntity == null)
                     throw new NotFoundException("Entrant not found.");
 
-                entrantEntity.UserId = userId;
+                var user = await context.Users.FirstOrDefaultAsync(x => x.Id == userId, cancellationToken)
+                    .ConfigureAwait(false);
+
+                if (user.EntrantId.HasValue)
+                {
+                    user.EntrantId = null;
+                    await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+                }
+
+                user.EntrantId = entrantId;
                 await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
             }
         }

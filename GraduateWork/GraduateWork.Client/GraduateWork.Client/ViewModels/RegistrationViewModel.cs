@@ -17,6 +17,18 @@ namespace GraduateWork.Client.ViewModels
         public Command RegistrationCommand { get; set; }
         public INavigation Navigation { get; set; }
 
+        private bool _isRegistrationButtonEnabled;
+
+        public bool IsRegistrationButtonEnabled
+        {
+            get => _isRegistrationButtonEnabled;
+            set
+            {
+                _isRegistrationButtonEnabled = value;
+                OnPropertyChanged();
+            }
+        }
+
         private string _inputEmail;
 
         public string InputEmail
@@ -100,14 +112,17 @@ namespace GraduateWork.Client.ViewModels
             _httpClient = new AccountHttpClient();
             RegistrationCommand = new Command(async() => await RegistrationAsync());
             Navigation = navigation;
+            IsRegistrationButtonEnabled = true;
         }
         
         private async Task RegistrationAsync()
         {
+            IsRegistrationButtonEnabled = false;
             if (!IsValidEmail(_inputEmail))
             {
                 await Application.Current.MainPage.DisplayAlert("Помилка реєстрації", "Невалідна пошта", "Закрити");
                 InputEmail = "";
+                IsRegistrationButtonEnabled = true;
                 return;
             }
 
@@ -118,6 +133,7 @@ namespace GraduateWork.Client.ViewModels
                 await Application.Current.MainPage.DisplayAlert("Помилка реєстрації", "Невалідний пароль", "Закрити");
                 InputPassword = "";
                 InputConfirmationPassword = "";
+                IsRegistrationButtonEnabled = true;
                 return;
             }
 
@@ -126,6 +142,7 @@ namespace GraduateWork.Client.ViewModels
                 await Application.Current.MainPage.DisplayAlert("Помилка реєстрації", "Паролі не співпадають", "Закрити");
                 InputPassword = "";
                 InputConfirmationPassword = "";
+                IsRegistrationButtonEnabled = true;
                 return;
             }
 
@@ -144,10 +161,12 @@ namespace GraduateWork.Client.ViewModels
                 InputEmail = "";
                 InputPassword = "";
                 InputConfirmationPassword = "";
+                IsRegistrationButtonEnabled = true;
                 return;
             }
 
             await Navigation.PopAsync(true);
+            IsRegistrationButtonEnabled = true;
         }
 
         private bool IsValidEmail(string email)

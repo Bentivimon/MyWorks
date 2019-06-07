@@ -10,7 +10,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace GraduateWork.Server.Data.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20190603101608_initial")]
+    [Migration("20190607080318_initial")]
     partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -112,13 +112,7 @@ namespace GraduateWork.Server.Data.Migrations
                     b.Property<string>("LastName")
                         .HasColumnName("last_name");
 
-                    b.Property<Guid?>("UserId")
-                        .HasColumnName("user_id");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("UserId")
-                        .IsUnique();
 
                     b.ToTable("entrants");
                 });
@@ -267,6 +261,9 @@ namespace GraduateWork.Server.Data.Migrations
                     b.Property<string>("Email")
                         .HasColumnName("email");
 
+                    b.Property<Guid?>("EntrantId")
+                        .HasColumnName("entrant_id");
+
                     b.Property<string>("FirstName")
                         .HasColumnName("first_name");
 
@@ -280,6 +277,8 @@ namespace GraduateWork.Server.Data.Migrations
                         .HasColumnName("phone");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("EntrantId");
 
                     b.ToTable("users");
                 });
@@ -296,13 +295,6 @@ namespace GraduateWork.Server.Data.Migrations
                     b.HasOne("GraduateWork.Server.Data.Entities.EntrantEntity", "Entrant")
                         .WithOne("CertificateOfTesting")
                         .HasForeignKey("GraduateWork.Server.Data.Entities.CertificateOfTestingEntity", "EntrantId");
-                });
-
-            modelBuilder.Entity("GraduateWork.Server.Data.Entities.EntrantEntity", b =>
-                {
-                    b.HasOne("GraduateWork.Server.Data.Entities.UserEntity", "User")
-                        .WithOne("Entrant")
-                        .HasForeignKey("GraduateWork.Server.Data.Entities.EntrantEntity", "UserId");
                 });
 
             modelBuilder.Entity("GraduateWork.Server.Data.Entities.StatementEntity", b =>
@@ -337,6 +329,13 @@ namespace GraduateWork.Server.Data.Migrations
                         .WithMany("UniversitySpecialities")
                         .HasForeignKey("UniversityId")
                         .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("GraduateWork.Server.Data.Entities.UserEntity", b =>
+                {
+                    b.HasOne("GraduateWork.Server.Data.Entities.EntrantEntity", "Entrant")
+                        .WithMany("Users")
+                        .HasForeignKey("EntrantId");
                 });
 #pragma warning restore 612, 618
         }

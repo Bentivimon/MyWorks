@@ -31,7 +31,7 @@ namespace GraduateWork.Server.Api.HostedServices
             while (cancellationToken.IsCancellationRequested)
             {
                 await Task.Delay(new TimeSpan(23, 0, 0)).ConfigureAwait(false);
-                await _ratingCalculationService.CalculateAsync(cancellationToken).ConfigureAwait(false);
+                //await _ratingCalculationService.CalculateAsync(cancellationToken).ConfigureAwait(false);
             }
         }
 

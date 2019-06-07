@@ -6,18 +6,21 @@
              Title="Вибір абітурієнта"
              BackgroundColor="White">
     <ContentPage.Content>
-        <StackLayout Spacing="15" Padding="10,10,10,0">
-            <StackLayout Orientation="Horizontal" Spacing="15" BackgroundColor="#fafafa">
-                <Entry FontSize="16" BackgroundColor="Transparent" />
-                <ImageButton Source="network_user.png" BackgroundColor="Transparent"/>
+        <StackLayout Spacing="15" Padding="10,10,5,0">
+            <StackLayout Orientation="Horizontal" Spacing="30" BackgroundColor="#fafafa" HeightRequest="50">
+                <Entry  HorizontalOptions="StartAndExpand" FontSize="16" BackgroundColor="Transparent" Placeholder="Введіть інформацію" Text="{Binding SearchQuery}"/>
+                <ImageButton Source="search.png" BackgroundColor="Transparent" Command="{Binding FindAbiturientsCommand}" HorizontalOptions="EndAndExpand"/>
             </StackLayout>
 
-            <ListView HasUnevenRows="True"  BackgroundColor="#fafafa" SeparatorColor="LightGray"  ItemsSource="" SelectionMode="None">
+            <ListView HasUnevenRows="True"  BackgroundColor="#fafafa" SeparatorColor="LightGray" ItemsSource="{Binding Abiturients}" SelectedItem="{Binding SelectedAbiturient}" >
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <client:CustomViewCell SelectedItemBackgroundColor="#fafafa">
                             <ViewCell.View>
-                                
+                                <StackLayout Padding="10" Margin="0,10,0,10">
+                                    <Label Text="{Binding Title}" TextColor="Black"  FontAttributes="Bold"/>
+                                    <Label Text="{Binding Score}" TextColor="Black"/>
+                                </StackLayout>
                             </ViewCell.View>
                         </client:CustomViewCell>
                     </DataTemplate>

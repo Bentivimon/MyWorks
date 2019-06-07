@@ -18,5 +18,11 @@ namespace GraduateWork.Client.Views
 			InitializeComponent ();
 		    BindingContext = _viewModel = new LoginViewModel(Navigation);
 		}
+
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+            BindingContext = _viewModel = new LoginViewModel(Navigation);
+        }
     }
 }

@@ -35,6 +35,19 @@ namespace GraduateWork.Client.ViewModels
             }
         }
 
+        private bool _isShowSelectEntrantButtonEnabled;
+
+        public bool IsShowSelectEntrantButtonEnabled
+        {
+            get => _isShowSelectEntrantButtonEnabled;
+
+            set
+            {
+                _isShowSelectEntrantButtonEnabled = value;
+                OnPropertyChanged();
+            }
+        }
+
 
         private string _firstName;
         
@@ -88,32 +101,50 @@ namespace GraduateWork.Client.ViewModels
             }
         }
 
-        public PersonalPageViewModel(UserInfo userInfo, INavigation navigation)
+        private string _headText;
+
+        public string HeadText
+        {
+            get => _headText;
+            set
+            {
+                _headText = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public PersonalPageViewModel(INavigation navigation)
         {
             _navigation = navigation;
             _accountHttpClient = new AccountHttpClient();
             _entrantsHttpClient = new EntrantsHttpClient();
+            var userInfo = _accountHttpClient.GetUserInfo(Application.Current.Properties["token"].ToString()).GetAwaiter().GetResult();
+            HeadText = $"Заяви відстежуваного абітурієнта (відстуні):";
             FirstName = userInfo.FirstName;
             LastName = userInfo.LastName;
             Email = userInfo.Email;
             MobilePhone = userInfo.MobileNumber;
             Statements = new ObservableCollection<EntrantStatementListModel>();
             IsShowAbiturientButtonEnabled = false;
+            IsShowSelectEntrantButtonEnabled = true;
             ShowAbiturientCommand = new Command(async ()=> await ShowAbiturientPageAsync(userInfo));
             ShowSelectEntrantCommand = new Command(async () => await ShowSelectEntrantPage());
 
             if (userInfo.Statements != null && userInfo.Statements.Any())
             {
                 InitializeStatements(userInfo.Statements);
+                HeadText = $"Заяви відстежуваного абітурієнта ({userInfo.EntrantLastName} {userInfo.EntrantFistName}):";
                 IsShowAbiturientButtonEnabled = true;
             }
         }
 
         private async Task ShowSelectEntrantPage()
         {
+            IsShowSelectEntrantButtonEnabled = false;
             await _navigation.PushAsync(new SelectEntrantPage(), true);
+            IsShowSelectEntrantButtonEnabled = true;
         }
-
+        
         private async Task ShowAbiturientPageAsync(UserInfo userInfo)
         {
             var entrant =

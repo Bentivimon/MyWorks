@@ -46,7 +46,7 @@
                 </StackLayout>
                 <StackLayout Orientation="Horizontal" Margin="5,15,5,0" BackgroundColor="Transparent" Padding="5,0,5,5">
                     <Button  VerticalOptions ="CenterAndExpand" HorizontalOptions="CenterAndExpand" Text="Реєстрація" FontSize="15" BackgroundColor="DodgerBlue" TextColor="White" Margin="0,5,5,0" HeightRequest="50" WidthRequest="130" Command="{Binding RegistrationCommand}"/>
-                    <Button  VerticalOptions ="CenterAndExpand" HorizontalOptions="CenterAndExpand" Text="Вхід" FontSize="15" BackgroundColor="DodgerBlue" TextColor="White" Margin="0,5,5,0" HeightRequest="50" WidthRequest="130" Command="{Binding LoginCommand}"/>
+                    <Button  VerticalOptions ="CenterAndExpand" HorizontalOptions="CenterAndExpand" Text="Вхід" FontSize="15" BackgroundColor="DodgerBlue" TextColor="White" Margin="0,5,5,0" HeightRequest="50" WidthRequest="130" Command="{Binding LoginCommand}" IsEnabled="{Binding IsLoginButtonEnabled}"/>
                 </StackLayout>
             </StackLayout>
             </Frame>

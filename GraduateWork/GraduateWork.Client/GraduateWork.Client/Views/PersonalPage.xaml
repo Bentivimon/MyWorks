@@ -6,7 +6,7 @@
              Title="Особистий кабінет" Padding="10,10,10,0" BackgroundColor="White">
     <ContentPage.Content>
         <!--<ScrollView BackgroundColor="#fafafa" Padding="5,5,5,5">-->
-            <StackLayout Orientation="Vertical" Spacing="5">
+        <StackLayout Orientation="Vertical" Spacing="5" Padding="5,5,5,5">
                 <StackLayout Orientation="Vertical" Spacing="5">
                     <Label Text="Ім'я" TextColor="Black" FontAttributes="Bold" FontSize="16"/>
                     <Label Text="{Binding FirstName}"/>
@@ -25,9 +25,9 @@
                 </StackLayout>
                 <StackLayout Orientation="Horizontal" Spacing="10">
                 <Button Text="Cторінка абітурієнта" FontSize="12"  VerticalOptions ="CenterAndExpand" HorizontalOptions="CenterAndExpand" Command="{Binding ShowAbiturientCommand}" IsEnabled="{Binding IsShowAbiturientButtonEnabled}"/>
-                    <Button Text="Вибрати абітурієнта" FontSize="12"  VerticalOptions ="CenterAndExpand" HorizontalOptions="CenterAndExpand" Command="{Binding ShowSelectEntrantCommand}"/>
+                <Button Text="Вибрати абітурієнта" FontSize="12"  VerticalOptions ="CenterAndExpand" HorizontalOptions="CenterAndExpand" Command="{Binding ShowSelectEntrantCommand}" IsEnabled="{Binding IsShowSelectEntrantButtonEnabled}"/>
                 </StackLayout>
-                <Label Text="Заяви абітурієнта за котрим ви стежите" FontSize="16" FontAttributes="Bold"/> 
+                <Label Text="{Binding HeadText}" FontSize="16" FontAttributes="Bold"/> 
                 <ListView HasUnevenRows="True"  BackgroundColor="#fafafa" SeparatorColor="LightGray"  ItemsSource="{Binding Statements}" SelectionMode="None">
                 <ListView.ItemTemplate>
                     <DataTemplate>

@@ -60,6 +60,12 @@ namespace GraduateWork.Server.Data.Entities
         [Column("birthday")]
         public DateTimeOffset Birthday { get; set; }
         
+        /// <summary>
+        /// Gets/Sets entrant id.
+        /// </summary>
+        [Column("entrant_id")]
+        public Guid? EntrantId { get; set; }
+
         #endregion
 
         #region Foreign keys
@@ -98,7 +104,9 @@ namespace GraduateWork.Server.Data.Entities
                 FirstName = FirstName,
                 LastName = LastName,
                 MobileNumber = Phone,
-                EntrantId = Entrant?.Id ?? Guid.Empty,
+                EntrantId = EntrantId ?? Guid.Empty,
+                EntrantFistName = Entrant?.FirstName ?? string.Empty,
+                EntrantLastName = Entrant?.LastName ?? string.Empty,
                 Statements = new List<EntrantStatementDto>()
             };
 
