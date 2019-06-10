@@ -51,7 +51,7 @@ namespace GraduateWork.Server.Services.Implementations
             using (var context = scope.ServiceProvider.GetRequiredService<DatabaseContext>())
             {
                 if (await context.Users
-                    .AnyAsync(x => x.Email == registrationModel.Email || x.Phone == registrationModel.MobileNumber,
+                    .AnyAsync(x => x.Email == registrationModel.Email,
                         cancellationToken).ConfigureAwait(false))
                     throw new InvalidDataException("User with the same email or phone number already exist");
 
