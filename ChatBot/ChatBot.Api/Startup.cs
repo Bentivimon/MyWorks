@@ -1,5 +1,6 @@
 ﻿using ChatBot.Data.Options;
 using ChatBot.Logic.RestClients;
+using ChatBot.Logic.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -35,7 +36,9 @@ namespace ChatBot.Api
 
             services.Configure<ViberApiOptions>(Configuration.GetSection("ViberApiOptions"));
 
-            services.AddScoped<ViberRestClient>();
+            services.AddTransient<ViberRestClient>();
+
+            services.AddTransient<IViberCallbackService, ViberCallbackService>();
 
             services.AddSwaggerGen(options =>
             {
