@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ChatBot.Logic.RestClients;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ChatBot.Api.Controllers
@@ -10,36 +11,20 @@ namespace ChatBot.Api.Controllers
     [ApiController]
     public class ValuesController : ControllerBase
     {
+        private readonly ViberRestClient _viberRestClient;
+
+        public ValuesController(ViberRestClient viberRestClient)
+        {
+            _viberRestClient = viberRestClient;
+        }
+
         // GET api/values
-        [HttpGet]
-        public ActionResult<IEnumerable<string>> Get()
+        [HttpPost("send")]
+        public async Task<IActionResult> SendMessageAsync()
         {
-            return new string[] { "value1", "value2" };
-        }
+            await _viberRestClient.SendMessage("NEw test message))))))", "EDsjO05Cz5eazCv14FxuFw==");
 
-        // GET api/values/5
-        [HttpGet("{id}")]
-        public ActionResult<string> Get(int id)
-        {
-            return "value";
-        }
-
-        // POST api/values
-        [HttpPost]
-        public void Post([FromBody] string value)
-        {
-        }
-
-        // PUT api/values/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
-
-        // DELETE api/values/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
+            return Ok();
         }
     }
 }
