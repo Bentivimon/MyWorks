@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
-using ChatBot.Data.Callbacks.Viber;
-using ChatBot.Data.Responses.Viber;
+﻿using System.Threading.Tasks;
+using ChatBot.Models.Callbacks.Viber;
+using ChatBot.Models.Responses.Viber;
 using Newtonsoft.Json;
 
 namespace ChatBot.Logic.Services
@@ -34,7 +31,7 @@ namespace ChatBot.Logic.Services
 
                         return new ConversationStartedResponse()
                         {
-                            Sender = new Data.Requests.Viber.ViberSenderModel() { Name = "FCIT Computer Science Bot" },
+                            Sender = new Models.Requests.Viber.ViberSenderModel() { Name = "FCIT Computer Science Bot" },
                             Type = "text",
                             Text = "This is Welcomed Message."
                         };

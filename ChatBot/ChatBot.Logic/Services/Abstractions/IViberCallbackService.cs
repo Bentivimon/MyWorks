@@ -1,4 +1,4 @@
-﻿using ChatBot.Data.Responses.Viber;
+﻿using ChatBot.Models.Responses.Viber;
 using System.Threading.Tasks;
 
 namespace ChatBot.Logic.Services

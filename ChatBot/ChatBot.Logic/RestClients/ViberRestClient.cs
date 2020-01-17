@@ -1,8 +1,8 @@
 ﻿using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using ChatBot.Data.Options;
-using ChatBot.Data.Requests.Viber;
+using ChatBot.Models.Options;
+using ChatBot.Models.Requests.Viber;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 

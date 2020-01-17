@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace ChatBot.Data.Callbacks.Viber
+namespace ChatBot.Models.Callbacks.Viber
 {
     public class BaseCallback
     {

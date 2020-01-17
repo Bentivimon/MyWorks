@@ -5,9 +5,11 @@ VisualStudioVersion = 16.0.29519.87
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChatBot.Api", "ChatBot.Api\ChatBot.Api.csproj", "{BDF7EB87-40C5-405B-9A21-ADA3CF87403E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatBot.Logic", "ChatBot.Logic\ChatBot.Logic.csproj", "{DEEB32CF-862E-4BC1-AC33-43985F977551}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChatBot.Logic", "ChatBot.Logic\ChatBot.Logic.csproj", "{DEEB32CF-862E-4BC1-AC33-43985F977551}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatBot.Data", "ChatBot.Data\ChatBot.Data.csproj", "{DE9AEF03-9A21-4700-A562-AD9C858856CE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChatBot.Models", "ChatBot.Models\ChatBot.Models.csproj", "{DE9AEF03-9A21-4700-A562-AD9C858856CE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatBot.Data", "ChatBot.Data\ChatBot.Data.csproj", "{66EE86C0-F293-45E7-BCA4-47EE662415E1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{DE9AEF03-9A21-4700-A562-AD9C858856CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DE9AEF03-9A21-4700-A562-AD9C858856CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DE9AEF03-9A21-4700-A562-AD9C858856CE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{66EE86C0-F293-45E7-BCA4-47EE662415E1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{66EE86C0-F293-45E7-BCA4-47EE662415E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{66EE86C0-F293-45E7-BCA4-47EE662415E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{66EE86C0-F293-45E7-BCA4-47EE662415E1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

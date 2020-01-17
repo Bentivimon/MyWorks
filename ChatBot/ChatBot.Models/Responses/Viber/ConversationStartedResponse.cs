@@ -1,7 +1,7 @@
-﻿using ChatBot.Data.Requests.Viber;
+﻿using ChatBot.Models.Requests.Viber;
 using Newtonsoft.Json;
 
-namespace ChatBot.Data.Responses.Viber
+namespace ChatBot.Models.Responses.Viber
 {
     public class ConversationStartedResponse
     {

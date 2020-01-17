@@ -1,4 +1,4 @@
-﻿using ChatBot.Data.Options;
+﻿using ChatBot.Models.Options;
 using ChatBot.Logic.RestClients;
 using ChatBot.Logic.Services;
 using Microsoft.AspNetCore.Builder;
@@ -8,6 +8,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json.Serialization;
 using Swashbuckle.AspNetCore.Swagger;
+using ChatBot.Data;
+using Microsoft.EntityFrameworkCore;
+using System;
 
 namespace ChatBot.Api
 {
@@ -33,13 +36,15 @@ namespace ChatBot.Api
                     };
                 });
 
+            services.AddDbContext<ApplicationDbContext>(options =>
+            options.UseNpgsql(Configuration.GetConnectionString("Default")));
 
             services.Configure<ViberApiOptions>(Configuration.GetSection("ViberApiOptions"));
 
             services.AddTransient<ViberRestClient>();
 
             services.AddTransient<IViberCallbackService, ViberCallbackService>();
-
+            
             services.AddSwaggerGen(options =>
             {
                 options.SwaggerDoc("v1", new Info { Title = "Identity Server Api", Version = "v1" });
@@ -52,6 +57,8 @@ namespace ChatBot.Api
                     Type = "apiKey"
                 });
             });
+
+            EnsureDbCreated(services);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -63,6 +70,12 @@ namespace ChatBot.Api
             }
 
             app.UseMvc();
+            app.UseCors(opt =>
+            {
+                opt.AllowAnyOrigin();
+                opt.AllowAnyMethod();
+                opt.AllowAnyHeader();
+            });
 
             var prefix = string.Empty;
             app.UseSwagger(options => options.RouteTemplate = prefix + "/swagger/{documentName}/swagger.json");
@@ -79,6 +92,16 @@ namespace ChatBot.Api
                     options.SwaggerEndpoint($"/{prefix}/swagger/v1/swagger.json", "V1");
                 }
             });
+        }
+
+        private void EnsureDbCreated(IServiceCollection services)
+        {
+            using (var provider = services.BuildServiceProvider())
+            {
+                var context = provider.GetRequiredService<ApplicationDbContext>();
+
+                context.Database.EnsureCreated();
+            }
         }
     }
 }

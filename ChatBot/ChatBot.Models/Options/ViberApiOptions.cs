@@ -1,4 +1,4 @@
-﻿namespace ChatBot.Data.Options
+﻿namespace ChatBot.Models.Options
 {
     public class ViberApiOptions
     {

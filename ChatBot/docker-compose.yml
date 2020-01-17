@@ -1,0 +1,24 @@
+version: '3.5'
+
+networks:
+  backend:
+
+services:
+  postgres:
+    image: postgres:latest
+    environment:
+      - POSTGRES_PASSWORD=x7AsdhA8732
+      - POSTGRES_USER=root
+    networks:
+      - backend
+    ports:
+      - 5432:5432
+
+#  chatBot-api:
+#    image: 
+#    environment:
+#      - 
+#    networks:
+#      - backend
+#    ports:
+#      - 5000:80

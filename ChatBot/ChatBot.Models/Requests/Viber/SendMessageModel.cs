@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace ChatBot.Data.Requests.Viber
+namespace ChatBot.Models.Requests.Viber
 {
     public class SendMessageModel
     {
