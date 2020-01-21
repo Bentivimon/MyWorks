@@ -23,7 +23,6 @@ namespace ChatBot.Api.Controllers
 
             if (response != null)
             {
-
                 return Ok(response);
             }
             return Ok();

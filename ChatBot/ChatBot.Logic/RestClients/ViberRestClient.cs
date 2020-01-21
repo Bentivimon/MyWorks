@@ -34,7 +34,6 @@ namespace ChatBot.Logic.RestClients
                 var content = new StringContent(JsonConvert.SerializeObject(model), Encoding.UTF8);
                 var response = await client.PostAsync(_apiOptions.Url + "/pa/send_message", content);
 
-                //TODO Chat it!!!
                 if (!response.IsSuccessStatusCode)
                     return false;
 

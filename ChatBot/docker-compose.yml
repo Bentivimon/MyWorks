@@ -14,11 +14,25 @@ services:
     ports:
       - 5432:5432
 
-#  chatBot-api:
-#    image: 
-#    environment:
-#      - 
-#    networks:
-#      - backend
-#    ports:
-#      - 5000:80
+  watchtower:
+    image: containrrr/watchtower
+    container_name: watchtower
+    restart: always
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock       
+      - ~/.docker/config.json:/config.json:ro
+    command:
+      --interval 300
+      --cleanup
+      --include-stopped
+    networks:
+      - internal
+    
+ chatBot-api:
+   image: bentivimon/education:chatbot
+   environment:
+     - ViberApiOptions:AccessKey=4ae59b509327df09-ed43699212aa009c-95c72ff01fef7b11
+   networks:
+     - backend
+   ports:
+     - 5000:80

@@ -11,6 +11,6 @@ namespace ChatBot.Models.Callbacks.Viber
         public long Timestamp { get; set; }
 
         [JsonProperty("message_token")]
-        public long MeesageToken { get; set; }
+        public long MessageToken { get; set; }
     }
 }

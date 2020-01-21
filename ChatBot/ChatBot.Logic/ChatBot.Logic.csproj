@@ -10,6 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\ChatBot.Data\ChatBot.Data.csproj" />
     <ProjectReference Include="..\ChatBot.Models\ChatBot.Models.csproj" />
   </ItemGroup>
 
