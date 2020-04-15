@@ -9,6 +9,8 @@ namespace ChatBot.Data
 
         public DbSet<ViberUserMessageEntity> ViberUserMessages { get; set; }
 
+        public DbSet<DialogflowResultEntity> DialogflowResults { get; set; }
+
         public ApplicationDbContext(DbContextOptions options) : base(options)
         {
         }

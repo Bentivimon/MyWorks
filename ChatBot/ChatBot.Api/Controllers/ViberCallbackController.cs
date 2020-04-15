@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using ChatBot.Logic.RestClients;
 using ChatBot.Logic.Services;
 using Microsoft.AspNetCore.Mvc;
 

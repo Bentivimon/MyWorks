@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Threading.Tasks;
 using ChatBot.Data;
+using ChatBot.Data.DataStores;
 using ChatBot.Data.Entities;
+using ChatBot.Logic.Factories;
 using ChatBot.Logic.RestClients;
 using ChatBot.Models.Callbacks.Viber;
 using ChatBot.Models.Responses.Viber;
-using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 
 namespace ChatBot.Logic.Services
@@ -13,12 +14,24 @@ namespace ChatBot.Logic.Services
     public class ViberCallbackService : IViberCallbackService
     {
         private readonly ApplicationDbContext _dbContext;
+
+        private readonly ViberUserDataStore _userDataStore;
+        private readonly ViberUserMessageDataStore _messageDataStore;
         private readonly ViberRestClient _viberRestClient;
 
-        public ViberCallbackService(ApplicationDbContext dbContext, ViberRestClient viberRestClient)
+        private readonly DialogflowRestClient _dialogflowRestClient;
+        private readonly DialogflowResultDataStore _dialogflowResultDataStore;
+
+        public ViberCallbackService(ApplicationDbContext dbContext, ViberRestClient viberRestClient,
+            ViberUserDataStore userDataStore, ViberUserMessageDataStore messageDataStore,
+            DialogflowRestClient dialogflowRestClient, DialogflowResultDataStore dialogflowResultDataStore)
         {
             _dbContext = dbContext;
             _viberRestClient = viberRestClient;
+            _userDataStore = userDataStore;
+            _messageDataStore = messageDataStore;
+            _dialogflowRestClient = dialogflowRestClient;
+            _dialogflowResultDataStore = dialogflowResultDataStore;
         }
 
         public async Task<ConversationStartedResponse> ProccessCallbackMessageAsync(string callbackMessage)
@@ -43,7 +56,7 @@ namespace ChatBot.Logic.Services
                     {
                         var model = JsonConvert.DeserializeObject<ConversationStartedCallback>(callbackMessage);
 
-                        return new ConversationStartedResponse()
+                        return new ConversationStartedResponse
                         {
                             Sender = new Models.Requests.Viber.ViberSenderModel() { Name = "FCIT Computer Science Bot" },
                             Type = "text",
@@ -65,80 +78,61 @@ namespace ChatBot.Logic.Services
 
         private async Task SubscribeUserAsync(SubscribedCallback callback)
         {
-            var now = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+            if (await _userDataStore.ExistAsync(x=> x.ViberId == callback.User.Id).ConfigureAwait(false))
+                return;
 
-            var entity = new ViberUserEntity()
-            {
-                Avatart = callback.User.Avatart,
-                Country = callback.User.Country,
-                CreatedTimestamp = now,
-                UpdatedTimestamp = now,
-                IsSubscribed = true,
-                Language = callback.User.Language,
-                Name = callback.User.Name,
-                ViberId = callback.User.Id
-            };
+            var entity = ViberUserFactory.ToEntity(callback);
 
-            await _dbContext.ViberUsers.AddAsync(entity).ConfigureAwait(false);
-            await _dbContext.SaveChangesAsync().ConfigureAwait(false);
+            await _userDataStore.CreateAsync(entity).ConfigureAwait(false);
+            await _userDataStore.SaveAsync().ConfigureAwait(false);
         }
 
         private async Task UnsubscribeUserAsync(UnsubscribedCallback callback)
         {
-            var entity = await _dbContext.ViberUsers.FirstOrDefaultAsync(x => x.ViberId == callback.UserId)
-                .ConfigureAwait(false);
+            var user = await _userDataStore.FindAsync(x => x.ViberId == callback.UserId).ConfigureAwait(false);
 
-            if (entity == null)
+            if (user == null)
                 return;
-            
-            entity.IsSubscribed = false;
-            entity.UpdatedTimestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
 
-            await _dbContext.SaveChangesAsync().ConfigureAwait(false);
+            user.IsSubscribed = false;
+            user.UpdatedTimestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+
+            _userDataStore.Update(user);
+            await _userDataStore.SaveAsync().ConfigureAwait(false);
         }
 
         private async Task HandleUserMessageAsync(ReceiveMessageFromUserCallback callback)
         {
             await SaveUserMessageAsync(callback).ConfigureAwait(false);
 
+            var response = await _dialogflowRestClient.SendQueryRequestAsync(callback.Message.Text);
+
+            await _dialogflowResultDataStore.CreateAsync(new DialogflowResultEntity()
+                {Request = callback.Message.Text, Response = response}).ConfigureAwait(false);
+            await _dialogflowResultDataStore.SaveAsync().ConfigureAwait(false);
+
             await _viberRestClient.SendMessage(
-                $"You send me this message '{callback.Message.Text}'. Thank you))) I'm learning (smiley)", callback.Sender.Id);
+                $"{response}", callback.Sender.Id).ConfigureAwait(false);
         }
 
         private async Task SaveUserMessageAsync(ReceiveMessageFromUserCallback callback)
         {
-            var senderEntity = await _dbContext.ViberUsers.FirstOrDefaultAsync(x => x.ViberId == callback.Sender.Id);
+            var senderEntity = await _userDataStore.FindAsync(x => x.ViberId == callback.Sender.Id).ConfigureAwait(false);
 
             if (senderEntity == null)
             {
-                var now = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+                var userEntity = ViberUserFactory.ToEntity(callback);
 
-                var userEntity = new ViberUserEntity()
-                {
-                    Avatart = callback.Sender.Avatart,
-                    Country = callback.Sender.Country,
-                    CreatedTimestamp = now,
-                    UpdatedTimestamp = now,
-                    IsSubscribed = true,
-                    Language = callback.Sender.Language,
-                    Name = callback.Sender.Name,
-                    ViberId = callback.Sender.Id
-                };
-                await _dbContext.ViberUsers.AddAsync(userEntity).ConfigureAwait(false);
+                await _userDataStore.CreateAsync(userEntity).ConfigureAwait(false);
                 await _dbContext.SaveChangesAsync().ConfigureAwait(false);
 
                 senderEntity = userEntity;
             }
 
-            var messageEntity = new ViberUserMessageEntity()
-            {
-                Message = callback.Message.Text,
-                MessageType = callback.Message.Type,
-                UserId = senderEntity.Id
-            };
+            var messageEntity = ViberUserMessageFactory.ToEntity(callback, senderEntity.Id);
 
-            await _dbContext.ViberUserMessages.AddAsync(messageEntity).ConfigureAwait(false);
-            await _dbContext.SaveChangesAsync().ConfigureAwait(false);
+            await _messageDataStore.CreateAsync(messageEntity).ConfigureAwait(false);
+            await _messageDataStore.SaveAsync().ConfigureAwait(false);
         }
     }
 }

@@ -10,8 +10,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ChatBot.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20200117210253_Initial")]
-    partial class Initial
+    [Migration("20200415183338_Init")]
+    partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -20,6 +20,23 @@ namespace ChatBot.Data.Migrations
                 .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn)
                 .HasAnnotation("ProductVersion", "2.2.6-servicing-10079")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
+
+            modelBuilder.Entity("ChatBot.Data.Entities.DialogflowResultEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnName("id");
+
+                    b.Property<string>("Request")
+                        .HasColumnName("request");
+
+                    b.Property<string>("Response")
+                        .HasColumnName("response");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("dialogflow_result");
+                });
 
             modelBuilder.Entity("ChatBot.Data.Entities.ViberUserEntity", b =>
                 {

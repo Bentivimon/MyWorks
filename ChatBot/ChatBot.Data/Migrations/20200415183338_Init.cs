@@ -3,10 +3,23 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace ChatBot.Data.Migrations
 {
-    public partial class Initial : Migration
+    public partial class Init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "dialogflow_result",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(nullable: false),
+                    response = table.Column<string>(nullable: true),
+                    request = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_dialogflow_result", x => x.id);
+                });
+
             migrationBuilder.CreateTable(
                 name: "viber_users",
                 columns: table => new
@@ -54,6 +67,9 @@ namespace ChatBot.Data.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "dialogflow_result");
+
             migrationBuilder.DropTable(
                 name: "viber_user_messages");
 

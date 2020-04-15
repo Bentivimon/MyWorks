@@ -19,6 +19,23 @@ namespace ChatBot.Data.Migrations
                 .HasAnnotation("ProductVersion", "2.2.6-servicing-10079")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
+            modelBuilder.Entity("ChatBot.Data.Entities.DialogflowResultEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnName("id");
+
+                    b.Property<string>("Request")
+                        .HasColumnName("request");
+
+                    b.Property<string>("Response")
+                        .HasColumnName("response");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("dialogflow_result");
+                });
+
             modelBuilder.Entity("ChatBot.Data.Entities.ViberUserEntity", b =>
                 {
                     b.Property<Guid>("Id")
