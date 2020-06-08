@@ -18,6 +18,7 @@ namespace ChatBot.Logic.Factories
                 UpdatedTimestamp = now,
                 IsSubscribed = true,
                 Language = callback.User.Language,
+                SessionId = Guid.NewGuid().ToString(),
                 Name = callback.User.Name,
                 ViberId = callback.User.Id
             };
@@ -35,6 +36,7 @@ namespace ChatBot.Logic.Factories
                 UpdatedTimestamp = now,
                 IsSubscribed = true,
                 Language = callback.Sender.Language,
+                SessionId = Guid.NewGuid().ToString(),
                 Name = callback.Sender.Name,
                 ViberId = callback.Sender.Id
             };

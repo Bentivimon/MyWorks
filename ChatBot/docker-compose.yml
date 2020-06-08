@@ -26,13 +26,16 @@ services:
       --cleanup
       --include-stopped
     networks:
-      - internal
+      - backend
     
- chatBot-api:
-   image: bentivimon/education:chatbot
-   environment:
-     - ViberApiOptions:AccessKey=4ae59b509327df09-ed43699212aa009c-95c72ff01fef7b11
-   networks:
-     - backend
-   ports:
-     - 5000:80
+  chatBot-api:
+    image: bentivimon/education:chatbot
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - ViberApiOptions:AccessKey=4ae59b509327df09-ed43699212aa009c-95c72ff01fef7b11
+    networks:
+      - backend
+    ports:
+      - 5000:80

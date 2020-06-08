@@ -2,6 +2,7 @@
 
 namespace ChatBot.Models.Callbacks.Viber
 {
+    
     public class ReceiveMessageFromUserCallback : BaseCallback
     {
         [JsonProperty("sender")]
@@ -10,7 +11,7 @@ namespace ChatBot.Models.Callbacks.Viber
         [JsonProperty("message")]
         public ReceiveMessageModel Message { get; set; }
     }
-
+    
     public class ReceiveMessageModel
     {
         [JsonProperty("type")]
@@ -28,7 +29,7 @@ namespace ChatBot.Models.Callbacks.Viber
         [JsonProperty("tracking_data")]
         public string TrackingData { get; set; }
     }
-
+    
     public class Location
     {
         [JsonProperty("lat")]

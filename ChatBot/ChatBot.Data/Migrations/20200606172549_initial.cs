@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace ChatBot.Data.Migrations
 {
-    public partial class Init : Migration
+    public partial class initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -30,6 +30,7 @@ namespace ChatBot.Data.Migrations
                     avatar = table.Column<string>(nullable: true),
                     country = table.Column<string>(nullable: true),
                     language = table.Column<string>(nullable: true),
+                    session_id = table.Column<string>(nullable: true),
                     is_subscribed = table.Column<bool>(nullable: false),
                     created_timestamp = table.Column<long>(nullable: false),
                     updated_timestamp = table.Column<long>(nullable: false)

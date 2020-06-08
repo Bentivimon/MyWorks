@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-using ChatBot.Logic.RestClients;
 using ChatBot.Logic.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -23,9 +22,8 @@ namespace ChatBot.Api.Controllers
             var response = await _viberCallbackService.ProccessCallbackMessageAsync(data.ToString()).ConfigureAwait(false);
 
             if (response != null)
-            {
                 return Ok(response);
-            }
+
             return Ok();
         }
     }

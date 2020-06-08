@@ -10,8 +10,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ChatBot.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20200415183338_Init")]
-    partial class Init
+    [Migration("20200606172549_initial")]
+    partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -61,6 +61,9 @@ namespace ChatBot.Data.Migrations
 
                     b.Property<string>("Name")
                         .HasColumnName("name");
+
+                    b.Property<string>("SessionId")
+                        .HasColumnName("session_id");
 
                     b.Property<long>("UpdatedTimestamp")
                         .HasColumnName("updated_timestamp");

@@ -26,6 +26,9 @@ namespace ChatBot.Data.Entities
         [Column("language")]
         public string Language { get; set; }
 
+        [Column("session_id")]
+        public string SessionId { get; set; }
+
         [Column("is_subscribed")]
         public bool IsSubscribed { get; set; }
 

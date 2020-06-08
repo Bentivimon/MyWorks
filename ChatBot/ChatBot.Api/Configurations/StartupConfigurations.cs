@@ -89,7 +89,7 @@ namespace ChatBot.Api
             {
                 var context = provider.GetRequiredService<ApplicationDbContext>();
 
-                context.Database.EnsureCreated();
+                context.Database.Migrate();
             }
         }
     }

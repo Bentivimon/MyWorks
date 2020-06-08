@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading.Tasks;
 using ChatBot.Data;
 using ChatBot.Data.DataStores;
@@ -6,7 +8,11 @@ using ChatBot.Data.Entities;
 using ChatBot.Logic.Factories;
 using ChatBot.Logic.RestClients;
 using ChatBot.Models.Callbacks.Viber;
+using ChatBot.Models.Options;
 using ChatBot.Models.Responses.Viber;
+using Google.Cloud.Dialogflow.V2;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 
 namespace ChatBot.Logic.Services
@@ -101,18 +107,55 @@ namespace ChatBot.Logic.Services
             await _userDataStore.SaveAsync().ConfigureAwait(false);
         }
 
-        private async Task HandleUserMessageAsync(ReceiveMessageFromUserCallback callback)
+        public async Task HandleUserMessageAsync(ReceiveMessageFromUserCallback callback)
         {
-            await SaveUserMessageAsync(callback).ConfigureAwait(false);
+            var user = await _userDataStore.FindAsync(x => x.ViberId == callback.Sender.Id);
 
-            var response = await _dialogflowRestClient.SendQueryRequestAsync(callback.Message.Text);
+            if (user == null)
+            {
+                var entity = ViberUserFactory.ToEntity(callback);
 
-            await _dialogflowResultDataStore.CreateAsync(new DialogflowResultEntity()
-                {Request = callback.Message.Text, Response = response}).ConfigureAwait(false);
-            await _dialogflowResultDataStore.SaveAsync().ConfigureAwait(false);
+                await _userDataStore.CreateAsync(entity).ConfigureAwait(false);
+                await _userDataStore.SaveAsync().ConfigureAwait(false);
+            }
+
+            await SaveUserMessageAsync(callback);
+
+            var client = await SessionsClient.CreateAsync();
+
+            var response = await client.DetectIntentAsync(
+                session: SessionName.FromProjectSession("viber-bot-jexkor", user.SessionId),
+                queryInput: new QueryInput
+                {
+                    Text = new TextInput
+                    {
+                        Text = callback.Message.Text,
+                        LanguageCode = "uk-UA"
+                    }
+                }
+            );
+
+            await _dialogflowResultDataStore.CreateAsync(new DialogflowResultEntity
+                {
+                    Request = callback.Message.Text, 
+                    Response = response.QueryResult.FulfillmentText
+                });
+
+            await _dialogflowResultDataStore.SaveAsync();
 
             await _viberRestClient.SendMessage(
-                $"{response}", callback.Sender.Id).ConfigureAwait(false);
+                $"{response.QueryResult.FulfillmentText}", callback.Sender.Id);
+        }
+
+
+        private byte[] Convert(object data)
+        {
+            BinaryFormatter bf = new BinaryFormatter();
+            using (MemoryStream ms = new MemoryStream())
+            {
+                bf.Serialize(ms, data);
+                return ms.ToArray();
+            }
         }
 
         private async Task SaveUserMessageAsync(ReceiveMessageFromUserCallback callback)
@@ -134,5 +177,9 @@ namespace ChatBot.Logic.Services
             await _messageDataStore.CreateAsync(messageEntity).ConfigureAwait(false);
             await _messageDataStore.SaveAsync().ConfigureAwait(false);
         }
+
+
+
+        
     }
 }
